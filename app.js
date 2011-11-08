@@ -3,7 +3,12 @@
  * Module dependencies.
  */
 
-var express = require('express');
+var express = require('express'),
+    mongoose = require('mongoose'),
+    Schema = mongoose.Schema,
+    User = require('./models/user').User;
+    
+mongoose.connect('mongodb://localhost/nodejsrs');
 
 var app = module.exports = express.createServer();
 
@@ -32,6 +37,43 @@ app.get('/', function(req, res){
   res.render('index', {
     title: 'Express'
   });
+});
+
+app.get('/user', function(req, res) {
+    var user = new User();
+    user.firstName = "Zarko";
+    user.lastName = "Stankovic";
+    user.birthDate = new Date('1986', '01', '27');
+    
+    var result = 'empty';
+    
+    user.save(function(err) {
+       if (err) {
+           throw err;
+       }
+        result = 'cool';
+        res.render('user', {
+            result: result
+        });
+    });
+});
+
+app.get('/user/:id', function(req, res, next) {
+   console.log(req.params.id);
+   User.find({firstName: req.params.id}, function (err, users) {
+       if (err) {
+           throw err;
+       }
+       
+       if (users.length == 0) {
+           next();
+       }
+       
+       console.log(users)
+       res.render('user', {
+           user: users[0]
+       });
+   });
 });
 
 app.listen(3000);
