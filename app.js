@@ -7,7 +7,7 @@ var express = require('express'),
     mongoose = require('mongoose'),
     Schema = mongoose.Schema,
     User = require('./models/user').User;
-    
+
 mongoose.connect('mongodb://localhost/nodejsrs');
 
 var app = module.exports = express.createServer();
@@ -24,11 +24,11 @@ app.configure(function(){
 });
 
 app.configure('development', function(){
-  app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
+  app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 });
 
 app.configure('production', function(){
-  app.use(express.errorHandler()); 
+  app.use(express.errorHandler());
 });
 
 // Routes
@@ -44,9 +44,9 @@ app.get('/user', function(req, res) {
     user.firstName = "Zarko";
     user.lastName = "Stankovic";
     user.birthDate = new Date('1986', '01', '27');
-    
+
     var result = 'empty';
-    
+
     user.save(function(err) {
        if (err) {
            throw err;
@@ -64,11 +64,11 @@ app.get('/user/:id', function(req, res, next) {
        if (err) {
            throw err;
        }
-       
+
        if (users.length == 0) {
            next();
        }
-       
+
        console.log(users)
        res.render('user', {
            user: users[0]
@@ -78,3 +78,4 @@ app.get('/user/:id', function(req, res, next) {
 
 app.listen(3000);
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
+
