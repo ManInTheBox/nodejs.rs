@@ -41,10 +41,9 @@ app.get('/', function(req, res){
 
 app.get('/user', function(req, res) {
     var user = new User();
-    user.firstName = "Zarko";
-    user.lastName = "Stankovic";
+    user.name.first = "Zarko";
+    user.name.last = "Stankovic";
     user.birthDate = new Date('1986', '01', '27');
-    
     var result = 'empty';
     
     user.save(function(err) {
@@ -59,8 +58,8 @@ app.get('/user', function(req, res) {
 });
 
 app.get('/user/:id', function(req, res, next) {
-   console.log(req.params.id);
-   User.find({firstName: req.params.id}, function (err, users) {
+    var condition = name.firstName;
+    User.find({condition: req.params.id}, function (err, users) {
        if (err) {
            throw err;
        }
