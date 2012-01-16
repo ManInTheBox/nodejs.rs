@@ -3,7 +3,15 @@ html
   head
     - var title = title || 'Node Srbija'
     title= title
-    link(rel='stylesheet', href='/stylesheets/style.css')
+    //link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel='stylesheet', href='/stylesheets/blueprint/screen.css', type='text/css', media='screen, projection')
+    link(rel='stylesheet', href='/stylesheets/blueprint/print.css', type='text/css', media='print')
+    //if lt IE 8
+      link(rel='stylesheet', href='/stylesheets/blueprint/ie.css', type='text/css', media='screen, projection')
   body
-  a(href='/') Logo
-  != body
+    .container.showgrid
+      .span-24
+        a(href='/'): img(src='/images/logo.jpg', width='10%', height='10%')
+      .span-24!= body
+      .span-24
+        h1(style='background: skyblue;') Ovo je footer
