@@ -3,9 +3,9 @@
   , "version": "0.0.1"
   , "private": true
   , "dependencies": {
-      "express": "2.4.7"
+      "express": "2.5.4"
     , "jade": ">= 0.0.1"
-    , "mongoose": ">= 2.3.9"
+    , "mongoose": ">= 2.4.10"
+    , "mongoose-types": ">= 1.0.3"
   }
 }
-

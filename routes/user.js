@@ -1,0 +1,69 @@
+/**
+ * Helpers
+ */
+var util = require('util');
+
+/**
+ * Models
+ */
+var User = require('../models/user');
+
+/**
+ * Routes
+ */ 
+exports.register = function(req, res, next) {
+    if (req.body.user) { // we have submitted form
+        var u = req.body.user;
+        var user = new User({
+            name: {
+                first: u.name.first,
+                last: u.name.last
+            },
+            email: u.email,
+            password: u.password
+        });
+        
+        user.save(function(err) {
+            if (err) {
+                res.render('user/register', {user: user});
+            }
+            else {
+                res.redirect('/login');
+            }
+        });
+    } else {
+        res.render('user/register');
+    }
+};
+
+exports.login = function(req, res, next) {
+    if (req.body.user) {
+        var u = req.body.user;
+        u.errors = [];
+        
+        if (u.email === '') {
+            u.errors.push({email: 'Polje "E-mail" je obavezno.'});
+        }
+        if (u.password === '') {
+            u.errors.push({password: 'Polje "Lozinka" je obavezno.'});
+        }
+        
+        if (u.errors.length) {
+            res.render('user/login', {user: u});
+        } else {
+            User.findOne({email: u.email, password: u.password}, function(err, user) {
+                if (err) {
+                    next(err);
+                } else if (user) {
+                    req.flash('login.success', 'Uspesno ste se ulogovali.');
+                    res.redirect('/');
+                } else {
+                    u.errors.push({login: 'E-mail ili Lozinka nisu ispravni.'});
+                    res.render('user/login', {user: u});
+                }
+            });
+        }
+    } else {
+        res.render('user/login');
+    }
+};

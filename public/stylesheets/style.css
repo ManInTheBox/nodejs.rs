@@ -6,3 +6,12 @@ body {
 a {
   color: #00B7FF;
 }
+
+.errorSummary {
+    background: #FFB5B5;
+    border: 1px solid #FF0000;
+}
+
+.error {
+    border: 1px solid #FF0000;
+}

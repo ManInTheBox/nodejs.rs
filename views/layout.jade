@@ -1,6 +1,9 @@
 !!!
 html
   head
-    title asdf
+    - var title = title || 'Node Srbija'
+    title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
-  body!= body
+  body
+  a(href='/') Logo
+  != body

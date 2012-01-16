@@ -1,4 +1,8 @@
 h1= title
+- if ('undefined' !== typeof flash)
+  div= flash
+  
 p Welcome to #{title}
-
-h1(style="color: red;") Ovo je test!
+a(href='/register') Registracija
+br
+a(href='/login') Logovanje
