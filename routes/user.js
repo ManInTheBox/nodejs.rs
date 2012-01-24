@@ -51,11 +51,11 @@ exports.login = function(req, res, next) {
         if (u.errors.length) {
             res.render('user/login', {user: u});
         } else {
-            User.findOne({email: u.email, password: u.password}, function(err, user) {
+            User.findOne({email: u.email}, function(err, user) {
                 if (err) {
                     next(err);
-                } else if (user) {
-                    req.flash('login.success', 'Uspesno ste se ulogovali.');
+                } else if (user && user.password === user.encryptPassword(u.password)) {
+                    req.flash('success', 'Uspesno ste se ulogovali.');
                     res.redirect('/');
                 } else {
                     u.errors.push({login: 'E-mail ili Lozinka nisu ispravni.'});

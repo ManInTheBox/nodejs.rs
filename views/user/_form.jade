@@ -1,9 +1,9 @@
 form(action='/register', method='POST')
   - if ('undefined' !== typeof user)
-    div(class='errorSummary')
+    div(class='error')
       ul
         - for (var e in user.errors)
-          li= user.errors[e].type
+          li= user.errors[e]
           
   label(for='user_name_first') Ime: 
   input(type='text', id='user_name_first', name='user[name][first]', value=(('undefined' !== typeof user) ? user.name.first : null), class=(('undefined' !== typeof user && 'undefined' !== typeof user.errors["name.first"]) ? 'error' : null))

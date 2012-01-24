@@ -15,3 +15,8 @@ a {
 .error {
     border: 1px solid #FF0000;
 }
+
+.joinButtons {
+    display: block;
+    background: #ff0000;
+}

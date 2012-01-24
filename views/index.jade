@@ -1,8 +1,4 @@
 h1= title
-- if ('undefined' !== typeof flash)
-  div= flash
+!= messages()
   
-p Welcome to #{title}
-a(href='/register') Registracija
-br
-a(href='/login') Logovanje
+div Ovo je neka pocetna stranica...
