@@ -13,13 +13,15 @@ html
         .span-18
           a(href='/'): img(src='/images/logo.jpg', height='10%')
         .span-6.last
-          - if (typeof user !== 'undefined')
-            = user['name.first']
+          - if (typeof session.user !== 'undefined')
+            a(href='/logout') Izloguj se #{session.user.email}
           - else
             .span-2.colborder
               a(href='/register') Registracija
             .span-2.last
               a(href='/login') Logovanje
-      .span-24!= body
+      .span-24
+        != messages()
+        != body
       .span-24
         h1(style='background: skyblue;') Ovo je footer

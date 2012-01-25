@@ -28,6 +28,7 @@ exports.register = function(req, res, next) {
                 res.render('user/register', {user: user});
             }
             else {
+                req.flash('success', 'Uspesno ste kreirali nalog. Ulogujte se.');
                 res.redirect('/login');
             }
         });
@@ -55,6 +56,7 @@ exports.login = function(req, res, next) {
                 if (err) {
                     next(err);
                 } else if (user && user.password === user.encryptPassword(u.password)) {
+                    req.session.user = user;
                     req.flash('success', 'Uspesno ste se ulogovali.');
                     res.redirect('/');
                 } else {
@@ -66,4 +68,10 @@ exports.login = function(req, res, next) {
     } else {
         res.render('user/login');
     }
+};
+
+exports.logout = function(req, res) {
+    delete req.session.user;
+    req.flash('success', 'Uspesno ste se izlogovali.');
+    res.redirect('/login');
 };
