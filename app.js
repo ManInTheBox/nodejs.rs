@@ -36,6 +36,15 @@ app.configure('production', function(){
 
 //errors.bind(app, { layout: false });
 
+function isGuest(req, res, next) {
+    if (req.session.user) {
+        next();
+    } else {
+        req.flash('error', 'Morate se prvo ulogovati.');
+        res.redirect('/login');
+    }
+}
+
 
 // Routes
 
@@ -46,6 +55,22 @@ app.all('/register', routes.user.register);
 app.all('/login', routes.user.login);
 
 app.get('/logout', routes.user.logout);
+
+app.get('/post', routes.post.list);
+
+app.all('/post/new', isGuest, routes.post.new);
+
+app.get('/post/:postTitle', routes.post.view);
+
+app.get('/post/:postTitle/download', routes.post.download); // ne radi... proveri res.sendfile()...
+
+app.get('/post/:postTitle/delete', routes.post.delete);
+
+
+
+
+
+
 
 //errors.define({
 //    name: 'BadRequest', // You will be able to access it through `errors.BadRequest` in future

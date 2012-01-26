@@ -1,0 +1,9 @@
+h1 Kreiraj novi post
+form(action='/post/new', method='POST')
+  label(for='post_title') Naslov: 
+  input(type='text', id='post_title', name='post[title]')
+  br
+  label(for='post_content') Sadrzaj: 
+  textarea(id='post_content', name='post[content]')
+  br
+  input(type='submit', value='Kreiraj')

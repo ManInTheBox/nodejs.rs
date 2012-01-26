@@ -1,0 +1,5 @@
+h6 Napisao: #{post.owner.name.full}
+h6 Dana: #{post.createdAt}
+h3= post.title
+a(href='/post/#{post.titleUrl}/download') Preuzmi
+!= content

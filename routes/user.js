@@ -17,7 +17,8 @@ exports.register = function(req, res, next) {
         var user = new User({
             name: {
                 first: u.name.first,
-                last: u.name.last
+                last: u.name.last,
+                username: u.name.username
             },
             email: u.email,
             password: u.password

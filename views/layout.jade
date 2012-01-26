@@ -11,7 +11,7 @@ html
     .container.showgrid
       .span-24
         .span-18
-          a(href='/'): img(src='/images/logo.jpg', height='10%')
+          a(href='/'): img(src='/images/logo.jpg', width='10%', height='10%')
         .span-6.last
           - if (typeof session.user !== 'undefined')
             a(href='/logout') Izloguj se #{session.user.email}

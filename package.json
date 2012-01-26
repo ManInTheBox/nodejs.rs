@@ -9,5 +9,8 @@
     , "mongoose-types": ">= 1.0.3"
     , "express-messages": ">= 0.0.2"
     , "express-errors": ">= 0.0.8"
+    , "markdown": "0.3.1"
+    , "node-markdown": "0.1.0"
+    , "discount": ">= 0.2.3"
   }
 }

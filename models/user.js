@@ -1,47 +1,79 @@
 var db = require('./db'),
+    util = require('util'),
     crypto = require('crypto'),
-    util = require('util');
+    helpers = require('../helpers');
     
 var User = new db.Schema({
     name: {
         first: { 
             type: String, 
             trim: true, 
-            set: capitalize,
-            validate: [length, 'Polje "Ime" mora biti izmedju 2 i 30 karaktera.'], 
+            set: helpers.toUpperCaseFirst,
+            validate: [
+                helpers.stringBetweenValidator(2, 30), 
+                'Polje "Ime" mora biti izmedju 2 i 30 karaktera.'
+            ], 
             required: true 
         },
         middle: { 
             type: String, 
             trim: true, 
-            set: capitalize,
-            validate: [length, 'Polje "Srednje Ime" mora biti izmedju 2 i 30 karaktera.']
+            set: helpers.toUpperCaseFirst,
+            validate: [
+                helpers.stringBetweenValidator(2, 30), 
+                'Polje "Srednje Ime" mora biti izmedju 2 i 30 karaktera.'
+            ]
         },
         last: { 
             type: String, 
             trim: true, 
-            set: capitalize, 
-            validate: [length, 'Polje "Prezime" mora biti izmedju 2 i 30 karaktera.'], 
+            set: helpers.toUpperCaseFirst, 
+            validate: [
+                helpers.stringBetweenValidator(2, 30), 
+                'Polje "Prezime" mora biti izmedju 2 i 30 karaktera.'
+            ], 
             required: true 
+        },
+        username: {
+            type: String,
+            trim: true,
+            validate: [
+                usernameValidator(5, 10),
+                'Polje "Korisnicko ime" mora biti izmedju 5 i 10 karaktera.'
+            ]
         }
     },
-    email: { type: db.mongoose.SchemaTypes.Email, required: true /*, unique: true */ },
-    password: { type: String, required: true },
-    salt: { type: String, default: generateSalt },
-    birthDate: { type: Date },
-    createdAt: { type: Date, default: Date.now }
+    email: {
+        type: db.mongoose.SchemaTypes.Email,
+        required: true
+        /*, unique: true */
+    },
+    password: {
+        type: String, 
+        required: true,
+        validate: [
+            helpers.stringBetweenValidator(6, 30),
+            'Polje lozinka mora biti izmedju 6 i 30 karaktera.'
+        ]
+    },
+    salt: { 
+        type: String, 
+        default: helpers.generateHash 
+    },
+    createdAt: { 
+        type: Date,
+        default: Date.now 
+    }
 });
 
-function length(v) {
-    return (v.length >= 2) && (v.length <= 30);
-}
-
-function generateSalt() {
-    return crypto.createHash('md5').digest('hex');
-}
-
-function capitalize(v) {
-    return v.charAt(0).toUpperCase() + v.slice(1);
+function usernameValidator(from, to) {
+    return function(v) {
+        if (helpers.stringBetweenValidator(from, to)(v)) {
+            return true; // treba da ide dalja provera... regex etc etc...
+        } else {
+            return false;
+        }
+    };
 }
 
 User.methods.encryptPassword = function(password, salt) {
@@ -55,6 +87,10 @@ User.pre('save', function(next) {
         this.password = this.encryptPassword(this.password, this.salt);
     }
     next();
+});
+
+User.virtual('name.full').get(function() {
+    return this.name.first + ' ' + this.name.last;
 });
 
 module.exports = db.mongoose.model('User', User);
