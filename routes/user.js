@@ -71,6 +71,16 @@ exports.login = function(req, res, next) {
     }
 };
 
+exports.edit = function(req, res, next) {
+    User.findOne({name: {username: req.params.username}}, function(err, user) {
+        if (err) {
+            next(err);
+        } else {
+            res.render('user/edit', { user: user });
+        }
+    });
+};
+
 exports.logout = function(req, res) {
     delete req.session.user;
     req.flash('success', 'Uspesno ste se izlogovali.');

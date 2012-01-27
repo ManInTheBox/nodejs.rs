@@ -1,2 +1,24 @@
 h1 Registruj se na ovom sajtu.
-!= partial('_form')
+form(action='/register', method='POST')
+  - if ('undefined' !== typeof user)
+    div(class='error')
+      ul
+        - for (var e in user.errors)
+          li= user.errors[e]
+          
+  label(for='user_name_first') Ime: 
+  input(type='text', id='user_name_first', name='user[name][first]', value=(('undefined' !== typeof user) ? user.name.first : null))
+  br
+  label(for='user_name_last') Prezime: 
+  input(type='text', id='user_name_last', name='user[name][last]', value=(('undefined' !== typeof user) ? user.name.last : null))
+  br
+  label(for='user_name_username') Korisnicko ime:
+  input(type='text', id='user_name_username', name='user[name][username]', value=(('undefined' !== typeof user) ? user.name.username : null))
+  br
+  label(for='user_email') E-mail: 
+  input(type='text', id='user_email', name='user[email]', value=(('undefined' !== typeof user) ? user.email : null))
+  br
+  label(for='user_password') Lozinka: 
+  input(type='password', id='user_password', name='user[password]', value=(('undefined' !== typeof user) ? user.password : null))
+  br
+  input(type='submit', value='Registruj se')

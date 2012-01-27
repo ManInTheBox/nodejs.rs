@@ -56,6 +56,9 @@ app.all('/login', routes.user.login);
 
 app.get('/logout', routes.user.logout);
 
+app.get('/user/:username/edit', routes.user.edit);
+app.put('/user/:username/edit', routes.user.edit);
+
 app.get('/post', routes.post.list);
 
 app.all('/post/new', isGuest, routes.post.new);
