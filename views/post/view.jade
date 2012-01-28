@@ -2,4 +2,37 @@ h6 Napisao: #{post.owner.name.full}
 h6 Dana: #{post.createdAt}
 h3= post.title
 a(href='/post/#{post.titleUrl}/download') Preuzmi
+br
+a(href='/post/#{post.titleUrl}/edit') Edituj
+br
+a(href='#', id='deletePost') Obrisi
 != content
+form(action='/post/#{post._id}/comment/new', method='POST')
+  label(for='post_comment') Komentar: 
+  textarea(id='post_comment', name='post[comment]')
+  br
+  input(type='submit', value='Posalji')
+  
+  script(type='text/javascript')
+    $('#deletePost').click(function() {
+        $.ajax({
+            url: '/post/#{post._id}/delete',
+            type: 'POST',
+            data: { '_method': 'DELETE' },
+            success: function(response) {
+                if (response === 'ok') {
+                    window.location.href = '/post';
+                }
+            },
+            error: function(xhr) {
+                console.log(xhr.responseText);
+            }
+        });
+    });
+h3 Komentari korisnika:
+- each comment in post.comments
+  div(style='background: lightgreen;')
+    = comment.text
+    small= comment.createdAt
+  a(href='/post/#{post._id}/comment/#{comment._id}/delete') Obrisi
+  hr

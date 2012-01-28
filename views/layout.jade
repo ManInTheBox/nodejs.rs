@@ -3,6 +3,7 @@ html
   head
     - var title = title || 'Node Srbija'
     title= title
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js')
     link(rel='stylesheet', href='/stylesheets/blueprint/screen.css', type='text/css', media='screen, projection')
     link(rel='stylesheet', href='/stylesheets/blueprint/print.css', type='text/css', media='print')
     //if lt IE 8
@@ -14,7 +15,8 @@ html
           a(href='/'): img(src='/images/logo.jpg', width='10%', height='10%')
         .span-6.last
           - if (typeof session.user !== 'undefined')
-            a(href='/logout') Izloguj se #{session.user.email}
+            a(href='/logout') Izloguj se #{session.user.email} | 
+            a(href='/user/#{session.user.name.username}/edit') edit
           - else
             .span-2.colborder
               a(href='/register') Registracija

@@ -8,6 +8,7 @@ var express = require('express'),
     errors = require('express-errors');
 
 var app = module.exports = express.createServer();
+//errors.bind(app, {layout: false});
 
 
 // Configuration
@@ -19,7 +20,7 @@ app.configure(function(){
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   app.use(express.cookieParser());
-  app.use(express.session({ secret: 'test' }));
+  app.use(express.session({ secret: 'neki fancy session secret key :PPP' }));
   app.use(app.router);
   app.dynamicHelpers({ messages: require('express-messages') });
   app.dynamicHelpers({ session: function(req, res) { return req.session; } });
@@ -34,9 +35,8 @@ app.configure('production', function(){
   app.use(express.errorHandler()); 
 });
 
-//errors.bind(app, { layout: false });
 
-function isGuest(req, res, next) {
+function restrictAccess(req, res, next) {
     if (req.session.user) {
         next();
     } else {
@@ -50,9 +50,11 @@ function isGuest(req, res, next) {
 
 app.get('/', routes.index);
 
-app.all('/register', routes.user.register);
+app.get('/register', routes.user.register);
+app.post('/register', routes.user.register);
 
-app.all('/login', routes.user.login);
+app.get('/login', routes.user.login);
+app.post('/login', routes.user.login);
 
 app.get('/logout', routes.user.logout);
 
@@ -61,19 +63,26 @@ app.put('/user/:username/edit', routes.user.edit);
 
 app.get('/post', routes.post.list);
 
-app.all('/post/new', isGuest, routes.post.new);
+app.get('/post/new', restrictAccess, routes.post.new);
+app.post('/post/new', restrictAccess, routes.post.new);
 
 app.get('/post/:postTitle', routes.post.view);
 
-app.get('/post/:postTitle/download', routes.post.download); // ne radi... proveri res.sendfile()...
+app.get('/post/:postTitle/download', routes.post.download);
 
-app.get('/post/:postTitle/delete', routes.post.delete);
+app.del('/post/:postId/delete', restrictAccess, routes.post.delete);
+
+app.get('/post/:postTitle/edit', restrictAccess, routes.post.edit);
+app.put('/post/:postTitle/edit', restrictAccess, routes.post.edit);
+
+app.post('/post/:postId/comment/new', routes.post.comment.new);
+
+app.get('/post/:postId/comment/:commentId/delete', restrictAccess, routes.post.comment.delete); // ovo ce biti app.del()
 
 
-
-
-
-
+//app.get('/404', function(req, res, next) {
+//    next(errors.NotFound);
+//});
 
 //errors.define({
 //    name: 'BadRequest', // You will be able to access it through `errors.BadRequest` in future
