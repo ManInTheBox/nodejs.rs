@@ -5,6 +5,8 @@ form(action='/register', method='POST')
       ul
         - for (var e in user.errors)
           li= user.errors[e]
+  
+  input(type='hidden', name='_csrf', value=csrfToken)
           
   label(for='user_name_first') Ime: 
   input(type='text', id='user_name_first', name='user[name][first]', value=(('undefined' !== typeof user) ? user.name.first : null))

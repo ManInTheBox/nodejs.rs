@@ -1,0 +1,6 @@
+127.0.0.1 - GET / HTTP/1.1 200 1156 - 69 ms
+127.0.0.1 - GET /stylesheets/blueprint/screen.css HTTP/1.1 304 - - 7 ms
+127.0.0.1 - GET /images/logo.jpg HTTP/1.1 304 - - 4 ms
+127.0.0.1 - GET /stylesheets/blueprint/src/grid.png HTTP/1.1 304 - - 2 ms
+127.0.0.1 - GET /stylesheets/blueprint/print.css HTTP/1.1 304 - - 3 ms
+127.0.0.1 - GET /favicon.ico HTTP/1.1 404 - - 2 ms

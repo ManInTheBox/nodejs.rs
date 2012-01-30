@@ -13,22 +13,10 @@ var app = module.exports = express.createServer();
 
 // Configuration
 
-app.configure(function(){
-  app.set(express.logger());
-  app.set('views', __dirname + '/views');
-  app.set('view engine', 'jade');
-  app.use(express.bodyParser());
-  app.use(express.methodOverride());
-  app.use(express.cookieParser());
-  app.use(express.session({ secret: 'neki fancy session secret key :PPP' }));
-  app.use(app.router);
-  app.dynamicHelpers({ messages: require('express-messages') });
-  app.dynamicHelpers({ session: function(req, res) { return req.session; } });
-  app.use(express.static(__dirname + '/public'));
-});
+app.configure(require('./config')(app, express));
 
 app.configure('development', function(){
-  app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
+    app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
 });
 
 app.configure('production', function(){
