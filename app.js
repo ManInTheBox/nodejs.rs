@@ -4,16 +4,13 @@
  */
 
 var express = require('express'),
-    routes = require('./routes'),
-    errors = require('express-errors');
+    routes = require('./routes');
 
 var app = module.exports = express.createServer();
-//errors.bind(app, {layout: false});
-
 
 // Configuration
 
-app.configure(require('./config')(app, express));
+app.configure(require('./config'));
 
 app.configure('development', function(){
     app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
@@ -66,30 +63,6 @@ app.put('/post/:postTitle/edit', restrictAccess, routes.post.edit);
 app.post('/post/:postId/comment/new', routes.post.comment.new);
 
 app.get('/post/:postId/comment/:commentId/delete', restrictAccess, routes.post.comment.delete); // ovo ce biti app.del()
-
-
-//app.get('/404', function(req, res, next) {
-//    next(errors.NotFound);
-//});
-
-//errors.define({
-//    name: 'BadRequest', // You will be able to access it through `errors.BadRequest` in future
-//    message: 'Bad request', // This message for XHR requests
-//    status: 400 // HTTP status
-//});
-
-
-//app.get('/400', function(req, res, next) {
-//    next(errors.BadRequest);
-//});
-
-//app.get('/404', function(req, res, next) {
-//    res.render('errors/404');
-//});
-
-//app.get('/500', function(req, res, next) {
-//    next(new Error('500 errror yaaaaaa!'));
-//});
 
 app.listen(3000);
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);

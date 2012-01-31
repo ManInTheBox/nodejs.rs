@@ -1,4 +1,0 @@
-[Pocetna stranica](/)
-`cool`
-
-    printf("Hello world");

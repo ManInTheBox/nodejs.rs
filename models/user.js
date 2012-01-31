@@ -83,9 +83,9 @@ User.methods.encryptPassword = function(password, salt) {
 };
 
 User.pre('save', function(next) {
-    if (this.isNew) {
+//    if (this.isNew) {
         this.password = this.encryptPassword(this.password, this.salt);
-    }
+//    }
     next();
 });
 

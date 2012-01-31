@@ -46,15 +46,13 @@ exports.new = function(req, res, next) {
 
 exports.view = function(req, res, next) {
     Post.findOne({ titleUrl: req.params.postTitle }).populate('owner').populate('comments').run(function(err, post) {
-        if (err) {
-            next(err);
-        } else {
-            var filePath = __dirname + '/../views/post/content/' + post.titleUrl + '.md';
-            fs.readFile(filePath, function(err, content) {
-                if (err) next(err);
-                res.render('post/view', { post: post, content: md.parse(content.toString()) });
-            });
-        }
+        if (err) next(err);
+        // srediti kad je post === null
+        var filePath = __dirname + '/../views/post/content/' + post.titleUrl + '.md';
+        fs.readFile(filePath, function(err, content) {
+            if (err) next(err);
+            res.render('post/view', { post: post, content: md.parse(content.toString()) });
+        });
     });
 };
 

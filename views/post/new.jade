@@ -1,5 +1,6 @@
 h1 Kreiraj novi post
 form(action='/post/new', method='POST')
+  input(type='hidden', name='_csrf', value=csrfToken)
   label(for='post_title') Naslov: 
   input(type='text', id='post_title', name='post[title]')
   br

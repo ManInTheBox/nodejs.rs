@@ -6,11 +6,13 @@ form(action='/login', method='POST')
         ul
           - for (var i = 0; i < user.errors.length; i++)
             li= user.errors[i][Object.keys(user.errors[i])]
+            
+  input(type='hidden', name='_csrf', value=csrfToken)
 
   label(for='user_email') E-mail: 
-  input(type='text', id='user_email', name='user[email]', value=(('undefined' !== typeof user) ? user.email: null), class=(('undefined' !== typeof user && (Object.hasOwnProperty.call(user.errors[0], 'email') || Object.hasOwnProperty.call(user.errors[0], 'login'))) ? 'error': null))
+  input(type='text', id='user_email', name='user[email]', value=(('undefined' !== typeof user) ? user.email: null))
   br
   label(for='user_password') Lozinka: 
-  input(type='password', id='user_password', name='user[password]', value=(('undefined' !== typeof user) ? user.password: null), class=(('undefined' !== typeof user && (Object.hasOwnProperty.call(user.errors[0], 'password') || Object.hasOwnProperty.call(user.errors[0], 'login') || (user.errors.length > 1 ? Object.hasOwnProperty.call(user.errors[1], 'password') : null))) ? 'error': null))
+  input(type='password', id='user_password', name='user[password]', value=(('undefined' !== typeof user) ? user.password: null))
   br
   input(type='submit', value='Uloguj se') 
