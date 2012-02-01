@@ -1,22 +1,19 @@
 /**
  * Helpers
  */
-var util = require('util'),
-    mail = require('mail').Mail({
-        host: 'localhost',
-//        username: '',
-//        password: ''
-    });
+var util = require('util');
 
 /**
  * Models
  */
-var User = require('../models/user');
+var User = require('../models/user'),
+    Email = require('../models/email');
 
 /**
  * Routes
  */ 
 exports.register = function(req, res, next) {
+    console.log(Email.types);
     if (req.body.user) { // we have submitted form
         var u = req.body.user;
         var user = new User({
@@ -36,7 +33,7 @@ exports.register = function(req, res, next) {
             else {
                 var mailMessage = {
                     from: 'account@nodejs.rs',
-                    to: ['zarko.stankovic@itsmyplay.com'],
+                    to: [user.email],
                     subject: 'Nodejs.rs salje...'
                 };
                 var mailBody = [
@@ -45,13 +42,17 @@ exports.register = function(req, res, next) {
                     'Pozdrav'
                 ].join('\n');
                 
-                mail.message(mailMessage).body(mailBody).send(function(err) {
-                    if (err) throw err;
-                    console.log('uspesno poslat mejl');
+                var email = new Email({
+                    message: mailMessage,
+                    body: mailBody,
+                    type: Email.types['register']
                 });
                 
-                req.flash('success', 'Uspesno ste kreirali nalog. Ulogujte se.');
-                res.redirect('/login');
+                email.save(function(err) {
+                    if (err) next(err);
+                    req.flash('success', 'Uspesno ste kreirali nalog. Ulogujte se.');
+                    res.redirect('/login');
+                });
             }
         });
     } else {
@@ -80,7 +81,7 @@ exports.login = function(req, res, next) {
                 } else if (user && user.password === user.encryptPassword(u.password)) {
                     req.session.user = user;
                     req.flash('success', 'Uspesno ste se ulogovali.');
-                    res.redirect('/');
+                    res.redirect('home');
                 } else {
                     u.errors.push({login: 'E-mail ili Lozinka nisu ispravni.'});
                     res.render('user/login', {user: u});
@@ -98,12 +99,11 @@ exports.edit = function(req, res, next) {
         if (user) {
             var u = req.body.user;
             if (u) {
-                console.log(u);
                 user.name.first = u.name.first;
                 user.name.last = u.name.last;
                 user.name.username = u.name.username;
                 user.email = u.email;
-                user.password = u.password
+                user.password = u.password // ovo nesto zajebava...
 
                 user.save(function(err) {
                     if (err) next(err);
@@ -115,7 +115,7 @@ exports.edit = function(req, res, next) {
             }
         }
         else {
-            next(new Error('Ove errore treba srediti.... btw nema tog usera...'));
+            next(); // 404 ce uhvatiti ovo...
         }
     });
 };
