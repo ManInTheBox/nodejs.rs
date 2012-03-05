@@ -1,18 +1,16 @@
-h1 Uloguj se
 form(action='/login', method='POST')
-  - if ('undefined' !== typeof user)
-    - if (user.errors.length)
-      div(class='error')
-        ul
-          - for (var i = 0; i < user.errors.length; i++)
-            li= user.errors[i][Object.keys(user.errors[i])]
+  - if ('undefined' !== typeof user.errors)
+    div(class='error')
+      ul
+        - each err in user.errors
+          li= err
             
   input(type='hidden', name='_csrf', value=csrfToken)
 
-  label(for='user_email') E-mail: 
-  input(type='text', id='user_email', name='user[email]', value=(('undefined' !== typeof user) ? user.email: null))
+  label(for='userEmail') E-mail: 
+  input(type='text', id='userEmail', name='user[email]', value=user.email)
   br
-  label(for='user_password') Lozinka: 
-  input(type='password', id='user_password', name='user[password]', value=(('undefined' !== typeof user) ? user.password: null))
+  label(for='userPassword') Lozinka: 
+  input(type='password', id='userPassword', name='user[password]', value=user.password)
   br
   input(type='submit', value='Uloguj se') 

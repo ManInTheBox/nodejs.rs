@@ -4,7 +4,7 @@
  */
 
 var express = require('express'),
-    routes = require('./routes');
+  routes = require('./routes');
 
 var app = module.exports = express.createServer();
 
@@ -13,7 +13,7 @@ var app = module.exports = express.createServer();
 app.configure(require('./config'));
 
 app.configure('development', function(){
-    app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
+  app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
 });
 
 app.configure('production', function(){
@@ -22,12 +22,12 @@ app.configure('production', function(){
 
 
 function restrictAccess(req, res, next) {
-    if (req.session.user) {
-        next();
-    } else {
-        req.flash('error', 'Morate se prvo ulogovati.');
-        res.redirect('/login');
-    }
+  if (req.session.user) {
+    next();
+  } else {
+    req.flash('error', 'Morate se prvo ulogovati.');
+    res.redirect('/login');
+  }
 }
 
 

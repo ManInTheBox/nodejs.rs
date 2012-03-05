@@ -1,26 +1,25 @@
-h1 Registruj se na ovom sajtu.
 form(action='/register', method='POST')
-  - if ('undefined' !== typeof user)
+  - if ('undefined' !== typeof user.errors)
     div(class='error')
       ul
-        - for (var e in user.errors)
-          li= user.errors[e]
+        - each err in user.errors
+          li= err
   
   input(type='hidden', name='_csrf', value=csrfToken)
           
-  label(for='user_name_first') Ime: 
-  input(type='text', id='user_name_first', name='user[name][first]', value=(('undefined' !== typeof user) ? user.name.first : null))
+  label(for='userNameFirst') Ime: 
+  input(type='text', id='userNameFirst', name='user[name][first]', value=user.name.first)
   br
-  label(for='user_name_last') Prezime: 
-  input(type='text', id='user_name_last', name='user[name][last]', value=(('undefined' !== typeof user) ? user.name.last : null))
+  label(for='userNameLast') Prezime: 
+  input(type='text', id='userNameLast', name='user[name][last]', value=user.name.last)
   br
-  label(for='user_name_username') Korisnicko ime:
-  input(type='text', id='user_name_username', name='user[name][username]', value=(('undefined' !== typeof user) ? user.name.username : null))
+  label(for='userNameUsername') Korisnicko ime:
+  input(type='text', id='userNameUsername', name='user[name][username]', value=user.name.username)
   br
-  label(for='user_email') E-mail: 
-  input(type='text', id='user_email', name='user[email]', value=(('undefined' !== typeof user) ? user.email : null))
+  label(for='userEmail') E-mail: 
+  input(type='text', id='userEmail', name='user[email]', value=user.email)
   br
-  label(for='user_password') Lozinka: 
-  input(type='password', id='user_password', name='user[password]', value=(('undefined' !== typeof user) ? user.password : null))
+  label(for='userPassword') Lozinka: 
+  input(type='password', id='userPassword', name='user[password]', value=user.password)
   br
   input(type='submit', value='Registruj se')

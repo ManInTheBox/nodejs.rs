@@ -7,89 +7,82 @@ var util = require('util');
  * Models
  */
 var User = require('../models/user'),
-    Email = require('../models/email');
+  Email = require('../models/email');
 
 /**
  * Routes
  */ 
-exports.register = function(req, res, next) {
-    if (req.body.user) { // we have submitted form
-        var u = req.body.user;
-        var user = new User({
-            name: {
-                first: u.name.first,
-                last: u.name.last,
-                username: u.name.username
-            },
-            email: u.email,
-            password: u.password
-        });
+exports.register = function (req, res, next) {
+  var user = new User();
+
+  if (req.body.user) { // we have submitted form
+    var u = req.body.user;
+
+    user = new User({
+      name: {
+        first: u.name.first,
+        last: u.name.last,
+        username: u.name.username
+      },
+      email: u.email,
+      password: u.password
+    });
         
-        user.save(function(err) {
-            if (err) {
-                res.render('user/register', {user: user});
-            }
-            else {
-                var mailMessage = {
-                    from: 'account@nodejs.rs',
-                    to: [user.email],
-                    subject: 'Nodejs.rs salje...'
-                };
-                var mailBody = [
-                    'Hvala ti ' + user.name.full,
-                    'Poseti Nodejs.rs da nesto naucis',
-                    'Pozdrav'
-                ].join('\n');
+    user.save(function (err) {
+      if (err) {
+        res.render('user/register', { user: user });
+      }
+      else { // everything is cool, send email and redirect to login
+        var mailMessage = {
+          from: 'account@nodejs.rs',
+          to: [user.email],
+          subject: 'Nodejs.rs salje...'
+        };
+        var mailBody = [
+          'Hvala ti ' + user.name.full,
+          'Poseti Nodejs.rs da nesto naucis',
+          'Pozdrav'
+        ].join('\n');
                 
-                var email = new Email({
-                    message: mailMessage,
-                    body: mailBody,
-                    type: Email.types['register']
-                });
-                
-                email.save(function(err) {
-                    if (err) next(err);
-                    req.flash('success', 'Uspesno ste kreirali nalog. Ulogujte se.');
-                    res.redirect('/login');
-                });
-            }
+        var email = new Email({
+          message: mailMessage,
+          body: mailBody,
+          type: Email.types['register']
         });
-    } else {
-        res.render('user/register');
-    }
+                
+        email.save(function (err) {
+          if (err) next(err);
+          req.flash('success', 'Uspesno ste kreirali nalog. Ulogujte se.');
+          res.redirect('/login');
+        });
+      }
+    });
+  } else {
+    res.render('user/register', { user: user });
+  }
 };
 
-exports.login = function(req, res, next) {
-    if (req.body.user) {
-        var u = req.body.user;
-        u.errors = [];
-        
-        if (u.email === '') {
-            u.errors.push({email: 'Polje "E-mail" je obavezno.'});
-        }
-        if (u.password === '') {
-            u.errors.push({password: 'Polje "Lozinka" je obavezno.'});
-        }
-        
-        if (u.errors.length) {
-            res.render('user/login', {user: u});
-        } else {
-            User.findOne({email: u.email}, function(err, user) {
-                if (err) {
-                    next(err);
-                } else if (user && user.password === user.encryptPassword(u.password)) {
-                    req.session.user = user;
-                    req.flash('success', 'Uspesno ste se ulogovali.');
-                    res.redirect('home');
-                } else {
-                    u.errors.push({login: 'E-mail ili Lozinka nisu ispravni.'});
-                    res.render('user/login', {user: u});
-                }
-            });
-        }
-    } else {
-        res.render('user/login');
-    }
+exports.login = function (req, res, next) {
+  var user = new User();
+
+  if (req.body.user) {
+    var u = req.body.user;
+
+    User.findOne({ email: u.email }, function (err, user) {
+      if (err) {
+        next(err);
+      } else if (user && user.password === user.encryptPassword(u.password)) {
+        req.session.user = user;
+        req.flash('success', 'Uspesno ste se ulogovali.');
+        res.redirect('home');
+      } else {
+        u.errors.push({login: 'E-mail ili Lozinka nisu ispravni.'});
+        res.render('user/login', {user: u});
+      }
+    });
+  } else {
+    res.render('user/login', { user: user });
+  }
 };
 
 exports.edit = function(req, res, next) {
