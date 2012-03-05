@@ -45,8 +45,8 @@ var User = new db.Schema({
     },
     email: {
         type: db.mongoose.SchemaTypes.Email,
-        required: true
-        /*, unique: true */
+        required: true,
+        unique: true
     },
     password: {
         type: String, 

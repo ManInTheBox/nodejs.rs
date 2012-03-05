@@ -13,7 +13,6 @@ var User = require('../models/user'),
  * Routes
  */ 
 exports.register = function(req, res, next) {
-    console.log(Email.types);
     if (req.body.user) { // we have submitted form
         var u = req.body.user;
         var user = new User({
