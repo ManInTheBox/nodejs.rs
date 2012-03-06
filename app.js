@@ -4,32 +4,52 @@
  */
 
 var express = require('express'),
-  routes = require('./routes');
+  routes = require('./routes'),
+  HttpError = require('./httperror');
 
 var app = module.exports = express.createServer();
 
-// Configuration
-
+/**
+ * Application configuration
+ */
 app.configure(require('./config'));
 
-app.configure('development', function(){
-  app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
-});
-
-app.configure('production', function(){
-  app.use(express.errorHandler()); 
-});
-
-
-function restrictAccess(req, res, next) {
+/**
+ * Route middleware
+ */
+function loginRequired(req, res, next) {
   if (req.session.user) {
     next();
   } else {
+    req.session.returnUrl = req.url;
     req.flash('error', 'Morate se prvo ulogovati.');
     res.redirect('/login');
   }
 }
 
+function grantAccess(req, res, next) {
+  if (req.session.user.name.username === 'admin') {
+    next();
+  } else if (req.params.username === req.session.user.name.username) {
+    next();
+  } else {
+    next(new HttpError(403, 'Nemate dozvolu za pristup.'));
+  }
+}
+
+app.get('/test', function (req, res, next) {
+  var Email = require('./models/email');
+  var email = new Email({
+    message: {
+      to: ['test to']
+    },
+    type: 1,
+  });
+  email.save(function (err) {
+    if (err) console.log(err);
+    res.send(email);
+  });
+});
 
 // Routes
 
@@ -43,26 +63,26 @@ app.post('/login', routes.user.login);
 
 app.get('/logout', routes.user.logout);
 
-app.get('/user/:username/edit', routes.user.edit);
-app.put('/user/:username/edit', routes.user.edit);
+app.get('/user/:username/edit', loginRequired, grantAccess, routes.user.edit);
+app.put('/user/:username/edit', loginRequired, grantAccess, routes.user.edit);
 
 app.get('/post', routes.post.list);
 
-app.get('/post/new', restrictAccess, routes.post.new);
-app.post('/post/new', restrictAccess, routes.post.new);
+app.get('/post/new', loginRequired, routes.post.new);
+app.post('/post/new', loginRequired, routes.post.new);
 
 app.get('/post/:postTitle', routes.post.view);
 
 app.get('/post/:postTitle/download', routes.post.download);
 
-app.del('/post/:postId/delete', restrictAccess, routes.post.delete);
+app.del('/post/:postId/delete', loginRequired, routes.post.delete);
 
-app.get('/post/:postTitle/edit', restrictAccess, routes.post.edit);
-app.put('/post/:postTitle/edit', restrictAccess, routes.post.edit);
+app.get('/post/:postTitle/edit', loginRequired, routes.post.edit);
+app.put('/post/:postTitle/edit', loginRequired, routes.post.edit);
 
-app.post('/post/:postId/comment/new', routes.post.comment.new);
+app.post('/post/:postId/comment/new', loginRequired, routes.post.comment.new);
 
-app.get('/post/:postId/comment/:commentId/delete', restrictAccess, routes.post.comment.delete); // ovo ce biti app.del()
+app.get('/post/:postId/comment/:commentId/delete', loginRequired, routes.post.comment.delete); // ovo ce biti app.del()
 
 app.listen(3000);
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);

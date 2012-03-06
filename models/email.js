@@ -1,33 +1,37 @@
 var db = require('./db'),
-    mail = require('mail').Mail({
-        host: 'localhost'
-    });
+  mail = require('mail').Mail({ host: 'localhost' });
 
-const STATUS_NOT_SENT = 0;
-const STATUS_SENT = 1;
+const PRIORITY_HIGHEST = 1;
+const PRIORITY_HIGH = 2;
+const PRIORITY_NORMAL = 3;
+const PRIORITY_LOW = 4;
+const PRIORITY_LOWEST = 5;
 
 var types = {
-    'register': 1,
+  'register': 1,
 };
 
 var Email = new db.Schema({
-    message: {
-        from: String,
-        to: [String],
-        subject: String
-    },
-    body: String,
-    status: { type: Number, default: STATUS_NOT_SENT },
-    createdAt: {
-        type: Date,
-        default: Date.now 
-    },
-    sendAt: Date,
-    type: Number
+  message: {
+    from: { type: String, default: 'noreply@nodejs.rs' },
+    to: [ String ],
+    subject: String
+  },
+  body: String,
+  sent: { type: Boolean, default: false },
+  createdAt: { type: Date, default: Date.now },
+  sentAt: Date,
+  type: { type: Number, default: 0 },
+  priority: { type: Number, default: PRIORITY_NORMAL }
 });
 
-Email.methods.send = function(cb) {
-    var self = this;
+Email.methods.send = function (type, cb) {
+  var self = this;
+
+  // if ('undefined' === typeof cb && 'function' === typeof type) {
+
+  // }
+
     // nece da prihvati this.message???
     mail.message({
         from: this.message.from,
@@ -37,14 +41,30 @@ Email.methods.send = function(cb) {
     .body(this.body)
     .send(function(err) {
         if (err) cb(err);
-        self.status = STATUS_SENT;
-        self.sendAt = Date.now();
+        self.sent = true;
+        self.sentAt = Date.now();
         self.save(function(err) {
             if (err) cb(err);
             cb(null);
         });
     });
 };
+
+Email.pre('save', function (next) {
+  if (+this.type !== 0) {
+    switch (+this.type) {
+      case types['register']:
+        this.message = {
+          from: 'register@nodejs.rs',
+          subject: 'Registracija na nodejs.rs'
+        };
+        this.body = 'ovo je test registracionog mejla.';
+        this.priority = PRIORITY_HIGHEST;
+      break;
+    }
+  }
+  next();
+});
 
 Email.statics.types = types;
 
