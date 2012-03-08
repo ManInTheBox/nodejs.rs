@@ -7,18 +7,18 @@
 var Email = require('../models/email');
 
 var send = function() {
-	var conditions = {
-		// TODO: e.g. where not_sent, order by priority...
-	};
-    Email.find(conditions, function(err, emails) {
-        emails.forEach(function(email) {
-            email.send(function(err) {
-                if (err) throw err;
-                // email.save with status => sent...
-            });
-        });
+  var conditions = {
+    // TODO: e.g. where not_sent, order by priority...
+  };
+  Email.find(conditions, function (err, emails) {
+    emails.forEach(function (email) {
+      email.send(function (err) {
+        if (err) throw err;
+          // email.save with status => sent...
+      });
     });
-	setInterval(send, 10000);
-}
+  });
+  setInterval(send, 10000);
+};
 
 send();

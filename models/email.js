@@ -25,29 +25,24 @@ var Email = new db.Schema({
   priority: { type: Number, default: PRIORITY_NORMAL }
 });
 
-Email.methods.send = function (type, cb) {
+Email.methods.send = function (cb) {
   var self = this;
 
-  // if ('undefined' === typeof cb && 'function' === typeof type) {
-
-  // }
-
-    // nece da prihvati this.message???
-    mail.message({
-        from: this.message.from,
-        to: this.message.to,
-        subject: this.message.subject
-    })
-    .body(this.body)
-    .send(function(err) {
-        if (err) cb(err);
-        self.sent = true;
-        self.sentAt = Date.now();
-        self.save(function(err) {
-            if (err) cb(err);
-            cb(null);
-        });
+  mail.message({
+    from: this.message.from,
+    to: this.message.to,
+    subject: this.message.subject
+  })
+  .body(this.body)
+  .send(function (err) {
+    if (err) cb(err);
+    self.sent = true;
+    self.sentAt = Date.now();
+    self.save(function (err) {
+      if (err) cb(err);
+      cb(null);
     });
+  });
 };
 
 Email.pre('save', function (next) {
@@ -58,7 +53,13 @@ Email.pre('save', function (next) {
           from: 'register@nodejs.rs',
           subject: 'Registracija na nodejs.rs'
         };
-        this.body = 'ovo je test registracionog mejla.';
+        this.body = [
+          // 'Zdravo ' + bodyData['fullName'],
+          // 'Ti si: ' + bodyData['category'],
+          'Dobrodosli na Node.js Srbija',
+          'Kliknite ovde za aktivaciju:<br />',
+          'Ova poruka je poslata na ' + this.message.to[0]
+        ].join('\n');
         this.priority = PRIORITY_HIGHEST;
       break;
     }
@@ -67,5 +68,12 @@ Email.pre('save', function (next) {
 });
 
 Email.statics.types = types;
+
+// var bodyData = {};
+
+// Email.virtual('bodyData').set(function (data) {
+//   bodyData = data;
+// });
+
 
 module.exports = db.mongoose.model('Email', Email);

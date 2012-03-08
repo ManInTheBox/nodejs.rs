@@ -5,50 +5,61 @@ var Post = require('../models/post'),
     md = require('discount'),
     path = require('path'),
     util = require('util'),
-    contentPath = __dirname + '/../views/post/content/';
+    contentPath = path.normalize(__dirname + '/../public/stories/');
     
 
-exports.list = function(req, res) {
-    Post.find({}, function(err, posts) {
-        res.render('post/list', { posts: posts });
-    });
+exports.list = function (req, res, next) {
+  Post.find({}, function (err, posts) {
+    if (err) {
+      next(err);
+    } else {
+      res.render('post/list', { posts: posts });
+    }
+  });
 };
 
-exports.new = function(req, res, next) {
-    if (req.body.post) {
-        var p = req.body.post;
-        var post = new Post({
-            title: p.title,
-            owner: req.session.user._id
-        });
-        
-        post.save(function(err) {
+exports.new = function (req, res, next) {
+  var post = new Post();
+
+  if (req.body.post) {
+    var p = req.body.post;
+
+    post.title = p.title;
+    post.owner = req.session.user._id;
+
+    var normalizedTitle = post.normalizeTitle(post.title);
+    var fileName = path.join(contentPath, normalizedTitle + '.md');
+
+    if (fileName.indexOf(contentPath) === 0 && !~fileName.indexOf('\0')) {
+      post.save(function (err) {
+        if (err) {
+          post.content = p.content;
+          res.render('post/new', { post: post });
+        } else {
+          fs.writeFile(fileName, p.content, function (err) {
             if (err) {
-                next(err);
+              next(err);
             } else {
-                var fileName = __dirname + '/../views/post/content/' + post.titleUrl + '.md';
-                fs.writeFile(fileName, p.content, function(err) {
-                    if (err) {
-                        next(err);
-                    } else {
-                        req.flash('success', 'Novi post uspesno kreiran.');
-                        res.redirect('/post');
-                    }
-                });
+              req.flash('success', 'Novi post uspesno kreiran.');
+              res.redirect('/post');
             }
-        });
-        
-        
+          });
+        }
+      });
     } else {
-        res.render('post/new');
+      req.flash('error', 'Na ovom sajtu ne prolaze "Directory Traversal" i "Poison Null Byte" :PPP');
+      res.render('post/new', { post: post });
     }
+  } else {
+    res.render('post/new', { post: post });
+  }
 };
 
 exports.view = function(req, res, next) {
     Post.findOne({ titleUrl: req.params.postTitle }).populate('owner').populate('comments').run(function(err, post) {
         if (err) next(err);
         // srediti kad je post === null
-        var filePath = __dirname + '/../views/post/content/' + post.titleUrl + '.md';
+        var filePath = __dirname + '/../public/stories/' + post.titleUrl + '.md';
         fs.readFile(filePath, function(err, content) {
             if (err) next(err);
             res.render('post/view', { post: post, content: md.parse(content.toString()) });

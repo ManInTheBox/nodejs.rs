@@ -38,7 +38,7 @@ var User = new db.Schema({
             type: String,
             trim: true,
             validate: [
-                usernameValidator(5, 10),
+                usernameValidator(1, 100),
                 'Polje "Korisnicko ime" mora biti izmedju 5 i 10 karaktera.'
             ]
         }
@@ -50,11 +50,11 @@ var User = new db.Schema({
     },
     password: {
         type: String, 
-        required: true,
-        validate: [
-            helpers.stringBetweenValidator(6, 30),
-            'Polje lozinka mora biti izmedju 6 i 30 karaktera.'
-        ]
+        // required: true,
+        // validate: [
+        //     helpers.stringBetweenValidator(6, 30),
+        //     'Polje lozinka mora biti izmedju 6 i 30 karaktera.'
+        // ]
     },
     salt: { 
         type: String, 
@@ -82,12 +82,12 @@ User.methods.encryptPassword = function(password, salt) {
     return crypto.createHmac('md5', _password + _salt).digest('hex');
 };
 
-User.pre('save', function(next) {
-//    if (this.isNew) {
-        this.password = this.encryptPassword(this.password, this.salt);
-//    }
-    next();
-});
+// User.pre('save', function (next) {
+//   // if (this.isNew) {
+//     this.password = this.encryptPassword(this.password, this.salt);
+//   // }
+//   next();
+// });
 
 User.virtual('name.full').get(function() {
     return this.name.first + ' ' + this.name.last;

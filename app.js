@@ -41,12 +41,17 @@ app.get('/test', function (req, res, next) {
   var Email = require('./models/email');
   var email = new Email({
     message: {
-      to: ['test to']
+      to: ['zarko.stankovic@itsmyplay.com']
     },
     type: 1,
   });
+
+  // email.bodyData: {
+  //     'fullName': 'Zarko Stankovic',
+  //     'category': 'Car nad carevima'
+  //   };
   email.save(function (err) {
-    if (err) console.log(err);
+    if (err) next(err); else
     res.send(email);
   });
 });
