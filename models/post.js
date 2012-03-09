@@ -31,4 +31,13 @@ Post.pre('save', function (next) {
 
 Post.methods.normalizeTitle = normalizeTitle;
 
+Post.statics.findWithFullDetails = function (postTitle, cb) {
+  return this.findOne({ titleUrl: postTitle }).populate('owner').populate('comments').run(cb);
+};
+
 module.exports = db.mongoose.model('Post', Post);
+
+// Post.pre('init', function (next) {
+//   next(new Error('ne moze bre post!!!'));
+// });
+

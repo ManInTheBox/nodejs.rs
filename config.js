@@ -2,7 +2,8 @@ var fs = require('fs'),
   app = require('./app');
   express = require('express'),
 //    MongoStore = require('connect-session-mongo'),
-  RedisStore = require('connect-redis')(express);
+  RedisStore = require('connect-redis')(express),
+  HttpError = require('./httperror');
 
 module.exports = function () {
 //        app.use(express.profiler());
@@ -33,7 +34,8 @@ module.exports = function () {
   app.use(express.static(__dirname + '/public'));
     
   app.use(function (req, res, next) {
-    res.render('error/404', { status: 404, url: req.url });
+    var message = 'Nemaaaa togaaaa ovdeeee';
+    res.render('error/404', { status: 404, message: message, url: req.url });
   });
 
   app.configure('development', function () {
@@ -42,6 +44,21 @@ module.exports = function () {
 
   app.configure('production', function () {
     app.use(function (err, req, res, next) {
+
+      if (err instanceof HttpError) {
+        switch (err.status) {
+          case 403:
+            err.message = 'Ne moze breeeeeasdfasdf v cxc';
+          break;
+          case 404:
+            err.message = 'Nemaaaa togaaaa ovdeeee';
+          break;
+          default:
+            err.message = 'Nesto je crklo i radim na tome.';
+          break;
+        }
+      }
+
       res.render('error/500', { status: err.status || 500, message: err.message });
     });
     app.use(express.errorHandler()); 

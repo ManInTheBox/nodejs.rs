@@ -5,123 +5,135 @@ var Post = require('../models/post'),
     md = require('discount'),
     path = require('path'),
     util = require('util'),
-    contentPath = path.normalize(__dirname + '/../public/stories/');
-    
+    contentPath = path.normalize(__dirname + '/../public/stories/'),
+    HttpError = require('../httperror');
 
+
+/**
+ * List action
+ */
 exports.list = function (req, res, next) {
   Post.find({}, function (err, posts) {
-    if (err) {
-      next(err);
-    } else {
-      res.render('post/list', { posts: posts });
-    }
+    if (err) return next(err);
+    res.render('post/list', { posts: posts });
   });
 };
 
+/**
+ * New action
+ */
 exports.new = function (req, res, next) {
   var post = new Post();
 
   if (req.body.post) {
     var p = req.body.post;
-
     post.title = p.title;
     post.owner = req.session.user._id;
 
-    var normalizedTitle = post.normalizeTitle(post.title);
-    var fileName = path.join(contentPath, normalizedTitle + '.md');
-
-    if (fileName.indexOf(contentPath) === 0 && !~fileName.indexOf('\0')) {
+    var fileName = checkPostSecurity(post, function (err) {
+      if (err) return next(err);
       post.save(function (err) {
         if (err) {
           post.content = p.content;
           res.render('post/new', { post: post });
         } else {
           fs.writeFile(fileName, p.content, function (err) {
-            if (err) {
-              next(err);
-            } else {
-              req.flash('success', 'Novi post uspesno kreiran.');
-              res.redirect('/post');
-            }
+            if (err) return next(err);
+            req.flash('success', 'Novi post uspesno kreiran.');
+            res.redirect('/post');
           });
         }
       });
-    } else {
-      req.flash('error', 'Na ovom sajtu ne prolaze "Directory Traversal" i "Poison Null Byte" :PPP');
-      res.render('post/new', { post: post });
-    }
+    });
   } else {
     res.render('post/new', { post: post });
   }
 };
 
-exports.view = function(req, res, next) {
-    Post.findOne({ titleUrl: req.params.postTitle }).populate('owner').populate('comments').run(function(err, post) {
-        if (err) next(err);
-        // srediti kad je post === null
-        var filePath = __dirname + '/../public/stories/' + post.titleUrl + '.md';
-        fs.readFile(filePath, function(err, content) {
-            if (err) next(err);
-            res.render('post/view', { post: post, content: md.parse(content.toString()) });
+/**
+ * View action
+ */
+exports.view = function (req, res, next) {
+  Post.findWithFullDetails(req.params.postTitle, function (err, post) {
+    if (err) return next(err);
+    if (!post) return next(); // 404 will catch this...
+    var fileName = checkPostSecurity(post, function (err) {
+      if (err) return next(err);
+      fs.readFile(fileName, function (err, file) {
+        if (err) return next(err);
+        post.content = md.parse(file.toString());
+        res.render('post/view', { post: post });
+      });
+    });
+  });
+};
+
+/**
+ * Download action
+ */
+exports.download = function (req, res, next) {
+  var filePath = path.join(contentPath, req.params.postTitle + '.md');
+  res.download(filePath, function (err) {
+    if (err) return next(err);
+  });
+};
+
+/**
+ * Delete action
+ */
+exports.delete = function (req, res, next) {
+  Post.findById(req.params.postId, function (err, post) {
+    if (err) return next(err);
+    if (!post) return next(); // 404 will catch this...
+    post.remove(function (err) {
+      if (err) return next(err);
+      req.flash('success', 'Uspesno obrisan post.');
+      res.end();
+    });
+  });
+};
+
+/**
+ * Edit action
+ */
+exports.edit = function (req, res, next) {
+  Post.findOne({ titleUrl: req.params.postTitle }, function (err, post) {
+    if (err) return next(err);
+    if (req.body.post) {
+      var p = req.body.post;
+      post.title = p.title;
+      post.updatedAt = Date.now();
+
+      var filePath = checkPostSecurity(post, function (err) {
+        if (err) return next(err);
+        post.save(function (err) {
+          if (err) return next(err);
+          fs.writeFile(filePath, p.content, function(err) {
+            if (err) return next(err);
+            req.flash('success', 'Uspesno editovan post "' + post.title + '"');
+            res.redirect('/post');
+          });
         });
-    });
+      });
+    } else {
+      var filePath = checkPostSecurity(post, function (err) {
+        if (err) return next(err);
+        fs.readFile(filePath, function (err, file) {
+          if (err) return next(err);
+          res.render('post/edit', { post: post, content: file.toString() });
+        });
+      });
+    }
+  });
 };
 
-exports.download = function(req, res, next) {
-    var filePath = contentPath + req.params.postTitle + '.md';
-    res.download(path.normalize(filePath), function(err) {
-        if (err) {
-            next(err);
-        }
-    });
-};
-
-exports.delete = function(req, res, next) {
-    Post.findById(req.params.postId).remove(function(err) {
-        if (err) {
-            next(err);
-        } else {
-            req.flash('success', 'Uspesno obrisan post.');
-            res.send('ok');
-        }
-    });
-};
-
-exports.edit = function(req, res, next) {
-    Post.findOne({titleUrl: req.params.postTitle}, function(err, post) {
-        if (err) {
-            next(err);
-        } else {
-            if (req.body.post) {
-                var p = req.body.post;
-                post.title = p.title;
-                post.updatedAt = Date.now();
-                post.save(function(err) {
-                    if (err) {
-                        next(err);
-                    } else {
-                        var filePath = __dirname + '/../views/post/content/' + post.titleUrl + '.md';
-                        fs.writeFile(filePath, p.content, function(err) {
-                            if (err) {
-                                next(err);
-                            } else {
-                                req.flash('success', 'Uspesno editovan post "' + post.title + '"');
-                                res.redirect('/post');
-                            }
-                        });
-                    }
-                });
-            } else {
-                var filePath = __dirname + '/../views/post/content/' + post.titleUrl + '.md';
-                fs.readFile(filePath, function(err, file) {
-                    res.render('post/edit', { post: post, content: file.toString() });
-                });
-            }
-        }
-    });
-};
-
+/**
+ * Post comment actions
+ */
 exports.comment = {
+  /**
+   * New comment action
+   */
     new: function(req, res, next) {
         Post.findById(req.params.postId, function(err, post) {
             if (err) {
@@ -162,3 +174,16 @@ exports.comment = {
         });
     }
 };
+
+
+function checkPostSecurity(post, cb) {
+  var normalizedTitle = post.normalizeTitle(post.title),
+    fileName = path.join(contentPath, normalizedTitle + '.md');
+
+  process.nextTick(function () {
+    return fileName.indexOf(contentPath) === 0 && !~fileName.indexOf('\0')
+      ? cb(null) : cb(new HttpError(400, 'Vas zahtev nije validan.'));
+  });
+
+  return fileName;
+}

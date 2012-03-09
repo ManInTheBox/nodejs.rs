@@ -1,3 +1,6 @@
 - each post in posts
   div(style='padding: 5px;')
     a(href='/post/#{post.titleUrl}')= post.title
+    - if (session.user._id == post.owner)
+      a(href='/post/#{post.titleUrl}/edit')
+        button Edituj post
