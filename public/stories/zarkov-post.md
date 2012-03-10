@@ -1,1 +1,1 @@
-ovo je zarkov postaaaaaxcv
+ovo je zarkov post

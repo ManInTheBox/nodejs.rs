@@ -66,6 +66,15 @@ function postOwner(req, res, next) {
   });
 }
 
+app.param('postId', function (req, res, next, postId) {
+  Post.findById(postId, function (err, post) {
+    if (err) return next(err);
+    if (!post) return next(new HttpError(404, 'Ne postoji trazeni post.'));
+    req.post = post;
+    next();
+  });
+});
+
 // Routes
 
 app.get('/', routes.index);
@@ -97,7 +106,7 @@ app.put('/post/:postTitle/edit', loginRequired, grantAccess(postOwner), routes.p
 
 app.post('/post/:postId/comment/new', loginRequired, routes.post.comment.new);
 
-app.get('/post/:postId/comment/:commentId/delete', loginRequired, routes.post.comment.delete); // ovo ce biti app.del()
+app.del('/post/:postId/comment/:commentId/delete', loginRequired, routes.post.comment.delete);
 
 app.listen(3000);
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
@@ -130,11 +139,4 @@ app.get('/test', function (req, res, next) {
 });
 
 
-// app.param('postTitle', function (req, res, next, title) {
-//   Post.findOne({ titleUrl: title }, function (err, post) {
-//     if (err) return next(err);
-//     if (!post) return next(new HttpError(404, 'Ne postoji trazeni post.'));
-//     req.post = post;
-//     next();
-//   });
-// });
+

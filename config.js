@@ -28,7 +28,10 @@ module.exports = function () {
   app.dynamicHelpers({
     messages: require('express-messages'),
     session: function (req, res) { return req.session; },
-    csrfToken: function (req, res) { return req.session._csrf; }
+    csrfToken: function (req, res) { return req.session._csrf; },
+    isAdmin: function (req, res) { 
+      return req.session.user && req.session.user.name.username === 'admin'; 
+    }
   });
 
   app.use(express.static(__dirname + '/public'));

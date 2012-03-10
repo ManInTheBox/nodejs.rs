@@ -6,7 +6,9 @@ var Post = require('../models/post'),
     path = require('path'),
     util = require('util'),
     contentPath = path.normalize(__dirname + '/../public/stories/'),
-    HttpError = require('../httperror');
+    HttpError = require('../httperror'),
+    User = require('../models/user'),
+    EventEmitter = require('events').EventEmitter;
 
 
 /**
@@ -54,6 +56,19 @@ exports.new = function (req, res, next) {
  * View action
  */
 exports.view = function (req, res, next) {
+
+  function isLoggedIn() {
+    return !!req.session.user;
+  }
+
+  function isAdmin() {
+    return req.session.user.name.username === 'admin';
+  }
+
+  function isPostOwner(post) {
+    return req.session.user._id == post.owner._id;
+  }
+
   Post.findWithFullDetails(req.params.postTitle, function (err, post) {
     if (err) return next(err);
     if (!post) return next(); // 404 will catch this...
@@ -62,7 +77,23 @@ exports.view = function (req, res, next) {
       fs.readFile(fileName, function (err, file) {
         if (err) return next(err);
         post.content = md.parse(file.toString());
-        res.render('post/view', { post: post });
+
+        var length = post.comments.length;
+        post.comments.forEach(function (comment) {
+          User.findById(comment._owner, [ 'name.first', 'name.last', 'name.username' ], function (err, user) {
+            if (err) return next(err);
+            comment._ownerUsername = user.name.username;
+            comment._ownerFullName = user.name.full;
+            if (--length === 0)
+              res.emit('comments loaded');
+          });
+        });
+        res.on('comments loaded', function() {
+          res.render('post/view', { 
+            post: post,
+            canEditPost: isLoggedIn() && (isPostOwner(post) || isAdmin()),
+          });
+        });
       });
     });
   });
@@ -134,45 +165,51 @@ exports.comment = {
   /**
    * New comment action
    */
-    new: function(req, res, next) {
-        Post.findById(req.params.postId, function(err, post) {
-            if (err) {
-                next(err);
-            } else {
-                post.save(function(err) {
-                    if (err) {
-                        next(err);
-                    } else {
-                        var comment = new Comment({
-                            text: req.body.post.comment
-                        });
-                        comment.save(function(err) {
-                            if (err) {
-                                next(err);
-                            } else {
-                                post.comments.push(comment);
-                                post.save(function(err) {
-                                    if (err) next(err);
-                                    req.flash('success', 'Novi komentar uspesno dodat.');
-                                    res.redirect('/post/' + post.titleUrl);
-                                });
-                            }
-                        });
-                    }
-                });
-            }
+  new: function (req, res, next) {
+    var comment = new Comment({
+      _owner: req.session.user._id,
+      text: req.body.post.comment
+    });
+    comment.save(function (err) {
+      if (err) return next(err);
+      req.post.comments.push(comment);
+      req.post.save(function (err) {
+        if (err) return next(err);
+        req.flash('success', 'Novi komentar uspesno dodat.');
+        res.redirect('/post/' + req.post.titleUrl);
+      });
+    });
+  },
+  /**
+   * Delete comment action
+   */
+  delete: function (req, res, next) {
+    Comment.findById(req.params.commentId, function (err, comment) {
+      if (err) return next(err);
+      if (!comment) return next();
+
+      var _id = req.session.user._id;
+      if (comment._owner == _id || req.post.owner == _id) {
+        comment.remove(function (err) {
+          if (err) return next(err);
+          var pos = req.post.comments.indexOf(comment._id);
+          req.post.comments.splice(pos, 1); // manually remove it... mongoose bug?
+
+          if (req.post.comments.length === 0) {
+            req.post.comments = undefined; // tell mongoose to remove comments key... mongoose bug?
+          }
+
+          req.post.save(function (err) {
+            if (err) return next(err);
+            req.flash('success', 'Uspesno obrisan komentar');
+            res.end();
+          });
         });
-    },
-    delete: function(req, res, next) {
-        Post.findById(req.params.postId).populate('comments', ['_id'], { _id: req.params.commentId }).run(function(err, post) {
-            if (err) next(err);
-            post.comments[0].remove(function(err) {
-                if (err) next(err);
-                req.flash('success', 'Uspesno obrisan komentar');
-                res.redirect('/post/' + post.titleUrl);
-            });
-        });
-    }
+      } else { 
+        return next(new HttpError(403)); 
+      }
+    });
+  }
 };
 
 

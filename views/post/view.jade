@@ -3,26 +3,33 @@ h6 Dana: #{post.createdAt}
 h3= post.title
 a(href='/post/#{post.titleUrl}/download') Preuzmi
 br
-a(href='/post/#{post.titleUrl}/edit') Edituj
-br
-
-a(href='#', id='deletePost') Obrisi
+- if (canEditPost)
+  a(href='/post/#{post.titleUrl}/edit') Edituj
+  br
+  a(href='#', id='deletePost') Obrisi
 
 != post.content
 
 form(action='/post/#{post._id}/comment/new', method='POST')
   input(type='hidden', name='_csrf', value=csrfToken)
-  label(for='post_comment') Komentar: 
-  textarea(id='post_comment', name='post[comment]')
+
+  label(for='postComment') Komentar: 
+  textarea(id='postComment', name='post[comment]')
   br
-  input(type='submit', value='Posalji')
+  input(type='submit', value='Posalji komentar')
   
 h3 Komentari korisnika:
 - each comment in post.comments
   div(style='background: lightgreen;')
     = comment.text
-    small= comment.createdAt
-  a(href='/post/#{post._id}/comment/#{comment._id}/delete') Obrisi
+    br
+    small Napisao 
+      a(href='/user/#{comment._ownerUsername}') #{comment._ownerFullName}
+    br
+    small Dana #{comment.createdAt}
+
+    - if (canEditPost || session.user && session.user._id == comment._owner)
+      a(href='#', id='#{comment._id}', class='deleteComment') Obrisi komentar
   hr
 
 script(type='text/javascript')
@@ -37,12 +44,31 @@ script(type='text/javascript')
         '_csrf': '#{csrfToken}'
       },
       success: function (response) {
-        console.log('obrisan', response)
         window.location.href = '/post';
       },
       error: function (xhr) {
         console.log(xhr.responseText);
-        window.location.href = '/post';
+      }
+    })
+    : false;
+  });
+
+script(type='text/javascript')
+  $('.deleteComment').click(function () {
+    confirm('Da li sigurno zelite da obrisete vas komentar?')
+    ?
+    $.ajax({
+      url: '/post/#{post._id}/comment/' + $(this).attr('id') + '/delete',
+      type: 'POST',
+      data: { 
+        '_method': 'DELETE',
+        '_csrf': '#{csrfToken}'
+      },
+      success: function (response) {
+        window.location.href = '/post/#{post.titleUrl}';
+      },
+      error: function (xhr) {
+        console.log(xhr.responseText);
       }
     })
     : false;
