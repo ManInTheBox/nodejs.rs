@@ -7,8 +7,7 @@ var Post = require('../models/post'),
     util = require('util'),
     contentPath = path.normalize(__dirname + '/../public/stories/'),
     HttpError = require('../httperror'),
-    User = require('../models/user'),
-    EventEmitter = require('events').EventEmitter;
+    User = require('../models/user');
 
 
 /**
@@ -103,10 +102,43 @@ exports.view = function (req, res, next) {
  * Download action
  */
 exports.download = function (req, res, next) {
-  var filePath = path.join(contentPath, req.params.postTitle + '.md');
-  res.download(filePath, function (err) {
-    if (err) return next(err);
-  });
+  var fileName = path.join(contentPath, req.params.postTitle + '.md');
+
+  if (fileName.indexOf(contentPath) === 0 && !~fileName.indexOf('\0')) {
+    fs.readFile(fileName, function (err, file) {
+      if (err) return err.code === 'ENOENT' ? next() : next(err); // 404 or 500
+      var content = '';
+      var contentType = '';
+      fileName = req.params.postTitle;
+
+      switch (req.params.format) {
+        case 'md':
+          content = file.toString();
+          fileName += '.md';
+          contentType = 'text/plain';
+        break;
+        case 'pdf':
+          content = file.toString(); // one day...
+          fileName += '.pdf';
+          contentType = 'application/pdf';
+        break;
+        default: // html
+          content = md.parse(file.toString());
+          fileName += '.html';
+          contentType = 'text/html'
+        break;
+      }
+
+      res.writeHead(200, {
+        'Content-Type': contentType,
+        'Content-Disposition': 'attachment; filename=' + fileName,
+        'Content-Length': content.length
+      });
+      res.end(content);
+    });
+  } else {
+    return next(new HttpError(400));
+  }
 };
 
 /**

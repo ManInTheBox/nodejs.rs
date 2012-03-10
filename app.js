@@ -87,6 +87,8 @@ app.post('/login', routes.user.login);
 
 app.get('/logout', routes.user.logout);
 
+app.get('/user/:username', routes.user.view);
+
 app.get('/user/:username/edit', loginRequired, grantAccess(profileOwner), routes.user.edit);
 app.put('/user/:username/edit', loginRequired, grantAccess(profileOwner), routes.user.edit);
 
@@ -97,7 +99,7 @@ app.post('/post/new', loginRequired, routes.post.new);
 
 app.get('/post/:postTitle', routes.post.view);
 
-app.get('/post/:postTitle/download', routes.post.download);
+app.get('/post/:postTitle.:format?/download', routes.post.download);
 
 app.del('/post/:postId/delete', loginRequired, grantAccess(postOwner), routes.post.delete);
 

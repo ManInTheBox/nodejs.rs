@@ -93,4 +93,8 @@ User.virtual('name.full').get(function() {
     return this.name.first + ' ' + this.name.last;
 });
 
+User.statics.findByUsername = function (username, cb) {
+    return this.findOne({ 'name.username': username }, cb);
+};
+
 module.exports = db.mongoose.model('User', User);

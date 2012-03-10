@@ -87,6 +87,16 @@ exports.login = function (req, res, next) {
 };
 
 /**
+ * View action
+ */
+exports.view = function (req, res, next) {
+  User.findByUsername(req.params.username, function (err, user) {
+    if (err) return next(err);
+    if (!user) return next();
+    res.render('user/view', { user: user });
+  });
+};
+/**
  * Edit action
  */
 exports.edit = function (req, res, next) {
