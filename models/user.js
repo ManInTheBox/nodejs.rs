@@ -1,51 +1,43 @@
 var db = require('./db'),
-    util = require('util'),
-    crypto = require('crypto'),
-    helpers = require('../helpers');
+  util = require('util'),
+  crypto = require('crypto'),
+  helpers = require('../helpers');
     
 var User = new db.Schema({
-    name: {
-        first: { 
-            type: String, 
-            trim: true, 
-            set: helpers.toUpperCaseFirst,
-            validate: [
-                helpers.stringBetweenValidator(2, 30), 
-                'Polje "Ime" mora biti izmedju 2 i 30 karaktera.'
-            ], 
-            required: true 
-        },
-        middle: { 
-            type: String, 
-            trim: true, 
-            set: helpers.toUpperCaseFirst,
-            validate: [
-                helpers.stringBetweenValidator(2, 30), 
-                'Polje "Srednje Ime" mora biti izmedju 2 i 30 karaktera.'
-            ]
-        },
-        last: { 
-            type: String, 
-            trim: true, 
-            set: helpers.toUpperCaseFirst, 
-            validate: [
-                helpers.stringBetweenValidator(2, 30), 
-                'Polje "Prezime" mora biti izmedju 2 i 30 karaktera.'
-            ], 
-            required: true 
-        },
-        username: {
-            type: String,
-            trim: true,
-            validate: [
-                usernameValidator(1, 100),
-                'Polje "Korisnicko ime" mora biti izmedju 5 i 10 karaktera.'
-            ]
-        }
+  name: {
+    first: { 
+      type: String,
+      required: [ true, '{path|Ime} je obavezno polje.' ],
+      trim: true,
+      set: helpers.toUpperCaseFirst,
+      min: [ 2, '{path|Ime} je prekratko (minimum je {min} karaktera).' ],
+      max: [ 30, '{path|Ime} je predugačko (maksimum je {max} karaktera).' ]
     },
+    middle: { 
+      type: String, 
+      trim: true, 
+      set: helpers.toUpperCaseFirst,
+      min: [ 2, '{path|Srednje ime} je prekratko (minimum je {min} karaktera).' ],
+      max: [ 30, '{path|Srednje ime} je predugačko (maksimum je {max} karaktera).' ]
+    },
+    last: { 
+      type: String,
+      required: [ true, '{path|Prezime} je obavezno polje.' ],
+      trim: true,
+      set: helpers.toUpperCaseFirst,
+      min: [ 2, '{path|Prezime} je prekratko (minimum je {min} karaktera).' ],
+      max: [ 30, '{path|Prezime} je predugačko (maksimum je {max} karaktera).' ]
+    },
+    username: {
+      type: String,
+      trim: true,
+      min: [ 2, '{path|Korisničko ime} je prekratko (minimum je {min} karaktera).' ],
+      max: [ 30, '{path|Korisničko ime} je predugačko (maksimum je {max} karaktera).' ]
+    }
+  },
     email: {
         type: db.mongoose.SchemaTypes.Email,
-        required: true,
+        required: [ true, '{path|E-mail} je obavezno polje.' ],
         unique: true
     },
     password: {

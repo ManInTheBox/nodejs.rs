@@ -3,6 +3,9 @@
  */
 var util = require('util');
 
+var qs = require('querystring');
+var url = require('url');
+
 /**
  * Models
  */
@@ -59,13 +62,18 @@ exports.register = function (req, res, next) {
 exports.login = function (req, res, next) {
   var user = new User();
 
+  var returnUrl = qs.parse(url.parse(req.url).query).returnUrl;
+
+  if (returnUrl) {
+    req.session.returnUrl = returnUrl;
+  }
+
   if (req.body.user) {
     var u = req.body.user;
 
     User.findOne({ email: u.email }, function (err, user) {
-      if (err) {
-        next(err);
-      } else if (user && (user.password === user.encryptPassword(u.password))) {
+      if (err) return next(err);
+      if (user && (user.password === user.encryptPassword(u.password))) {
         req.session.user = user;
         req.flash('success', 'Uspesno ste se ulogovali.');
 

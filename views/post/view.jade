@@ -10,25 +10,28 @@ br
 
 != post.content
 
-form(action='/post/#{post._id}/comment/new', method='POST')
-  input(type='hidden', name='_csrf', value=csrfToken)
+- if (session.user)
+  != partial('_addComment')
+- else
+  a(href='/login?returnUrl=' + encodeURIComponent('/post/#{post.titleUrl}')) Dodaj komentar
 
-  label(for='postComment') Komentar: 
-  textarea(id='postComment', name='post[comment]')
-  br
-  input(type='submit', value='Posalji komentar')
+
+
   
 h3 Komentari korisnika:
 - each comment in post.comments
-  div(style='background: lightgreen;')
+  div(style='background: lightgreen;', class='comment')
     = comment.text
     br
     small Napisao 
       a(href='/user/#{comment._ownerUsername}') #{comment._ownerFullName}
     br
     small Dana #{comment.createdAt}
+    br
 
     - if (canEditPost || session.user && session.user._id == comment._owner)
+      a(href='#', id="#{comment._id}", class='editComment') Edituj komentar
+      br
       a(href='#', id='#{comment._id}', class='deleteComment') Obrisi komentar
   hr
 
@@ -73,3 +76,9 @@ script(type='text/javascript')
     })
     : false;
   });
+
+script(type='text/javascript')
+  $('.comment').click(function () {
+    alert('uskoro....')
+  });
+
