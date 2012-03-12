@@ -8,14 +8,20 @@ var Email = require('../models/email');
 
 var send = function() {
   var conditions = {
-    // TODO: e.g. where not_sent, order by priority...
+    sent: false,
+    sendingCounter: {
+      $lt: 5
+    }
   };
-  Email.find(conditions, function (err, emails) {
+  Email.find(conditions).asc('priority').run(function (err, emails) {
     emails.forEach(function (email) {
-      email.send(function (err) {
-        if (err) throw err;
-          // email.save with status => sent...
-      });
+      console.log(email.message.to[0]);
+      email.sendingCounter += 1;
+      email.save();
+      // email.send(function (err) {
+      //   if (err) throw err;
+      //     // email.save with status => sent...
+      // });
     });
   });
   setInterval(send, 10000);

@@ -1,7 +1,6 @@
 var Post = require('../models/post'),
     Comment = require('../models/comment'),
     fs = require('fs'),
-//    md = require('node-markdown').Markdown;
     md = require('discount'),
     path = require('path'),
     util = require('util'),
@@ -31,10 +30,18 @@ exports.new = function (req, res, next) {
     post.title = p.title;
     post.owner = req.session.user._id;
 
+    if (!p.content.length) {
+      post.errors = ['Sadržaj je obavezno polje.'];
+      return res.render('post/new', { post: post });
+    }
+
     var fileName = checkPostSecurity(post, function (err) {
       if (err) return next(err);
       post.save(function (err) {
         if (err) {
+          if (~err.toString().indexOf('duplicate key'))
+            post.errors = ['Naslov je već zauzet.'];
+
           post.content = p.content;
           res.render('post/new', { post: post });
         } else {
@@ -73,26 +80,38 @@ exports.view = function (req, res, next) {
     if (!post) return next(); // 404 will catch this...
     var fileName = checkPostSecurity(post, function (err) {
       if (err) return next(err);
-      fs.readFile(fileName, function (err, file) {
+      fs.readFile(fileName, 'utf8', function (err, file) {
         if (err) return next(err);
-        post.content = md.parse(file.toString());
+        var flags = md.flags.autolink | md.flags.noHTML;
+        post.content = md.parse(file, flags);
 
         var length = post.comments.length;
-        post.comments.forEach(function (comment) {
-          User.findById(comment._owner, [ 'name.first', 'name.last', 'name.username' ], function (err, user) {
-            if (err) return next(err);
-            comment._ownerUsername = user.name.username;
-            comment._ownerFullName = user.name.full;
-            if (--length === 0)
-              res.emit('comments loaded');
+
+        if (length) {
+          post.comments.forEach(function (comment) {
+            User.findById(comment._owner, [ 'name.first', 'name.last', 'name.username' ], function (err, user) {
+              if (err) return next(err);
+              comment._ownerUsername = user.name.username;
+              comment._ownerFullName = user.name.full;
+
+              comment.text = md.parse(comment.text, flags);
+
+              if (--length === 0)
+                res.emit('comments loaded');
+            });
           });
-        });
-        res.on('comments loaded', function() {
+          res.on('comments loaded', function() {
+            res.render('post/view', { 
+              post: post,
+              canEditPost: isLoggedIn() && (isPostOwner(post) || isAdmin())
+            });
+          });
+        } else {
           res.render('post/view', { 
             post: post,
-            canEditPost: isLoggedIn() && (isPostOwner(post) || isAdmin()),
+            canEditPost: isLoggedIn() && (isPostOwner(post) || isAdmin())
           });
-        });
+        }
       });
     });
   });
@@ -150,8 +169,11 @@ exports.delete = function (req, res, next) {
     if (!post) return next(); // 404 will catch this...
     post.remove(function (err) {
       if (err) return next(err);
-      req.flash('success', 'Uspesno obrisan post.');
-      res.end();
+      fs.unlink(contentPath + post.titleUrl + '.md', function (err) {
+        if (err) return next(err);
+        req.flash('success', 'Uspesno obrisan post.');
+        res.end();
+      });
     });
   });
 };
@@ -162,28 +184,49 @@ exports.delete = function (req, res, next) {
 exports.edit = function (req, res, next) {
   Post.findOne({ titleUrl: req.params.postTitle }, function (err, post) {
     if (err) return next(err);
+
     if (req.body.post) {
       var p = req.body.post;
+
+      var originalTitleUrl = post.titleUrl;
       post.title = p.title;
       post.updatedAt = Date.now();
+
+      if (!p.content.length) {
+        post.errors = ['Sadržaj je obavezno polje.'];
+        return res.render('post/edit', { post: post });
+      }
 
       var filePath = checkPostSecurity(post, function (err) {
         if (err) return next(err);
         post.save(function (err) {
-          if (err) return next(err);
-          fs.writeFile(filePath, p.content, function(err) {
+          if (err) {
+            if (~err.toString().indexOf('duplicate key')) {
+              post.errors = ['Naslov je već zauzet.'];
+              post.titleUrl = originalTitleUrl;
+            }
+
+            post.content = p.content;
+            return res.render('post/edit', { post: post });
+          }
+
+          fs.rename(contentPath + originalTitleUrl + '.md', filePath, function (err) {
             if (err) return next(err);
-            req.flash('success', 'Uspesno editovan post "' + post.title + '"');
-            res.redirect('/post');
+            fs.writeFile(filePath, p.content, function (err) {
+              if (err) return next(err);
+              req.flash('success', 'Uspesno editovan post "' + post.title + '"');
+              res.redirect('/post/' + post.titleUrl);
+            });
           });
         });
       });
     } else {
       var filePath = checkPostSecurity(post, function (err) {
         if (err) return next(err);
-        fs.readFile(filePath, function (err, file) {
+        fs.readFile(filePath, 'utf8', function (err, file) {
           if (err) return next(err);
-          res.render('post/edit', { post: post, content: file.toString() });
+          post.content = file;
+          res.render('post/edit', { post: post });
         });
       });
     }
@@ -203,7 +246,14 @@ exports.comment = {
       text: req.body.post.comment
     });
     comment.save(function (err) {
-      if (err) return next(err);
+      if (err) {
+        var errors = [];
+        for (var msg in err.errors)
+          errors.push(err.errors[msg].message);
+
+        req.flash('error', errors);
+        return res.redirect('back');
+      }
       req.post.comments.push(comment);
       req.post.save(function (err) {
         if (err) return next(err);
@@ -241,6 +291,12 @@ exports.comment = {
         return next(new HttpError(403)); 
       }
     });
+  },
+  /**
+   * Edit comment action
+   */
+  edit: function (req, res, next) {
+    res.end('in progress...');
   }
 };
 

@@ -2,7 +2,12 @@ var db = require('./db');
 
 var Comment = new db.Schema({
   _owner: { type: db.ObjectId, ref: 'User' },
-  text: String,
+  text: {
+    type: String,
+    required: [ true, '{path|Sadržaj komentara} je obavezno polje.' ],
+    min: [ 2, '{path|Komentar} je prekratak (minimum je {min} karaktera).' ],
+    max: [ 500, '{path|Komentar} je predugačak (maksimum je {max} karaktera).' ]
+  },
   createdAt: { type: Date, default: Date.now }
 });
 

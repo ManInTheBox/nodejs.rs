@@ -1,4 +1,5 @@
-h6 Napisao: #{post.owner.name.full}
+h6 Napisao:
+  a(href='/user/#{post.owner.name.username}')= post.owner.name.full || post.owner.name.username
 h6 Dana: #{post.createdAt}
 h3= post.title
 a(href='/post/#{post.titleUrl}/download') Preuzmi
@@ -8,7 +9,7 @@ br
   br
   a(href='#', id='deletePost') Obrisi
 
-!= post.content
+div(style='font-size: 1.2em;')!= post.content
 
 - if (session.user)
   != partial('_addComment')
@@ -21,10 +22,11 @@ br
 h3 Komentari korisnika:
 - each comment in post.comments
   div(style='background: lightgreen;', class='comment')
-    = comment.text
+    != comment.text
     br
     small Napisao 
-      a(href='/user/#{comment._ownerUsername}') #{comment._ownerFullName}
+      a(href='/user/#{comment._ownerUsername}')
+        = comment._ownerFullName || comment._ownerUsername
     br
     small Dana #{comment.createdAt}
     br
@@ -79,6 +81,6 @@ script(type='text/javascript')
 
 script(type='text/javascript')
   $('.comment').click(function () {
-    alert('uskoro....')
+    //alert('uskoro....')
   });
 

@@ -22,34 +22,30 @@ exports.register = function (req, res, next) {
     var u = req.body.user;
 
     user.name = {
-      first: u.name.first,
-      last: u.name.last,
+      first: u.name.first.length ? u.name.first : undefined,
+      last: u.name.last.length ? u.name.last : undefined,
       username: u.name.username
     };
     user.email = u.email;
-    user.password = user.encryptPassword(u.password);
+    user.password = u.password;
 
     user.save(function (err) {
-      if (err) {
-        res.render('user/register', { user: user });
-      }
-      else { // everything is cool, send email and redirect to login
-        var email = new Email({
-          message: {
-            to: [ user.email ]
-          },
-          type: Email.types['register']
-        });
+      if (err) // validation failed
+        return res.render('user/register', { user: user });
 
-        email.save(function (err) {
-          if (err) {
-            next(err);
-          } else {
-            req.flash('success', 'Uspesno ste kreirali nalog. Ulogujte se.');
-            res.redirect('/login');
-          }
-        });
-      }
+      // everything is cool, send email and redirect to login
+      var email = new Email({
+        message: {
+          to: [ user.email ]
+        },
+        type: Email.types['register']
+      });
+
+      email.save(function (err) {
+        if (err) return next(err);
+        req.flash('success', 'Uspesno ste kreirali nalog. Ulogujte se.');
+        res.redirect('/login');
+      });
     });
   } else {
     res.render('user/register', { user: user });
@@ -73,7 +69,12 @@ exports.login = function (req, res, next) {
 
     User.findOne({ email: u.email }, function (err, user) {
       if (err) return next(err);
-      if (user && (user.password === user.encryptPassword(u.password))) {
+      if (!user) {
+        u.errors = [ 'E-mail ili Lozinka nisu ispravni.' ];
+        return res.render('user/login', { user: u });
+      }
+
+      if (user.password === user.encryptPassword(u.password)) {
         req.session.user = user;
         req.flash('success', 'Uspesno ste se ulogovali.');
 
@@ -85,8 +86,8 @@ exports.login = function (req, res, next) {
           res.redirect('home');
         }
       } else {
-        user.errors = [ 'E-mail ili Lozinka nisu ispravni.' ];
-        res.render('user/login', { user: user });
+        u.errors = [ 'E-mail ili Lozinka nisu ispravni.' ];
+        res.render('user/login', { user: u });
       }
     });
   } else {
@@ -109,51 +110,51 @@ exports.view = function (req, res, next) {
  */
 exports.edit = function (req, res, next) {
   User.findOne({ 'name.username': req.params.username }, function (err, user) {
-    if (err) {
-      next(err);
-    } else if (user) {
-      if (req.body.user) {
-        var u = req.body.user;
+    if (err) return next(err);
+    if (!user) return next(); // 404 will catch this...
 
-        if (u.password) {
-          user.password = u.password;
-          user.passwordRepeat = u.passwordRepeat;
+    if (req.body.user) {
+      var u = req.body.user;
 
-          if (!u.passwordRepeat) {
-            user.errors = [ 'Morate uneti potvrdu lozinke.' ];
-            res.render('user/edit', { user: user });
-            return;
-          } else if (u.password !== u.passwordRepeat) {
-            user.errors = [ 'Lozinke se ne poklapaju.' ];
-            res.render('user/edit', { user: user });
-            return;
-          }
+      if (u.password) {
+        user.password = u.password;
+        user.passwordRepeat = u.passwordRepeat;
+
+        if (!u.passwordRepeat) {
+          user.errors = [ 'Morate uneti potvrdu lozinke.' ];
+          return res.render('user/edit', { user: user });
+        } else if (u.password !== u.passwordRepeat) {
+          user.errors = [ 'Lozinke se ne poklapaju.' ];
+          return res.render('user/edit', { user: user });
+        }
+      }
+
+      user.name.first = u.name.first.length ? u.name.first : undefined;
+      user.name.last = u.name.last.length ? u.name.last : undefined;
+      user.name.username = u.name.username;
+
+      user.save(function (err) {
+        if (err) {
+          user.password = null; // don't display anything
+          return res.render('user/edit', { user: user });
         }
 
-        user.name.first = u.name.first;
-        user.name.last = u.name.last;
-        user.name.username = u.name.username;
-
         if (u.password) {
-          user.password = user.encryptPassword(u.password);
-        }
-
-        user.save(function (err) {
-          if (err) {
-            user.password = null; // don't display anything
-            res.render('user/edit', { user: user });
-          } else {
+          User.update({ password: user.encryptPassword() }, function (err) {
+            if (err) return next(err);
             req.session.user = user;
             req.flash('success', 'Uspesno sacuvane izmene profila.');
             res.redirect('/post');
-          }
-        });
-      } else {
-        user.password = null; // don't display anything
-        res.render('user/edit', { user: user });
-      }
+          });
+        } else {
+          req.session.user = user;
+          req.flash('success', 'Uspesno sacuvane izmene profila.');
+          res.redirect('/post');
+        }
+      });
     } else {
-      next(); // 404 will catch this...
+      user.password = null; // don't display anything
+      res.render('user/edit', { user: user });
     }
   });
 };

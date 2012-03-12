@@ -22,7 +22,8 @@ var Email = new db.Schema({
   createdAt: { type: Date, default: Date.now },
   sentAt: Date,
   type: { type: Number, default: 0 },
-  priority: { type: Number, default: PRIORITY_NORMAL }
+  priority: { type: Number, default: PRIORITY_NORMAL },
+  sendingCounter: { type: Number, default: 0 }
 });
 
 Email.methods.send = function (cb) {

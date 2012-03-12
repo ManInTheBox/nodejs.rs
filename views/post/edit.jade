@@ -1,11 +1,19 @@
 h1 Editovanje: #{post.title}
+
 form(action='/post/#{post.titleUrl}/edit', method='POST')
+  - if ('undefined' !== typeof post.errors)
+    div(class='error')
+      ul
+        - each err in post.errors
+          li= err
+
   input(type='hidden', name='_csrf', value=csrfToken)
   input(type='hidden', name='_method', value='PUT')
-  label(for='post_title') Naslov: 
-  input(type='text', id='post_title', name='post[title]', value=post.title)
+
+  label(for='postTitle') Naslov: 
+  input(type='text', id='postTitle', name='post[title]', value=post.title)
   br
-  label(for='post_content') Sadrzaj: 
-  textarea(id='post_content', name='post[content]')= content
+  label(for='postContent') Sadrzaj: 
+  textarea(id='postContent', name='post[content]')= post.content
   br
   input(type='submit', value='Sacuvaj')
