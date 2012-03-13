@@ -3,28 +3,63 @@
 /**
  * EmailCommand
  */
+var Email = require('../models/email'),
+  EventEmitter = require('events').EventEmitter;
+  fs = require('fs');
 
-var Email = require('../models/email');
-
-var send = function() {
-  var conditions = {
+function EmailManager() {
+  this.conditions = {
     sent: false,
     sendingCounter: {
       $lt: 5
     }
   };
-  Email.find(conditions).asc('priority').run(function (err, emails) {
-    emails.forEach(function (email) {
-      console.log(email.message.to[0]);
-      email.sendingCounter += 1;
-      email.save();
-      // email.send(function (err) {
-      //   if (err) throw err;
-      //     // email.save with status => sent...
-      // });
-    });
+}
+
+EmailManager.prototype.__proto__ = EventEmitter.prototype;
+
+EmailManager.prototype.send = function () {
+  var self = this;
+
+  Email.find(this.conditions).asc('priority').run(function (err, emails) {
+    if (err) throw err;
+
+    var length = emails.length;
+
+    if (!length) {
+      self.emit('nextLoop', 5000);
+    }
+    else {
+      emails.forEach(function (email) {
+        email.send(function (err) {
+          if (err) throw err;
+
+          if (--length === 0)
+            self.emit('nextLoop', 0);
+        });
+      });
+    }
   });
-  setInterval(send, 10000);
 };
 
-send();
+var emailManager = new EmailManager();
+
+emailManager.on('nextLoop', function (wait) {
+  var self = this;
+  setTimeout(function () {
+    self.send();
+  }, wait);
+});
+
+// emailManager.on('error', function (err) {
+//   var self = this;
+//   fs.writeFile('/home/zarkos/Desktop/mail.err', err.stack, function () {
+//     self.emit('nextLoop', 0);
+//   })
+// });
+
+emailManager.send();
+
+process.on('uncaughtException', function (err) {
+  console.log('uhvacen error');
+});

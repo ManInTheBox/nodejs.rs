@@ -1,5 +1,6 @@
 var db = require('./db'),
-  mail = require('mail').Mail({ host: 'localhost' });
+  mail = require('mail').Mail({ host: 'localhost' }),
+  EventEmitter = require('events').EventEmitter;
 
 const PRIORITY_HIGHEST = 1;
 const PRIORITY_HIGH = 2;
@@ -28,20 +29,26 @@ var Email = new db.Schema({
 
 Email.methods.send = function (cb) {
   var self = this;
+  this.sendingCounter++;
 
-  mail.message({
-    from: this.message.from,
-    to: this.message.to,
-    subject: this.message.subject
-  })
-  .body(this.body)
-  .send(function (err) {
+  this.save(function (err) {
     if (err) cb(err);
-    self.sent = true;
-    self.sentAt = Date.now();
-    self.save(function (err) {
+
+    mail.message({
+      from: self.message.from,
+      to: self.message.to,
+      subject: self.message.subject
+    })
+    .body(self.body)
+    .send(function (err) {
       if (err) cb(err);
-      cb(null);
+
+      self.sent = true;
+      self.sentAt = Date.now();
+      self.save(function (err) {
+        if (err) cb(err);
+        cb(null);
+      });
     });
   });
 };
@@ -76,5 +83,7 @@ Email.statics.types = types;
 //   bodyData = data;
 // });
 
+
+// Email.prototype.__proto__ = EventEmitter.prototype;
 
 module.exports = db.mongoose.model('Email', Email);
