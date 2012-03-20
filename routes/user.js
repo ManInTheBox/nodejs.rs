@@ -132,6 +132,12 @@ exports.edit = function (req, res, next) {
       user.name.first = u.name.first.length ? u.name.first : undefined;
       user.name.last = u.name.last.length ? u.name.last : undefined;
       user.name.username = u.name.username;
+      user.bio.about = u.bio.about.length ? u.bio.about : undefined;
+      user.bio.company = u.bio.company.length ? u.bio.company : undefined;
+      user.bio.website = u.bio.website.length ? u.bio.website : undefined;
+      user.bio.github = u.bio.github.length ? u.bio.github : undefined;
+      user.bio.twitter = u.bio.twitter.length ? u.bio.twitter : undefined;
+      user.bio.location = u.bio.location.length ? u.bio.location : undefined;
 
       user.save(function (err) {
         if (err) {
