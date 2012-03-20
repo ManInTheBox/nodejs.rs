@@ -26,4 +26,22 @@ form(action='/user/#{user.name.username}/edit', method='POST')
   label(for='userPasswordRepeat') Ponovite lozinku: 
   input(type='password', id='userPasswordRepeat', name='user[passwordRepeat]', value=user.passwordRepeat)
   br
+  label(for='userBioAbout') O meni: 
+  textarea(id='userBioAbout', name='user[bio][about]')=user.bio.about
+  br
+  label(for='userBioCompany') Kompanija: 
+  input(type='text', id='userBioCompany', name='user[bio][company]', value=user.bio.company)
+  br
+  label(for='userBioWebsite') Website/Blog: 
+  input(type='text', id='userBioWebsite', name='user[bio][website]', value=user.bio.website)
+  br
+  label(for='userBioGithub') Github: 
+  input(type='text', id='userBioGithub', name='user[bio][github]', value=user.bio.github)
+  br
+  label(for='userBioTwitter') Twitter: 
+  input(type='text', id='userBioTwitter', name='user[bio][twitter]', value=user.bio.twitter)
+  br
+  label(for='userBioLocation') Lokacija: 
+  input(type='text', id='userBioLocation', name='user[bio][location]', value=user.bio.location)
+  br
   input(type='submit', value='Sacuvaj izmene')

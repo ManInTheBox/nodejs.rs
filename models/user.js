@@ -30,8 +30,9 @@ var User = new db.Schema({
     }
   },
   email: {
-    type: db.mongoose.SchemaTypes.Email,
+    type: String,
     required: [ true, '{path|E-mail} je obavezno polje.' ],
+    validate: [ helpers.EmailValidator, 'email', 'E-mail nije ispravna e-mail adresa.' ],
     unique: true
   },
   password: {
@@ -41,10 +42,39 @@ var User = new db.Schema({
     max: [ 32, '{path|Lozinka} je predugačka (maksimum je {max} karaktera).' ]
   },
   bio: {
-    type: String,
-    trim: true,
-    min: [ 5, '{path|Biografija} je prekratka (minimum je {min} karaktera).' ],
-    max: [ 500, '{path|Biografija} je predugačka (maksimum je {max} karaktera).' ]
+    about: {
+      type: String,
+      trim: true,
+      set: helpers.toUpperCaseFirst,
+      min: [ 5, 'Polje {path|O meni} je prekratko (minimum je {min} karaktera).' ],
+      max: [ 500, 'Polje {path|O meni} je predugačko (maksimum je {max} karaktera).' ]
+    },
+    company: {
+      type: String,
+      trim: true,
+      set: helpers.toUpperCaseFirst,
+      min: [ 3, '{path|Kompanija} je prekratka (minimum je {min} karaktera).' ],
+      max: [ 100, '{path|Kompanija} je predugačka (maksimum je {max} karaktera).' ]
+    },
+    website: {
+      type: String,
+      validate: [ helpers.UrlValidator, 'url', '{path|Website} nije ispravna URL adresa.' ]
+    },
+    github: {
+      type: String,
+      validate: [ helpers.UrlValidator, 'url', '{path|Github} nije ispravna URL adresa.' ]
+    },
+    twitter: {
+      type: String,
+      validate: [ helpers.UrlValidator, 'url', '{path|Twitter} nije ispravna URL adresa.' ]
+    },
+    location: {
+      type: String,
+      trim: true,
+      set: helpers.toUpperCaseFirst,
+      min: [ 2, '{path|Lokacija} je prekratka (minimum je {min} karaktera).' ],
+      max: [ 100, '{path|Lokacija} je predugačka (maksimum je {max} karaktera).' ]
+    }
   },
   salt: { 
     type: String,

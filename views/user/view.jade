@@ -1,3 +1,11 @@
 div Detalji usera
 p= user.name.full
-p= user.email
+br
+a(href='mailto:#{user.email}')= user.email
+br
+a(href='#{user.bio.github}', target='_blank')= user.bio.github
+br
+a(href='#{user.bio.twitter}', target='_blank')= user.bio.twitter
+br
+a(href='#{user.bio.website}', target='_blank')= user.bio.website
+br
