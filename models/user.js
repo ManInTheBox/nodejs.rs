@@ -41,6 +41,10 @@ var User = new db.Schema({
     min: [ 6, '{path|Lozinka} je prekratka (minimum je {min} karaktera).' ],
     max: [ 32, '{path|Lozinka} je predugačka (maksimum je {max} karaktera).' ]
   },
+  photo: {
+    type: db.ObjectId,
+    ref: 'Picture'
+  },
   bio: {
     about: {
       type: String,

@@ -5,10 +5,13 @@
         ul
           - each err in user.errors
             li= err
-    form(action='/user/#{user.name.username}/edit', method='POST', class='edit')    
+    form(action='/user/#{user.name.username}/edit', method='POST', class='edit', enctype='multipart/form-data')    
       input(type='hidden', name='_csrf', value=csrfToken)
       input(type='hidden', name='_method', value='PUT')
       
+      div
+        label(for='userPhoto') Fotografija: 
+        input(type='file', id='userPhoto', name='user[photo]')
       div
         label(for='userNameFirst') Ime: 
         input(type='text', id='userNameFirst', name='user[name][first]', value=user.name.first)

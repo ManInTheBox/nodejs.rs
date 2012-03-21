@@ -22,4 +22,7 @@ form(action='/register', method='POST')
   label(for='userPassword') Lozinka: 
   input(type='password', id='userPassword', name='user[password]', value=user.password)
   br
+  label(for='userPhoto') Fotografija: 
+  input(type='file', id='userPhoto', name='user[photo]')
+  br
   input(type='submit', value='Registruj se')

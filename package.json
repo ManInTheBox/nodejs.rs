@@ -15,5 +15,6 @@
     , "connect-session-mongo": ">= 0.0.4"
     , "connect-redis": "1.2.0"
     , "mail": ">= 0.2.3"
+    , "imagemagick": "0.1.2"
   }
 }

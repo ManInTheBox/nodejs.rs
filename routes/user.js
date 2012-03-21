@@ -1,16 +1,16 @@
 /**
  * Helpers
  */
-var util = require('util');
-
-var qs = require('querystring');
-var url = require('url');
+var util = require('util'),
+  qs = require('querystring'),
+  url = require('url');
 
 /**
  * Models
  */
 var User = require('../models/user'),
-  Email = require('../models/email');
+  Email = require('../models/email'),
+  Picture = require('../models/picture');
 
 /**
  * Register action
@@ -115,7 +115,20 @@ exports.edit = function (req, res, next) {
     if (!user) return next(); // 404 will catch this...
 
     if (req.body.user) {
-      var u = req.body.user;
+      var u = req.body.user,
+        photo = req.files.user.photo.size ? req.files.user.photo : null;
+
+      if (photo) {
+        var picture = new Picture({
+          path: photo.path,
+          name: req.session.user.name.username
+        });
+        picture.crop(function (err) {
+          if (err) return next(err);
+          console.log('yeahhhhh');
+          return;
+        });
+      }
 
       if (u.password) {
         user.password = u.password;
