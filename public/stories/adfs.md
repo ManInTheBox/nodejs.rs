@@ -1,5 +1,22 @@
-Ovo je jedan tako cool
-post.    
+Ovo je jedan tako `alert(5 + 6 == 11);` post. Ovo je jedan tako `alert(5 + 6 == 11);` post. Ovo je jedan tako `alert(5 + 6 == 11);` post.
+
+nikada nemojte koristiti `eval()` funkciju. Ona je _**zla**_. nikada nemojte koristiti `eval()` funkciju. Ona je _**zla**_. nikada nemojte koristiti `eval()` funkciju. Ona je _**zla**_. nikada nemojte koristiti `eval()` funkciju. Ona je _**zla**_
+
+_ovo je italic_
+*ovo takodje italic*
+
+**ovo je bold**
+__ovo je takodje bold__
+
+> hahahha
+
+* opa
+* opa
+* opa
+
+***
+
+(tm) zarko (c) stankovic
     
     /**
      * View action

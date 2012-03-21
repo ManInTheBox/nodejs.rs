@@ -170,10 +170,10 @@ blockquote .author {
     font-size: 12px;
 }
 code {
-    font-family: Consolas, 'Lucida Console', Monaco, Monospace;
-    font-size: 12px;
-    line-height: 1.5em;
-    overflow-y: hidden;
+    border: 1px solid #E4E6E9;
+    padding: 2px;
+    font-family: Monospace;
+    background: #F3F4F5;
 }
 pre {
     white-space: pre;
@@ -186,6 +186,13 @@ pre {
     clear: both;
   	border: 1px solid #E4E6E9;
 	background: #F3F4F5;
+}
+
+pre code {
+    font-family: Consolas, 'Lucida Console', Monaco, Monospace;
+    font-size: 12px;
+    line-height: 1.5em;
+    overflow-y: hidden;    
 }
 abbr[title], dfn[title] {
     border-bottom: 1px dotted;

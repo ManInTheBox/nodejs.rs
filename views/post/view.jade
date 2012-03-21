@@ -11,6 +11,8 @@ article.post.single
           a(href='/post/#{post.titleUrl}/download') Kao HTML format 
           br
           a(href='/post/#{post.titleUrl}.md/download') Kao Mark down format
+          br
+          a(href='/post/#{post.titleUrl}.pdf/download') Kao PDF format
 
     - if (canEditPost)
       a(href='/post/#{post.titleUrl}/edit') Edituj 
