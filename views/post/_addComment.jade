@@ -1,7 +1,11 @@
-form(action='/post/#{post._id}/comment/new', method='POST')
-  input(type='hidden', name='_csrf', value=csrfToken)
-
-  label(for='postComment') Komentar: 
-  textarea(id='postComment', name='post[comment]')
-  br
-  input(type='submit', value='Posalji komentar')
+div(class='post-bottom-section', id='add-comment')
+  h3 Pošalji komentar
+  .primary
+    form(action='/post/#{post._id}/comment/new', method='POST')
+      input(type='hidden', name='_csrf', value=csrfToken)
+      div
+        label(for='postComment') Komentar 
+          span.required *
+        textarea(id='postComment', name='post[comment]')
+      .no-border
+        input(type='submit', value='Pošalji', class='button')

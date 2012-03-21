@@ -1,6 +1,27 @@
 - each post in posts
-  div(style='padding: 5px;')
-    a(href='/post/#{post.titleUrl}')= post.title
-    - if (session.user && session.user._id == post.owner || isAdmin)
-      a(href='/post/#{post.titleUrl}/edit')
-        button Edituj post
+  article.post
+    .primary
+      h2
+        a(href='/post/#{post.titleUrl}')= post.title
+      p.post-info postovanu u 
+        a(href='') neki tag
+
+      p!= post.content
+      p
+        a(href='/post/#{post.titleUrl}', class='more') Ceo tekst
+    aside
+      //p.dateinfo JAN
+        span 31
+      .post-meta
+        //h4 Post info
+        ul
+          li.user
+            a(href='/user/#{post.owner.name.username}', title='Objavio #{post.owner.name.username}')= post.owner.name.username
+          li.time= post.createdAtFormatted
+          li.comment
+            a(href='/post/#{post.titleUrl}#comments') Komentari #{post.commentsCount}
+          li.permalink
+            a(href='/post/#{post.titleUrl}') Perma link
+          - if (session.user && session.user._id == post.owner || isAdmin)
+            li
+              a(href='/post/#{post.titleUrl}/edit') Edituj
