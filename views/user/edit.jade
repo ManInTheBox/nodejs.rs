@@ -1,47 +1,49 @@
-form(action='/user/#{user.name.username}/edit', method='POST')
-  - if ('undefined' !== typeof user.errors)
-    div(class='error')
-      ul
-        - each err in user.errors
-          li= err
-  
-  input(type='hidden', name='_csrf', value=csrfToken)
-  input(type='hidden', name='_method', value='PUT')
-          
-  label(for='userNameFirst') Ime: 
-  input(type='text', id='userNameFirst', name='user[name][first]', value=user.name.first)
-  br
-  label(for='userNameLast') Prezime: 
-  input(type='text', id='userNameLast', name='user[name][last]', value=user.name.last)
-  br
-  label(for='userNameUsername') Korisnicko ime:
-  input(type='text', id='userNameUsername', name='user[name][username]', value=user.name.username)
-  br
-  label(for='userEmail') E-mail: 
-  input(type='text', id='userEmail', name='user[email]', value=user.email, disabled='disabled')
-  br
-  label(for='userPassword') Nova lozinka: 
-  input(type='password', id='userPassword', name='user[password]', value=user.password)
-  br
-  label(for='userPasswordRepeat') Ponovite lozinku: 
-  input(type='password', id='userPasswordRepeat', name='user[passwordRepeat]', value=user.passwordRepeat)
-  br
-  label(for='userBioAbout') O meni: 
-  textarea(id='userBioAbout', name='user[bio][about]')=user.bio.about
-  br
-  label(for='userBioCompany') Kompanija: 
-  input(type='text', id='userBioCompany', name='user[bio][company]', value=user.bio.company)
-  br
-  label(for='userBioWebsite') Website/Blog: 
-  input(type='text', id='userBioWebsite', name='user[bio][website]', value=user.bio.website)
-  br
-  label(for='userBioGithub') Github: 
-  input(type='text', id='userBioGithub', name='user[bio][github]', value=user.bio.github)
-  br
-  label(for='userBioTwitter') Twitter: 
-  input(type='text', id='userBioTwitter', name='user[bio][twitter]', value=user.bio.twitter)
-  br
-  label(for='userBioLocation') Lokacija: 
-  input(type='text', id='userBioLocation', name='user[bio][location]', value=user.bio.location)
-  br
-  input(type='submit', value='Sacuvaj izmene')
+.article.post
+  .main-content
+    - if ('undefined' !== typeof user.errors)
+      div(class='error')
+        ul
+          - each err in user.errors
+            li= err
+    form(action='/user/#{user.name.username}/edit', method='POST', class='edit')    
+      input(type='hidden', name='_csrf', value=csrfToken)
+      input(type='hidden', name='_method', value='PUT')
+      
+      div
+        label(for='userNameFirst') Ime: 
+        input(type='text', id='userNameFirst', name='user[name][first]', value=user.name.first)
+      div
+        label(for='userNameLast') Prezime: 
+        input(type='text', id='userNameLast', name='user[name][last]', value=user.name.last)
+      div
+        label(for='userNameUsername') Korisnicko ime:
+        input(type='text', id='userNameUsername', name='user[name][username]', value=user.name.username)
+      div
+        label(for='userEmail') E-mail: 
+        input(type='text', id='userEmail', name='user[email]', value=user.email, disabled='disabled')
+      div
+        label(for='userPassword') Nova lozinka: 
+        input(type='password', id='userPassword', name='user[password]', value=user.password)
+      div
+        label(for='userPasswordRepeat') Ponovite lozinku: 
+        input(type='password', id='userPasswordRepeat', name='user[passwordRepeat]', value=user.passwordRepeat)
+      div
+        label(for='userBioAbout') O meni: 
+        textarea(id='userBioAbout', name='user[bio][about]')=user.bio.about
+      div
+        label(for='userBioCompany') Kompanija: 
+        input(type='text', id='userBioCompany', name='user[bio][company]', value=user.bio.company)
+      div
+        label(for='userBioWebsite') Website/Blog: 
+        input(type='text', id='userBioWebsite', name='user[bio][website]', value=user.bio.website)
+      div
+        label(for='userBioGithub') Github: 
+        input(type='text', id='userBioGithub', name='user[bio][github]', value=user.bio.github)
+      div
+        label(for='userBioTwitter') Twitter: 
+        input(type='text', id='userBioTwitter', name='user[bio][twitter]', value=user.bio.twitter)
+      div
+        label(for='userBioLocation') Lokacija: 
+        input(type='text', id='userBioLocation', name='user[bio][location]', value=user.bio.location)
+      .no-border
+        input(type='submit', value='Sacuvaj izmene', class='button')

@@ -19,6 +19,16 @@ var Post = new db.Schema({
   createdAt: { type: Date, default: Date.now },
   updatedAt: Date,
   comments: [{ type: db.ObjectId, ref: 'Comment' }],
+  tags: [ String ]
+});
+
+Post.path('tags').set(function (v) {
+  var tags = v[0].replace(/\s/g, '').toLowerCase().split(',');
+
+  if (tags.length === 1 && tags[0].length === 0)
+    return undefined;
+  else
+    return tags;
 });
 
 function normalizeTitle(v) {

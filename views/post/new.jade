@@ -13,5 +13,7 @@ form(action='/post/new', method='POST')
   label(for='postContent') Sadrzaj: 
   textarea(id='postContent', name='post[content]')= post.content
   br
+  label(for='postTags') Tagovi: 
+  input(type='text', id='postTags', name='post[tags]')= post.tags
 
   input(type='submit', value='Kreiraj')

@@ -1,5 +1,6 @@
 article.post.single
   .main-content
+    != messages()
     h2
       a(href='/post/#{post.titleUrl}')= post.title
     p.post-info Napisao 
@@ -7,17 +8,17 @@ article.post.single
       | , dana #{post.createdAtFormatted}
       span(style='float: right;')
         a(href='/post/#{post.titleUrl}/download', id='download') Preuzmi
-        .download-box(style='display: none; float: right;')
+        br
+        span.download-box(style='display: none; float: right; background: #F3F4F5; border: 1px solid #E4E6E9; padding: 0 5px;')
           a(href='/post/#{post.titleUrl}/download') Kao HTML format 
           br
           a(href='/post/#{post.titleUrl}.md/download') Kao Mark down format
           br
           a(href='/post/#{post.titleUrl}.pdf/download') Kao PDF format
-
-    - if (canEditPost)
-      a(href='/post/#{post.titleUrl}/edit') Edituj 
-      | |  
-      a(href='#', id='deletePost') Obriši
+      - if (canEditPost)
+        a(href='/post/#{post.titleUrl}/edit') Edituj 
+        | |  
+        a(href='#', id='deletePost') Obriši
 
     p!= post.content
 
@@ -33,22 +34,23 @@ div(class='post-bottom-section', id='comments')
   .primary
     ol.commentlist
       - each comment in post.comments
-        li.depth-1
-          .comment-info
-            a(href='/user/#{comment._ownerUsername}'): img(src='/images/gravatar.jpg')
-            cite
-              a(href='/user/#{comment._ownerUsername}')= comment._ownerFullName || comment._ownerUsername
-              |  je napisao:
-              br
-              span.comment-data= comment.createdAtFormatted
-                - if (canEditPost || session.user && session.user._id == comment._owner)
-                  span(style='padding-left: 20px;')
-                    a(href='#', id="#{comment._id}", class='editComment')  Edituj 
-                    | | 
-                    a(href='#', id='#{comment._id}', class='deleteComment') Obriši
-
-          .comment-text
-            != comment.text
+        li(class=comment.cssClass)
+          div(id='comment-#{comment._id}')
+            .comment-info
+              a(href='/user/#{comment._ownerUsername}'): img(src='/images/gravatar.jpg')
+              cite
+                a(href='/user/#{comment._ownerUsername}')= comment._ownerFullName || comment._ownerUsername
+                |  je napisao:
+                br
+                span.comment-data
+                  a(href='/post/#{post.titleUrl}#comment-#{comment._id}')= comment.createdAtFormatted
+                  - if (canEditPost || session.user && session.user._id == comment._owner)
+                    span(style='padding-left: 20px;')
+                      a(href='#', id="#{comment._id}", class='editComment')  Edituj 
+                      | | 
+                      a(href='#', id='#{comment._id}', class='deleteComment') Obriši
+            .comment-text
+              != comment.text
 
 script(type='text/javascript')
   $('#deletePost').click(function (e) {

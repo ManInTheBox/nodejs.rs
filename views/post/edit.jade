@@ -2,7 +2,7 @@ article.post
   .main-content
     h1 Editovanje: #{post.title}
     form(action='/post/#{post.titleUrl}/edit', method='POST', class='edit')
-      - if ('undefined' !== typeof post.errors)
+      - if (post.errors)
         div(class='error')
           ul
             - each err in post.errors
@@ -14,10 +14,12 @@ article.post
       div
         label(for='postTitle') Naslov: 
         input(type='text', id='postTitle', name='post[title]', value=post.title)
-        br
       div
         label(for='postContent') Sadrzaj: 
         textarea(id='postContent', name='post[content]')= post.content
-        br
+      div
+        label(for='postTags') Tagovi 
+          span (razdvojiti ih zarezom)
+        input(type='text', id='postTags', name='post[tags]', value=post.tags)
       .no-border
         input(type='submit', value='Sacuvaj', class='button')

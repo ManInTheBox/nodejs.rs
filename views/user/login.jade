@@ -1,9 +1,10 @@
+!= messages()
+- if (user.errors)
+  div(class='error')
+    ul
+      - each err in user.errors
+        li= err
 form(action='/login', method='POST')
-  - if ('undefined' !== typeof user.errors)
-    div(class='error')
-      ul
-        - each err in user.errors
-          li= err
             
   input(type='hidden', name='_csrf', value=csrfToken)
 

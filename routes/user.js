@@ -102,6 +102,7 @@ exports.view = function (req, res, next) {
   User.findByUsername(req.params.username, function (err, user) {
     if (err) return next(err);
     if (!user) return next();
+    // res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
     res.render('user/view', { user: user });
   });
 };
@@ -149,13 +150,14 @@ exports.edit = function (req, res, next) {
           User.update({ password: user.encryptPassword() }, function (err) {
             if (err) return next(err);
             req.session.user = user;
-            req.flash('success', 'Uspesno sacuvane izmene profila.');
-            res.redirect('/post');
+            req.flash('success', 'Uspešno sačuvane izmene profila.');
+            res.redirect('/user/' + user.name.username);
           });
         } else {
           req.session.user = user;
-          req.flash('success', 'Uspesno sacuvane izmene profila.');
-          res.redirect('/post');
+          req.flash('success', 'Uspešno sačuvane izmene profila.');
+          // res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+          res.redirect('/user/' + user.name.username);
         }
       });
     } else {

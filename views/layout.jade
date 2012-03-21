@@ -4,6 +4,7 @@ html
     - var title = title || 'Node Srbija'
     title= title
     script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js')
+    script(type='text/javascript', src='/javascripts/script.js')
 
     //link(rel='stylesheet', href='/stylesheets/blueprint/screen.css', type='text/css', media='screen, projection')
     //link(rel='stylesheet', href='/stylesheets/blueprint/print.css', type='text/css', media='print')
@@ -33,6 +34,7 @@ html
               li: a(href='/register') Registracija
               li: a(href='/login') Logovanje
             - else
+              li: a(href='/user/#{session.user.name.username}/edit') Profil
               li: a(href='/logout') Izloguj se
         .subscribe
           span Subscribe

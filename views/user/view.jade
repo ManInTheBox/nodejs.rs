@@ -1,11 +1,18 @@
-div Detalji usera
-p= user.name.full
-br
-a(href='mailto:#{user.email}')= user.email
-br
-a(href='#{user.bio.github}', target='_blank')= user.bio.github
-br
-a(href='#{user.bio.twitter}', target='_blank')= user.bio.twitter
-br
-a(href='#{user.bio.website}', target='_blank')= user.bio.website
-br
+article.post
+  .main-content
+    != messages()
+    h3= user.name.full
+    - if (session.user && session.user._id == user._id)
+      a(href='/user/#{user.name.username}/edit') Edit
+    p
+      img(src='/images/gravatar.jpg', width='30%', height='30%', class='align-left')
+
+    p E-mail: 
+      a(href='mailto:#{user.email}')= user.email
+    p Github: 
+      a(href='#{user.bio.github}', target='_blank')= user.bio.github
+    p Twitter: 
+      a(href='#{user.bio.twitter}', target='_blank')= user.bio.twitter
+    p Website: 
+      a(href='#{user.bio.website}', target='_blank')= user.bio.website
+    blockquote= user.bio.about
