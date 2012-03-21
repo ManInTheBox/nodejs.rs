@@ -1,19 +1,23 @@
-h1 Editovanje: #{post.title}
+article.post
+  .main-content
+    h1 Editovanje: #{post.title}
+    form(action='/post/#{post.titleUrl}/edit', method='POST', class='edit')
+      - if ('undefined' !== typeof post.errors)
+        div(class='error')
+          ul
+            - each err in post.errors
+              li= err
 
-form(action='/post/#{post.titleUrl}/edit', method='POST')
-  - if ('undefined' !== typeof post.errors)
-    div(class='error')
-      ul
-        - each err in post.errors
-          li= err
+      input(type='hidden', name='_csrf', value=csrfToken)
+      input(type='hidden', name='_method', value='PUT')
 
-  input(type='hidden', name='_csrf', value=csrfToken)
-  input(type='hidden', name='_method', value='PUT')
-
-  label(for='postTitle') Naslov: 
-  input(type='text', id='postTitle', name='post[title]', value=post.title)
-  br
-  label(for='postContent') Sadrzaj: 
-  textarea(id='postContent', name='post[content]')= post.content
-  br
-  input(type='submit', value='Sacuvaj')
+      div
+        label(for='postTitle') Naslov: 
+        input(type='text', id='postTitle', name='post[title]', value=post.title)
+        br
+      div
+        label(for='postContent') Sadrzaj: 
+        textarea(id='postContent', name='post[content]')= post.content
+        br
+      .no-border
+        input(type='submit', value='Sacuvaj', class='button')

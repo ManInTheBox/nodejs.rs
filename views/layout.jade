@@ -4,31 +4,87 @@ html
     - var title = title || 'Node Srbija'
     title= title
     script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js')
-    link(rel='stylesheet', href='/stylesheets/blueprint/screen.css', type='text/css', media='screen, projection')
-    link(rel='stylesheet', href='/stylesheets/blueprint/print.css', type='text/css', media='print')
+
+    //link(rel='stylesheet', href='/stylesheets/blueprint/screen.css', type='text/css', media='screen, projection')
+    //link(rel='stylesheet', href='/stylesheets/blueprint/print.css', type='text/css', media='print')
+    //link(rel='stylesheet', href='/stylesheets/style.css', type='text/css')
     //if lt IE 8
-      link(rel='stylesheet', href='/stylesheets/blueprint/ie.css', type='text/css', media='screen, projection')
+      //link(rel='stylesheet', href='/stylesheets/blueprint/ie.css', type='text/css', media='screen, projection')
+
     script(type='text/javascript', src='/javascripts/highlight/highlight.pack.js')
     script(type='text/javascript')
-      hljs.tabReplace = '    ';
       hljs.initHighlightingOnLoad();
-    link(rel='stylesheet', href='/javascripts/highlight/styles/dark.css', type='text/css')
-  body
-    .container.showgrid
-      .span-24
-        .span-18
-          a(href='/'): img(src='/images/logo.jpg', width='10%', height='10%')
-        .span-6.last
-          - if (typeof session.user !== 'undefined')
-            a(href='/logout') Izloguj se #{session.user.email} | 
-            a(href='/user/#{session.user.name.username}/edit') edit
-          - else
-            .span-2.colborder
-              a(href='/register') Registracija
-            .span-2.last
-              a(href='/login') Logovanje
-      .span-24
-        != messages()
-        != body
-      .span-24
-        h1(style='background: skyblue;') Ovo je footer
+    link(rel='stylesheet', href='/javascripts/highlight/styles/github.css', type='text/css')
+
+    link(rel='stylesheet', type='text/css', media='screen', href='/stylesheets/coolblue.css')
+
+  body(id='top')
+    #header-wrap
+      header
+        hgroup
+          h1: a(href='/') Node Srbija
+          h3 ovde se uci...
+        nav
+          ul
+            li(id='current'): a(href='/') Pocetna
+              span
+            li: a(href='/post') Turorijali
+            - if (!session.user)
+              li: a(href='/register') Registracija
+              li: a(href='/login') Logovanje
+            - else
+              li: a(href='/logout') Izloguj se
+        .subscribe
+          span Subscribe
+          a(href='/') email
+          a(href='/') rss
+
+        form(id='quick-search')
+          fieldset(class='search')
+            input(class='tbox', type='text', value='search')
+            button(class='btn', type='submit', value='search')
+
+    #content-wrap
+      #content.clearfix
+        #main!= body
+        // end #main
+        #sidebar
+          .about-me
+            h3 About me
+            p
+              a(href="index.html")
+                img(src="images/gravatar.jpg", width="42", height="42", alt="firefox", class="align-left")
+              | Lorem ipsum dolor sit, consectetuer adipiscing. Donec libero. Suspendisse bibendum.
+              | Cras id urna. Morbi tincidunt, orci ac convallis aliquam, lectus turpis varius lorem, eu
+              | posuere nunc justo tempus leo suspendisse bibendum.
+              | a(href="index.html") Learn more...
+          .sidemenu
+            h3 sidemenu
+            ul
+              li
+                a(href='/') Pocetna
+              li
+                a(href='/') Pocetna
+                  span neki tamo tekst...
+              li
+                a(href='/') Pocetna
+          .sidemenu.popular
+            h3 Most popular
+            ul
+              li
+                a(href='/') test1
+                  span ahahah ahahh
+              li
+                a(href='/') test1
+                  span ahahah ahahh
+              li
+                a(href='/') test1
+                  span ahahah ahahh
+    // end #content-wrap
+    footer
+      p.footer-left
+        span ahahah
+      p.footer-right
+        a(href='/') aaa | 
+        a(href='/') aaa | 
+        a(href='/') aaa

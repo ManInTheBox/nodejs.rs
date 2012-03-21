@@ -1,44 +1,58 @@
-h6 Napisao:
-  a(href='/user/#{post.owner.name.username}')= post.owner.name.full || post.owner.name.username
-h6 Dana: #{post.createdAt}
-h3= post.title
-a(href='/post/#{post.titleUrl}/download') Preuzmi
-br
-- if (canEditPost)
-  a(href='/post/#{post.titleUrl}/edit') Edituj
-  br
-  a(href='#', id='deletePost') Obrisi
+article.post.single
+  .main-content
+    h2
+      a(href='/post/#{post.titleUrl}')= post.title
+    p.post-info Napisao 
+      a(href='/user/#{post.owner.name.username}')= post.owner.name.full || post.owner.name.username
+      | , dana #{post.createdAtFormatted}
+      span(style='float: right;')
+        a(href='/post/#{post.titleUrl}/download', id='download') Preuzmi
+        .download-box(style='display: none; float: right;')
+          a(href='/post/#{post.titleUrl}/download') Kao HTML format 
+          br
+          a(href='/post/#{post.titleUrl}.md/download') Kao Mark down format
+          br
+          a(href='/post/#{post.titleUrl}.pdf/download') Kao PDF format
 
-div(style='font-size: 1.2em;')!= post.content
+    - if (canEditPost)
+      a(href='/post/#{post.titleUrl}/edit') Edituj 
+      | |  
+      a(href='#', id='deletePost') Obriši
+
+    p!= post.content
 
 - if (session.user)
   != partial('_addComment')
 - else
-  a(href='/login?returnUrl=' + encodeURIComponent('/post/#{post.titleUrl}')) Dodaj komentar
+  a(href='/login?returnUrl=' + encodeURIComponent('/post/#{post.titleUrl}#add-comment')) Dodaj komentar
 
 
 
-  
-h3 Komentari korisnika:
-- each comment in post.comments
-  div(style='background: lightgreen;', class='comment')
-    != comment.text
-    br
-    small Napisao 
-      a(href='/user/#{comment._ownerUsername}')
-        = comment._ownerFullName || comment._ownerUsername
-    br
-    small Dana #{comment.createdAt}
-    br
+div(class='post-bottom-section', id='comments')  
+  h3 Komentari korisnika
+  .primary
+    ol.commentlist
+      - each comment in post.comments
+        li.depth-1
+          .comment-info
+            a(href='/user/#{comment._ownerUsername}'): img(src='/images/gravatar.jpg')
+            cite
+              a(href='/user/#{comment._ownerUsername}')= comment._ownerFullName || comment._ownerUsername
+              |  je napisao:
+              br
+              span.comment-data= comment.createdAtFormatted
+                - if (canEditPost || session.user && session.user._id == comment._owner)
+                  span(style='padding-left: 20px;')
+                    a(href='#', id="#{comment._id}", class='editComment')  Edituj 
+                    | | 
+                    a(href='#', id='#{comment._id}', class='deleteComment') Obriši
 
-    - if (canEditPost || session.user && session.user._id == comment._owner)
-      a(href='#', id="#{comment._id}", class='editComment') Edituj komentar
-      br
-      a(href='#', id='#{comment._id}', class='deleteComment') Obrisi komentar
-  hr
+          .comment-text
+            != comment.text
 
 script(type='text/javascript')
-  $('#deletePost').click(function () {
+  $('#deletePost').click(function (e) {
+    e.preventDefault();
     confirm('Da li sigurno zelite da obrisete post?')
     ?
     $.ajax({
@@ -59,7 +73,8 @@ script(type='text/javascript')
   });
 
 script(type='text/javascript')
-  $('.deleteComment').click(function () {
+  $('.deleteComment').click(function (e) {
+    e.preventDefault();
     confirm('Da li sigurno zelite da obrisete vas komentar?')
     ?
     $.ajax({
@@ -84,3 +99,8 @@ script(type='text/javascript')
     //alert('uskoro....')
   });
 
+  $('#download').toggle(function () {
+    $('.download-box').show(200);
+  }, function () {
+    $('.download-box').hide(200);
+  });
