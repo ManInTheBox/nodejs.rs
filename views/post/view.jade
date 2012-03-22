@@ -1,7 +1,7 @@
 article.post.single
   .main-content
     != messages()
-    h2
+    h3
       a(href='/post/#{post.titleUrl}')= post.title
     p.post-info Napisao 
       a(href='/user/#{post.owner.name.username}')= post.owner.name.full || post.owner.name.username
@@ -21,6 +21,8 @@ article.post.single
         a(href='#', id='deletePost') Obriši
 
     p!= post.content
+    a(href='#top', class='back-to-top') vrh
+
 
 - if (session.user)
   != partial('_addComment')
@@ -37,7 +39,7 @@ div(class='post-bottom-section', id='comments')
         li(class=comment.cssClass)
           div(id='comment-#{comment._id}')
             .comment-info
-              a(href='/user/#{comment._ownerUsername}'): img(src='/images/gravatar.jpg')
+              a(href='/user/#{comment._ownerUsername}'): img(src='/images/users/#{comment._ownerUsername}_small.jpg')
               cite
                 a(href='/user/#{comment._ownerUsername}')= comment._ownerFullName || comment._ownerUsername
                 |  je napisao:
@@ -97,8 +99,9 @@ script(type='text/javascript')
   });
 
 script(type='text/javascript')
-  $('.comment').click(function () {
-    //alert('uskoro....')
+  $('.editComment').click(function (e) {
+    e.preventDefault();
+    alert('uskoro....');
   });
 
   $('#download').toggle(function () {

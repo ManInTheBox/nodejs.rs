@@ -34,7 +34,7 @@ html
               li: a(href='/register') Registracija
               li: a(href='/login') Logovanje
             - else
-              li: a(href='/user/#{session.user.name.username}/edit') Profil
+              li: a(href='/user/#{session.user.name.username}') Profil
               li: a(href='/logout') Izloguj se
         .subscribe
           span Subscribe

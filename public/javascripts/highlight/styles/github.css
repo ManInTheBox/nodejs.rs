@@ -95,6 +95,7 @@ pre .input_number {
 
 pre .builtin,
 pre .built_in,
+pre .literal,
 pre .lisp .title {
   color: #0086b3
 }

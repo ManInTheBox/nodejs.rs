@@ -111,7 +111,7 @@ User.virtual('name.full').get(function () {
 });
 
 User.statics.findByUsername = function (username, cb) {
-  return this.findOne({ 'name.username': username }, cb);
+  return this.findOne({ 'name.username': username }).populate('photo').run(cb);
 };
 
 module.exports = db.mongoose.model('User', User);

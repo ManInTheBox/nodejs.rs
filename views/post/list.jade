@@ -2,7 +2,7 @@
 - each post in posts
   article.post
     .primary
-      h2
+      h3
         a(href='/post/#{post.titleUrl}')= post.title
       p.post-info tagovi: 
         - each tag, i in post.tags

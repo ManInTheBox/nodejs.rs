@@ -25,10 +25,9 @@ var Post = new db.Schema({
 Post.path('tags').set(function (v) {
   var tags = v[0].replace(/\s/g, '').toLowerCase().split(',');
 
-  if (tags.length === 1 && tags[0].length === 0)
-    return undefined;
-  else
-    return tags;
+  return (tags.length === 1 && tags[0].length === 0)
+    ? undefined
+    : tags;
 });
 
 function normalizeTitle(v) {

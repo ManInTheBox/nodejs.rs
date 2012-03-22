@@ -5,7 +5,7 @@ var db = require('./db'),
 
 var Picture = new db.Schema({
   path: String,
-  name: String
+  name: String,
 });
 
 Picture.methods.crop = function (cb) {
@@ -18,7 +18,7 @@ Picture.methods.crop = function (cb) {
   },
   self = this;
 
-  imagemagick.crop(opts, function(err, stdout, stderr) {
+  imagemagick.crop(opts, function (err, stdout, stderr) {
     if (err) return cb(err);
     opts.dstPath = storePath + self.name + '_large.jpg';
     opts.width = 200;

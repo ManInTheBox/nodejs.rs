@@ -5,7 +5,7 @@ article.post
     - if (session.user && session.user._id == user._id)
       a(href='/user/#{user.name.username}/edit') Edit
     p
-      img(src='/images/gravatar.jpg', width='30%', height='30%', class='align-left')
+      img(src='/images/users/' + user.photo.name + '_large.jpg', class='align-left')
 
     p E-mail: 
       a(href='mailto:#{user.email}')= user.email
