@@ -1,4 +1,7 @@
-var crypto = require('crypto');
+var crypto = require('crypto'),
+  md = require('discount'),
+  mdFlags = md.flags.autolink | md.flags.noHTML;
+
 
 exports.toUpperCaseFirst = function (v) {
   return v.charAt(0).toUpperCase() + v.slice(1);
@@ -48,4 +51,15 @@ exports.formatDateFine = function (date) {
   minutes = minutes < 10 ? '0' + minutes : minutes;
 
   return date.getDate() + '. ' + months[date.getMonth()] + ' ' + date.getFullYear() + ' ' + hours + ':' + minutes;
+};
+
+exports.markdown = function (content) {
+  var matches = content.match(/`(javascript|bash|html)[^`]+`end/g);
+
+  if (matches) {
+    console.log(matches);
+    var language = matches[1];
+  }
+
+  return md.parse(content, mdFlags);
 };

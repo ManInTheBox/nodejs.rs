@@ -107,8 +107,11 @@ exports.view = function (req, res, next) {
       if (err) return next(err);
       fs.readFile(fileName, 'utf8', function (err, file) {
         if (err) return next(err);
-        var flags = md.flags.autolink | md.flags.noHTML;
-        post.content = md.parse(file, flags);
+        // var flags = md.flags.autolink | md.flags.noHTML;
+        // post.content = md.parse(file, flags);
+
+        post.content = helpers.markdown(file);
+
         post.createdAtFormatted = helpers.formatDateFine(post.createdAt);
 
         var length = post.comments.length;
@@ -122,7 +125,8 @@ exports.view = function (req, res, next) {
               comment.createdAtFormatted = helpers.formatDateFine(comment.createdAt);
               comment.cssClass = (isLoggedIn() && isCommentOwner(comment)) ? ['thread-alt', 'depth-1'] : 'depth-1';
 
-              comment.text = md.parse(comment.text, flags);
+              // comment.text = md.parse(comment.text, flags);
+              comment.text = helpers.markdown(comment.text);
 
               if (--length === 0)
                 res.emit('comments loaded');
