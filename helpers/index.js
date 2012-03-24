@@ -68,7 +68,14 @@ exports.markdown = function (content) {
         }
     }
 
-    markdown = markdown.replace(/<p><code>(javascript|bash|html)\n([\s\S]+)<\/code><\/p>/, '<pre><code class="$1">$2</code></pre>');
+    var pattern = /<p><code>(javascript|bash|html)\n([\s\S]+?)<\/code><\/p>/g;
+
+
+    markdown = md
+                .parse(content, mdFlags)
+                .replace(pattern, '<pre><code class="$1">$2</code></pre>')
+                // .replace(/<pre><code class="(javascript|bash|html)">[ ]{4}([\s\S]+)<\/code><\/pre>/g, '<pre><code class=$1>$2</code</pre>');
+    // console.log(markdown);
   }
 
   return markdown;
