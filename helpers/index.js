@@ -54,12 +54,22 @@ exports.formatDateFine = function (date) {
 };
 
 exports.markdown = function (content) {
-  var matches = content.match(/`(javascript|bash|html)[^`]+`end/g);
+  var markdown = md.parse(content, mdFlags),
+    blocks = content.match(/```(javascript|bash|html)[\s\S]+?\r\n```/g);
 
-  if (matches) {
-    console.log(matches);
-    var language = matches[1];
+  if (blocks) {
+    for (var i = 0; i < blocks.length; i++) {
+      var matches = /```(javascript|bash|html)([\s\S]+?)\r\n```/.exec(blocks[i]),
+        language = matches[1],
+        lines = matches[2].split('\r\n');
+
+        for (var j = 1; j < lines.length; j++) {
+          content = content.replace(lines[j], '    ' + lines[j]);
+        }
+    }
+
+    markdown = markdown.replace(/<p><code>(javascript|bash|html)\n([\s\S]+)<\/code><\/p>/, '<pre><code class="$1">$2</code></pre>');
   }
 
-  return md.parse(content, mdFlags);
+  return markdown;
 };

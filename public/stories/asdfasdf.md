@@ -1,11 +1,11 @@
-`javascript
-alert('ahaha');
-   alert('asdff');
-asdf
-`end
+ovo je test
 
-`html
-132
-   45`6
-789
-`end
+```
+alert('ahaha');
+  alert('absdff');
+asdf
+```
+
+```bash
+sudo apt-get install
+```
