@@ -27,15 +27,14 @@ html
           h3 ovde se uci...
         nav
           ul
-            li(id='current'): a(href='/') Pocetna
-              span
-            li: a(href='/post') Turorijali
+            li(id= currentUrl === '/' ? 'current' : null): a(href='/') Pocetna
+            li(id= ~currentUrl.indexOf('/post') ? 'current' : null): a(href='/post') Turorijali
             - if (!session.user)
-              li: a(href='/register') Registracija
-              li: a(href='/login') Logovanje
+              li(id= ~currentUrl.indexOf('/register') ? 'current' : null ): a(href='/register') Registracija
+              li(id= ~currentUrl.indexOf('/login') ? 'current' : null): a(href='/login') Logovanje
             - else
-              li: a(href='/user/#{session.user.name.username}') Profil
-              li: a(href='/logout') Izloguj se
+              li(id= ~currentUrl.indexOf('/user/#{session.user.name.username}') ? 'current' : null): a(href='/user/#{session.user.name.username}') Profil
+              li(id= ~currentUrl.indexOf('/logout') ? 'current' : null): a(href='/logout') Izloguj se
         .subscribe
           span Subscribe
           a(href='/') email
@@ -49,39 +48,7 @@ html
     #content-wrap
       #content.clearfix
         #main!= body
-        // end #main
-        #sidebar
-          .about-me
-            h3 About me
-            p
-              a(href="index.html")
-                img(src="images/gravatar.jpg", width="42", height="42", alt="firefox", class="align-left")
-              | Lorem ipsum dolor sit, consectetuer adipiscing. Donec libero. Suspendisse bibendum.
-              | Cras id urna. Morbi tincidunt, orci ac convallis aliquam, lectus turpis varius lorem, eu
-              | posuere nunc justo tempus leo suspendisse bibendum.
-              | a(href="index.html") Learn more...
-          .sidemenu
-            h3 sidemenu
-            ul
-              li
-                a(href='/') Pocetna
-              li
-                a(href='/') Pocetna
-                  span neki tamo tekst...
-              li
-                a(href='/') Pocetna
-          .sidemenu.popular
-            h3 Most popular
-            ul
-              li
-                a(href='/') test1
-                  span ahahah ahahh
-              li
-                a(href='/') test1
-                  span ahahah ahahh
-              li
-                a(href='/') test1
-                  span ahahah ahahh
+        #sidebar!= partial('_sidebar', { sidebarData: 'asdf' })
     // end #content-wrap
     footer
       p.footer-left

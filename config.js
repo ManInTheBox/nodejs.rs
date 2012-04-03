@@ -31,7 +31,8 @@ module.exports = function () {
     csrfToken: function (req, res) { return req.session._csrf; },
     isAdmin: function (req, res) { 
       return req.session.user && req.session.user.name.username === 'admin'; 
-    }
+    },
+    currentUrl: function (req, res) { return req.url; }
   });
 
   app.use(express.static(__dirname + '/public'));
