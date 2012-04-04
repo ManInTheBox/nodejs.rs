@@ -80,3 +80,8 @@ exports.markdown = function (content) {
 
   return markdown;
 };
+
+exports.substring = function (string, length) {
+  length = length || 30;
+  return string.length > length ? string.substring(0, length) + '...' : string;
+};

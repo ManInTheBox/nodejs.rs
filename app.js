@@ -6,7 +6,8 @@
 var express = require('express'),
   routes = require('./routes'),
   HttpError = require('./httperror'),
-  Post = require('./models/post');
+  Post = require('./models/post'),
+  User = require('./models/user');
 
 var app = module.exports = express.createServer();
 
@@ -75,7 +76,21 @@ app.param('postId', function (req, res, next, postId) {
   });
 });
 
+function handleSidebar(req, res, next) {
+  User.findByUsername('ManInTheBox', function (err, user) {
+    Post.find({ owner: user._id }, function (err, posts) {
+      req.sidebar = {
+          user: user,
+          posts: posts
+        };
+      next();
+    });
+  });
+}
+
 // Routes
+
+app.all('/*', handleSidebar);
 
 app.get('/', routes.index);
 
@@ -119,6 +134,9 @@ console.log("Express server listening on port %d in %s mode", app.address().port
 
 
 app.get('/test', function (req, res, next) {
+    // console.log(app.dynamicViewHelpers.currentUrl());
+    // return;
+
   require('fs').readFile('/aaasdfasdf', function (err, f) {
     if (err) return next(err);
   });

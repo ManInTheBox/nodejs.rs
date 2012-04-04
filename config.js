@@ -3,6 +3,7 @@ var fs = require('fs'),
   express = require('express'),
 //    MongoStore = require('connect-session-mongo'),
   RedisStore = require('connect-redis')(express),
+  helpers = require('./helpers'),
   HttpError = require('./httperror');
 
 module.exports = function () {
@@ -14,6 +15,9 @@ module.exports = function () {
   }));
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
+  app.set('view options', {
+    substring: helpers.substring
+  });
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   app.use(express.cookieParser());
@@ -32,7 +36,8 @@ module.exports = function () {
     isAdmin: function (req, res) { 
       return req.session.user && req.session.user.name.username === 'admin'; 
     },
-    currentUrl: function (req, res) { return req.url; }
+    currentUrl: function (req, res) { return req.url; },
+    sidebar: function (req, res) { return req.sidebar; },
   });
 
   app.use(express.static(__dirname + '/public'));
