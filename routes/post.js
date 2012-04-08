@@ -132,16 +132,26 @@ exports.view = function (req, res, next) {
                 res.emit('comments loaded');
             });
           });
-          res.on('comments loaded', function() {
-            res.render('post/view', { 
+          res.on('comments loaded', function () {
+            res.render('post/view', {
               post: post,
               canEditPost: isLoggedIn() && (isPostOwner(post) || isAdmin())
             });
           });
         } else {
-          res.render('post/view', { 
-            post: post,
-            canEditPost: isLoggedIn() && (isPostOwner(post) || isAdmin())
+          Post.find({ owner: post.owner }, function (err, posts) {
+            if (err) return next(err);
+            req.sidebar = {
+              viewFile: 'post/_sidebar',
+              data: {
+                user: post.owner,
+                posts: posts
+              }
+            };
+            res.render('post/view', { 
+              post: post,
+              canEditPost: isLoggedIn() && (isPostOwner(post) || isAdmin())
+            });
           });
         }
       });

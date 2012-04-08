@@ -80,8 +80,10 @@ function handleSidebar(req, res, next) {
   User.findByUsername('ManInTheBox', function (err, user) {
     Post.find({ owner: user._id }, function (err, posts) {
       req.sidebar = {
-          user: user,
-          posts: posts
+          data: {
+            user: user,
+            posts: posts
+          }
         };
       next();
     });

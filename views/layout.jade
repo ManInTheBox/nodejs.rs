@@ -48,7 +48,8 @@ html
     #content-wrap
       #content.clearfix
         #main!= body
-        #sidebar!= partial('_sidebar', { data: sidebar })
+        - console.log(sidebar.viewFile)
+        #sidebar!= partial(sidebar.viewFile || '_sidebar', { data: sidebar.data })
     footer
       p.footer-left
         span ahahah

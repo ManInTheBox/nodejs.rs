@@ -4,8 +4,8 @@
     a(href='/user/#{data.user.name.username}')
       img(src='/images/users/#{data.user.name.username}_small.jpg', class="align-left")
     = data.user.bio.about
-.sidemenu.popular
-  h3 još od istog autora
+.sidemenu
+  h3 Još od istog autora
   ul
     - each post in data.posts
       li
@@ -16,3 +16,4 @@
     - each post in data.posts
       li
         a(href='/post/#{post.titleUrl}')= substring(post.title)
+          span asdf
