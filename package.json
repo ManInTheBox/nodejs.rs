@@ -17,4 +17,8 @@
     , "mail": ">= 0.2.3"
     , "imagemagick": "0.1.2"
   }
+  , "devDependencies": {
+      "should": "*"
+    , "mocha": "latest"
+  }
 }
