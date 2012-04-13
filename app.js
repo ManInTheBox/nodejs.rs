@@ -9,16 +9,19 @@ var express = require('express'),
   Post = require('./models/post'),
   User = require('./models/user');
 
+
 var app = module.exports = express.createServer();
 
 /**
  * Application configuration
  */
+
 app.configure(require('./config'));
 
 /**
  * Route middleware
  */
+
 function loginRequired(req, res, next) {
   if (req.session.user) {
     next();
@@ -78,14 +81,22 @@ app.param('postId', function (req, res, next, postId) {
 
 function handleSidebar(req, res, next) {
   User.findByUsername('ManInTheBox', function (err, user) {
-    Post.find({ owner: user._id }, function (err, posts) {
-      req.sidebar = {
+    if (err) return next(err);
+    Post.findByAuthor(user._id, function (err, authorPosts) {
+      if (err) return next(err);
+      Post.findNewest(function (err, newestPosts) {
+        if (err) return next(err);
+        req.sidebar = {
           data: {
             user: user,
-            posts: posts
+            posts: {
+              author: authorPosts,
+              newest: newestPosts
+            }
           }
         };
-      next();
+        next();
+      });
     });
   });
 }

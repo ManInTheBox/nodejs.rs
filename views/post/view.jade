@@ -1,6 +1,6 @@
-!= messages()
 article.post.single
   .main-content
+    != messages()
     h3
       a(href='/post/#{post.titleUrl}')= post.title
     p.post-info Napisao 

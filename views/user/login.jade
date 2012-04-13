@@ -1,17 +1,21 @@
-!= messages()
-- if (user.errors)
-  div(class='error')
-    ul
-      - each err in user.errors
-        li= err
-form(action='/login', method='POST')
-            
-  input(type='hidden', name='_csrf', value=csrfToken)
+.main-content
+  != messages()
+  - if (user.errors)
+    div(class='error')
+      ul
+        - each err in user.errors
+          li= err
+  form(action='/login', method='POST')
+              
+    input(type='hidden', name='_csrf', value=csrfToken)
 
-  label(for='userEmail') E-mail: 
-  input(type='text', id='userEmail', name='user[email]', value=user.email, class='title')
-  br
-  label(for='userPassword') Lozinka: 
-  input(type='password', id='userPassword', name='user[password]', value=user.password, class='title')
-  br
-  input(type='submit', value='Uloguj se') 
+    div
+      label(for='userEmail') E-mail: 
+        span.required *
+      input(type='text', id='userEmail', name='user[email]', value=user.email, class='title')
+    div
+      label(for='userPassword') Lozinka: 
+        span.required *
+      input(type='password', id='userPassword', name='user[password]', value=user.password, class='title')
+    
+    input(type='submit', value='Uloguj se', class='submit') 

@@ -1,28 +1,66 @@
-- if ('undefined' !== typeof user.errors)
-  div(class='error')
-    ul
-      - each err in user.errors
-        li= err
-form(action='/register', method='POST')
-  
-  input(type='hidden', name='_csrf', value=csrfToken)
-          
-  label(for='userNameFirst') Ime: 
-  input(type='text', id='userNameFirst', name='user[name][first]', value=user.name.first)
-  br
-  label(for='userNameLast') Prezime: 
-  input(type='text', id='userNameLast', name='user[name][last]', value=user.name.last)
-  br
-  label(for='userNameUsername') Korisnicko ime:
-  input(type='text', id='userNameUsername', name='user[name][username]', value=user.name.username)
-  br
-  label(for='userEmail') E-mail: 
-  input(type='text', id='userEmail', name='user[email]', value=user.email)
-  br
-  label(for='userPassword') Lozinka: 
-  input(type='password', id='userPassword', name='user[password]', value=user.password)
-  br
-  label(for='userPhoto') Fotografija: 
-  input(type='file', id='userPhoto', name='user[photo]')
-  br
-  input(type='submit', value='Registruj se')
+.main-content
+  - if (user.errors)
+    div(class='error')
+      ul
+        - each err in user.errors
+          li= err
+  form(action='/register', method='POST')
+    
+    input(type='hidden', name='_csrf', value=csrfToken)
+    
+    div
+      label(for='userNameUsername') Korisničko ime: 
+        span.required *
+      input(type='text', id='userNameUsername', name='user[name][username]', value=user.name.username)
+    div
+      label(for='userEmail') E-mail: 
+        span.required *
+      input(type='text', id='userEmail', name='user[email]', value=user.email)
+    div
+      label(for='userPassword') Lozinka: 
+        span.required *
+      input(type='password', id='userPassword', name='user[password]', value=user.password)
+    #fullDetails
+      label(for='userNameFirst') Ime: 
+      input(type='text', id='userNameFirst', name='user[name][first]', value=user.name.first)
+
+      label(for='userNameLast') Prezime: 
+      input(type='text', id='userNameLast', name='user[name][last]', value=user.name.last)
+
+      label(for='userPhoto') Fotografija: 
+      input(type='file', id='userPhoto', name='user[photo]')
+
+      label(for='userBioCompany') Kompanija: 
+      input(type='text', id='userBioCompany', name='user[bio][company]', value=user.bio.company)
+
+      label(for='userBioWebsite') Website/Blog: 
+      input(type='text', id='userBioWebsite', name='user[bio][website]', value=user.bio.website)
+
+      label(for='userBioGithub') Github: 
+      input(type='text', id='userBioGithub', name='user[bio][github]', value=user.bio.github)
+
+      label(for='userBioTwitter') Twitter: 
+      input(type='text', id='userBioTwitter', name='user[bio][twitter]', value=user.bio.twitter)
+
+      label(for='userBioLocation') Lokacija: 
+      input(type='text', id='userBioLocation', name='user[bio][location]', value=user.bio.location)
+
+      label(for='userBioAbout') O meni: 
+      textarea(id='userBioAbout', name='user[bio][about]')=user.bio.about
+
+    a(href='#', id='showFullDetails') Da, hoću da ostavim više informacija o sebi.
+    br
+    input(type='submit', value='Registruj se', class='submit')
+
+script(type='text/javascript')
+  $('#fullDetails').hide();
+  $('#showFullDetails').on('click', function () {
+    $('#fullDetails').toggle(200);
+    $("html, body").animate({
+        scrollTop: $('#fullDetails').offset().top
+      }, {
+      duration: 400,
+      easing: "swing"
+    });
+    return false;
+  });

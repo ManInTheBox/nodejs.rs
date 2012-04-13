@@ -25,6 +25,7 @@ exports.register = function (req, res, next) {
       first: u.name.first.length ? u.name.first : undefined,
       last: u.name.last.length ? u.name.last : undefined,
       username: u.name.username
+      // dodati ostala polja
     };
     user.email = u.email;
     user.password = u.password;
@@ -83,7 +84,7 @@ exports.login = function (req, res, next) {
           delete req.session.returnUrl;
           res.redirect(returnUrl);
         } else {
-          res.redirect('home');
+          res.redirect('/post');
         }
       } else {
         u.errors = [ 'E-mail ili Lozinka nisu ispravni.' ];

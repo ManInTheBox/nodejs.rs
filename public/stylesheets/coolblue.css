@@ -252,10 +252,11 @@ td {
 
 /* Form */
 form {
-    width: 500px;
+    /*width: 500px;*/
     margin: 24px 0 24px 0;
     padding: 32px 40px;
-    background: #E9EAEB;
+    /*background: #E9EAEB;*/
+    background: #F7F7F7;
     border: 1px solid #DFE1E6;
 
 }
@@ -286,6 +287,7 @@ form label span {
 form input,
 form select,
 form textarea {
+  width: 550px;
     margin-bottom: 24px;
   padding: 9px 10px;
     color: #999;
@@ -293,7 +295,7 @@ form textarea {
   border-width: 1px;
   border-style: solid;
     border-color: #DCDEE2 #E9EBED #E9EBED #DCDEE2;
-  font: 13px 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Verdana, Sans-serif;
+  font: 17px 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Verdana, Sans-serif;
 }
 form textarea {
     height: 325px;
@@ -301,9 +303,41 @@ form textarea {
 form input:focus,
 form select:focus,
 form textarea:focus {
-  background: #EEF5F9;
+  /*background: #FAFAFA;*/
     color: #666666;
 }
+
+form input.submit {
+  width: auto;
+    height: 36px;
+    font-family: 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Verdana, Sans-serif;
+    margin-top: 30px;
+  margin-right: 3px;
+  padding: 6px 10px;
+  border: 1px solid #2177A5;
+  background-color: #227bad;
+    color: #fff;
+    cursor: pointer;
+
+    text-shadow: 0 -1px 0 rgba(0,0,0,0.5);
+
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+
+    box-shadow: 0px 1px 2px rgba(0,0,0,0.3), inset 0 1px 0 #3CA5D2;
+    -moz-box-shadow: 0px 1px 2px rgba(0,0,0,0.3), inset 0 1px 0 #3CA5D2;
+    -webkit-box-shadow: 0px 1px 2px rgba(0,0,0,0.3), inset 0 1px 0 #3CA5D2;
+}
+form input.submit:hover {
+    border:  1px  solid #B32D00;
+    background-color: #CC3300;
+
+    box-shadow: 0px 1px 2px rgba(0,0,0,0.3), inset 0 1px 0 #FF7242;
+    -moz-box-shadow: 0px 1px 2px rgba(0,0,0,0.3), inset 0 1px 0 #FF7242;
+    -webkit-box-shadow: 0px 1px 2px rgba(0,0,0,0.3), inset 0 1px 0 #FF7242;
+}
+
 form input.button {
     height: 36px;
     font-family: 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Verdana, Sans-serif;
@@ -1184,7 +1218,7 @@ form.edit textarea {
 }
 
 #messages {
-  padding-right: 30px;
+  /*padding-right: 30px;*/
   /*padding-left: 5px;*/
 }
 

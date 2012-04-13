@@ -5,14 +5,14 @@
       img(src='/images/users/#{data.user.name.username}_small.jpg', class="align-left")
     = data.user.bio.about
 .sidemenu.popular
-  h3 još od istog autora
+  h3 Još od istog autora
   ul
-    - each post in data.posts
+    - each post in data.posts.author
       li
         a(href='/post/#{post.titleUrl}')= substring(post.title)
 .sidemenu.popular
-  h3 Najnoviji
+  h3 Najnoviji članci
   ul
-    - each post in data.posts
+    - each post in data.posts.newest
       li
         a(href='/post/#{post.titleUrl}')= substring(post.title)

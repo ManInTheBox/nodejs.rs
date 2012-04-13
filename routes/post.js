@@ -133,21 +133,15 @@ exports.view = function (req, res, next) {
             });
           });
           res.on('comments loaded', function () {
-            res.render('post/view', {
-              post: post,
-              canEditPost: isLoggedIn() && (isPostOwner(post) || isAdmin())
+            handleSidebar(req, res, next, post, function () {
+              res.render('post/view', {
+                post: post,
+                canEditPost: isLoggedIn() && (isPostOwner(post) || isAdmin())
+              });
             });
           });
         } else {
-          Post.find({ owner: post.owner }, function (err, posts) {
-            if (err) return next(err);
-            req.sidebar = {
-              viewFile: 'post/_sidebar',
-              data: {
-                user: post.owner,
-                posts: posts
-              }
-            };
+          handleSidebar(req, res, next, post, function () {
             res.render('post/view', { 
               post: post,
               canEditPost: isLoggedIn() && (isPostOwner(post) || isAdmin())
@@ -237,7 +231,10 @@ exports.edit = function (req, res, next) {
 
       if (!p.content.length) {
         post.errors = ['Sadržaj je obavezno polje.'];
-        return res.render('post/edit', { post: post });
+        handleSidebar(req, res, next, post, function () {
+          res.render('post/edit', { post: post });
+        });
+        return;
       }
 
       var filePath = checkPostSecurity(post, function (err) {
@@ -250,7 +247,10 @@ exports.edit = function (req, res, next) {
             }
 
             post.content = p.content;
-            return res.render('post/edit', { post: post });
+            handleSidebar(req, res, next, post, function () {
+              res.render('post/edit', { post: post });
+            });
+            return;
           }
 
           fs.rename(contentPath + originalTitleUrl + '.md', filePath, function (err) {
@@ -269,7 +269,9 @@ exports.edit = function (req, res, next) {
         fs.readFile(filePath, 'utf8', function (err, file) {
           if (err) return next(err);
           post.content = file;
-          res.render('post/edit', { post: post });
+          handleSidebar(req, res, next, post, function () {
+            res.render('post/edit', { post: post });
+          });
         });
       });
     }
@@ -354,4 +356,35 @@ function checkPostSecurity(post, cb) {
   });
 
   return fileName;
+}
+
+function handleSidebar(req, res, next, post, cb) {
+  if (post.owner.length) {
+    Post.findByAuthor(post.owner).ne('_id', post._id).run(function (err, posts) {
+      if (err) return next(err);
+      req.sidebar = {
+        viewFile: 'post/_sidebar',
+        data: {
+          user: post.owner,
+          posts: posts
+        }
+      };
+      cb();
+    });
+  } else {
+    User.findOne({ _id: post.owner}, function (err, user) {
+      if (err) return next(err);
+      Post.findByAuthor(post.owner).ne('_id', post._id).run(function (err, posts) {
+        if (err) return next(err);
+        req.sidebar = {
+          viewFile: 'post/_sidebar',
+          data: {
+            user: user,
+            posts: posts
+          }
+        };
+        cb();
+      });
+    });
+  }
 }

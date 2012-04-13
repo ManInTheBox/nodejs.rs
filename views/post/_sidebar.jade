@@ -4,16 +4,12 @@
     a(href='/user/#{data.user.name.username}')
       img(src='/images/users/#{data.user.name.username}_small.jpg', class="align-left")
     = data.user.bio.about
-.sidemenu
-  h3 Još od istog autora
-  ul
-    - each post in data.posts
-      li
-        a(href='/post/#{post.titleUrl}')= substring(post.title)
+- if (data.posts.length)
+  .sidemenu.popular
+    h3 Još od istog autora
+    ul
+      - each post in data.posts
+        li
+          a(href='/post/#{post.titleUrl}')= substring(post.title)
 .sidemenu.popular
-  h3 Najnoviji
-  ul
-    - each post in data.posts
-      li
-        a(href='/post/#{post.titleUrl}')= substring(post.title)
-          span asdf
+  p Ovo je neki opis sajta.

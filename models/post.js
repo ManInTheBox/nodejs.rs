@@ -45,4 +45,21 @@ Post.statics.findWithFullDetails = function (postTitle, cb) {
   return this.findOne({ titleUrl: postTitle }).populate('owner').populate('comments').run(cb);
 };
 
+Post.statics.findByAuthor = function (author, cb) {
+  return this.find({ owner: author }, cb);
+};
+
+Post.statics.findNewest = function (limit, cb) {
+  var defultLimit = 10;
+
+  if ('function' === typeof limit) {
+    cb = limit;
+    limit = defultLimit;
+  }
+
+  limit = limit || defultLimit;
+
+  return this.find({}).limit(limit).desc('createdAt').run(cb);
+};
+
 module.exports = db.mongoose.model('Post', Post);
