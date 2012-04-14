@@ -4,7 +4,7 @@ article.post.single
     h3
       a(href='/post/#{post.titleUrl}')= post.title
     p.post-info Napisao 
-      a(href='/user/#{post.owner.name.username}')= post.owner.name.full || post.owner.name.username
+      a(href='/user/#{post._owner.name.username}')= post._owner.name.full || post._owner.name.username
       | , dana #{post.createdAtFormatted}
       span(style='float: right;')
         a(href='/post/#{post.titleUrl}/download', id='download') Preuzmi

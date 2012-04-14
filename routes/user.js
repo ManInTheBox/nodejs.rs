@@ -22,18 +22,8 @@ exports.register = function (req, res, next) {
   var user = new User();
 
   if (req.body.user) { // we have submitted form
-    var u = req.body.user,
-    photo = req.files.user.photo.size ? req.files.user.photo : null;
-
-    if (photo) {
-      if (!/(jpe?g|png|gif)/.test(photo.type)) {
-        user.errors = [ 'Dozvoljeni formati za fotografiju su: "jpeg, png, gif".' ];
-        user.displayFullForm = true;
-        return res.render('user/register', { user: user });
-      }
-
-      // TODO: sacuvati sliku u bazi...
-    }
+    var u = req.body.user;
+    u.photo = req.files.user.photo.size ? req.files.user.photo : null;
 
     user.name = {
       first: u.name.first.length ? u.name.first : undefined,
@@ -53,6 +43,15 @@ exports.register = function (req, res, next) {
 
     user.save(function (err) {
       if (err) { // validation failed
+        if (~err.toString().indexOf('duplicate key')) {
+          if (~err.toString().indexOf('username')) {
+            user.password = u.password;
+            user.errors = [ 'Korisničko ime je već zauzeto.' ];
+          } else if (~err.toString().indexOf('email')) {
+            user.password = u.password;
+            user.errors = [ 'E-mail je već zauzet.' ];
+          }
+        }
 
         var bio = false;
         if (user.bio.about)
@@ -74,18 +73,52 @@ exports.register = function (req, res, next) {
         return res.render('user/register', { user: user });
       }
 
-      // everything is cool, send email and redirect to login
-      var email = new Email({
-        message: {
-          to: [ user.email ]
-        },
-        type: Email.types['register']
-      });
+      if (u.photo) {
+        var picture = new Picture({
+          name: user.name.username,
+          size: u.photo.size,
+          type: u.photo.type
+        });
 
-      email.save(function (err) {
-        if (err) return next(err);
-        req.flash('success', 'Uspešno ste kreirali nalog. Sada se možete ulogovati.');
-        res.redirect('/login');
+        picture.store(u.photo.path, function (err) {
+          user.displayFullForm = true;
+          if (err) {
+            user.remove(function (err) {
+              if (err) return next(err);
+              user.errors = picture.errors;
+              user.password = u.password;
+              return res.render('user/register', { user: user });
+            });
+          } else {
+            User.update({ _id: user._id }, { photo: picture._id }, function (err) {
+              if (err) return next(err);
+              res.emit('user ready');
+            });
+          }
+        });
+      } else {
+        process.nextTick(function () {
+          res.emit('user ready');
+        });
+      }
+
+      res.on('user ready', function () {
+
+        return res.end('sad ce mejl');
+
+        // everything is cool, send email and redirect to login
+        var email = new Email({
+          message: {
+            to: [ user.email ]
+          },
+          type: Email.types['register']
+        });
+
+        email.save(function (err) {
+          if (err) return next(err);
+          req.flash('success', 'Uspešno ste kreirali nalog. Sada se možete ulogovati.');
+          res.redirect('/login');
+        });
       });
     });
   } else {

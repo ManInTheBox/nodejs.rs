@@ -15,7 +15,7 @@ var Post = require('../models/post'),
  * List action
  */
 exports.list = function (req, res, next) {
-  Post.find({}).desc('createdAt').populate('owner').populate('comments').run(function (err, posts) {
+  Post.find({}).desc('createdAt').populate('_owner').populate('comments').run(function (err, posts) {
     if (err) return next(err);
 
     var length = posts.length;
@@ -48,7 +48,7 @@ exports.new = function (req, res, next) {
   if (req.body.post) {
     var p = req.body.post;
     post.title = p.title;
-    post.owner = req.session.user._id;
+    post._owner = req.session.user._id;
     post.tags = p.tags;
 
     if (!p.content.length) {
@@ -93,7 +93,7 @@ exports.view = function (req, res, next) {
   }
 
   function isPostOwner(post) {
-    return req.session.user._id == post.owner._id;
+    return req.session.user._id == post._owner._id;
   }
 
   function isCommentOwner(comment) {
@@ -316,7 +316,7 @@ exports.comment = {
       if (!comment) return next();
 
       var _id = req.session.user._id;
-      if (comment._owner == _id || req.post.owner == _id) {
+      if (comment._owner == _id || req.post._owner == _id) {
         comment.remove(function (err) {
           if (err) return next(err);
           var pos = req.post.comments.indexOf(comment._id);
@@ -359,22 +359,22 @@ function checkPostSecurity(post, cb) {
 }
 
 function handleSidebar(req, res, next, post, cb) {
-  if (post.owner.length) {
-    Post.findByAuthor(post.owner).ne('_id', post._id).run(function (err, posts) {
+  if (post._owner.length) {
+    Post.findByAuthor(post._owner).ne('_id', post._id).run(function (err, posts) {
       if (err) return next(err);
       req.sidebar = {
         viewFile: 'post/_sidebar',
         data: {
-          user: post.owner,
+          user: post._owner,
           posts: posts
         }
       };
       cb();
     });
   } else {
-    User.findOne({ _id: post.owner}, function (err, user) {
+    User.findOne({ _id: post._owner}, function (err, user) {
       if (err) return next(err);
-      Post.findByAuthor(post.owner).ne('_id', post._id).run(function (err, posts) {
+      Post.findByAuthor(post._owner).ne('_id', post._id).run(function (err, posts) {
         if (err) return next(err);
         req.sidebar = {
           viewFile: 'post/_sidebar',

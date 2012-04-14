@@ -66,7 +66,7 @@ module.exports = function () {
             err.message = 'Tražena stranica nije pronađena.';
           break;
           default:
-            err.message = 'Nešto nije kako treba i već radimo na tome. Hvala na razumevanju.';
+            err.message = 'Nešto nije u redu i već radimo na tome. Hvala na razumevanju.';
           break;
         }
       } else {

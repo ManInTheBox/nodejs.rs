@@ -2,7 +2,7 @@ var db = require('./db'),
   helpers = require('../helpers');
 
 var Post = new db.Schema({
-  owner: { type: db.ObjectId, ref: 'User' },
+  _owner: { type: db.ObjectId, ref: 'User' },
   title: { 
     type: String, 
     set: helpers.toUpperCaseFirst,
@@ -42,11 +42,11 @@ Post.pre('save', function (next) {
 Post.methods.normalizeTitle = normalizeTitle;
 
 Post.statics.findWithFullDetails = function (postTitle, cb) {
-  return this.findOne({ titleUrl: postTitle }).populate('owner').populate('comments').run(cb);
+  return this.findOne({ titleUrl: postTitle }).populate('_owner').populate('comments').run(cb);
 };
 
 Post.statics.findByAuthor = function (author, cb) {
-  return this.find({ owner: author }, cb);
+  return this.find({ _owner: author }, cb);
 };
 
 Post.statics.findNewest = function (limit, cb) {
