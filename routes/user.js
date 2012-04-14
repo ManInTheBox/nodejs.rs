@@ -1,6 +1,7 @@
 /**
  * Helpers
  */
+
 var util = require('util'),
   qs = require('querystring'),
   url = require('url');
@@ -8,6 +9,7 @@ var util = require('util'),
 /**
  * Models
  */
+
 var User = require('../models/user'),
   Email = require('../models/email'),
   Picture = require('../models/picture');
@@ -15,24 +17,62 @@ var User = require('../models/user'),
 /**
  * Register action
  */
+
 exports.register = function (req, res, next) {
   var user = new User();
 
   if (req.body.user) { // we have submitted form
-    var u = req.body.user;
+    var u = req.body.user,
+    photo = req.files.user.photo.size ? req.files.user.photo : null;
+
+    if (photo) {
+      if (!/(jpe?g|png|gif)/.test(photo.type)) {
+        user.errors = [ 'Dozvoljeni formati za fotografiju su: "jpeg, png, gif".' ];
+        user.displayFullForm = true;
+        return res.render('user/register', { user: user });
+      }
+
+      // TODO: sacuvati sliku u bazi...
+    }
 
     user.name = {
       first: u.name.first.length ? u.name.first : undefined,
       last: u.name.last.length ? u.name.last : undefined,
       username: u.name.username
-      // dodati ostala polja
     };
     user.email = u.email;
     user.password = u.password;
+    user.bio = {
+      about: u.bio.about.length ? u.bio.about : undefined,
+      company: u.bio.company.length ? u.bio.company : undefined,
+      website: u.bio.website.length ? u.bio.website : undefined,
+      github: u.bio.github.length ? u.bio.github : undefined,
+      twitter: u.bio.twitter.length ? u.bio.twitter : undefined,
+      location: u.bio.location.length ? u.bio.location : undefined,
+    };
 
     user.save(function (err) {
-      if (err) // validation failed
+      if (err) { // validation failed
+
+        var bio = false;
+        if (user.bio.about)
+          bio = true;
+        if (user.bio.company)
+          bio = true;
+        if (user.bio.website)
+          bio = true;
+        if (user.bio.github)
+          bio = true;
+        if (user.bio.twitter)
+          bio = true;
+        if (user.bio.location)
+          bio = true;
+
+        if (user.name.first || user.name.last || bio) {
+          user.displayFullForm = true;
+        }
         return res.render('user/register', { user: user });
+      }
 
       // everything is cool, send email and redirect to login
       var email = new Email({
@@ -44,7 +84,7 @@ exports.register = function (req, res, next) {
 
       email.save(function (err) {
         if (err) return next(err);
-        req.flash('success', 'Uspesno ste kreirali nalog. Ulogujte se.');
+        req.flash('success', 'Uspešno ste kreirali nalog. Sada se možete ulogovati.');
         res.redirect('/login');
       });
     });
@@ -56,6 +96,7 @@ exports.register = function (req, res, next) {
 /**
  * Login action
  */
+
 exports.login = function (req, res, next) {
   var user = new User();
 
@@ -77,7 +118,7 @@ exports.login = function (req, res, next) {
 
       if (user.password === user.encryptPassword(u.password)) {
         req.session.user = user;
-        req.flash('success', 'Uspesno ste se ulogovali.');
+        req.flash('success', 'Uspešno ste se ulogovali.');
 
         if (req.session.returnUrl) {
           var returnUrl = req.session.returnUrl;
@@ -99,17 +140,19 @@ exports.login = function (req, res, next) {
 /**
  * View action
  */
+
 exports.view = function (req, res, next) {
   User.findByUsername(req.params.username, function (err, user) {
     if (err) return next(err);
     if (!user) return next();
-    // res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
     res.render('user/view', { user: user });
   });
 };
+
 /**
  * Edit action
  */
+
 exports.edit = function (req, res, next) {
   User.findOne({ 'name.username': req.params.username }, function (err, user) {
     if (err) return next(err);
@@ -201,8 +244,9 @@ exports.edit = function (req, res, next) {
 /**
  * Logout action
  */
+
 exports.logout = function (req, res) {
   delete req.session.user;
-  req.flash('success', 'Uspesno ste se izlogovali.');
+  req.flash('success', 'Uspešno ste se izlogovali.');
   res.redirect('/login');
 };

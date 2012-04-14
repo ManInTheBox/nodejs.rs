@@ -295,7 +295,7 @@ form textarea {
   border-width: 1px;
   border-style: solid;
     border-color: #DCDEE2 #E9EBED #E9EBED #DCDEE2;
-  font: 17px 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Verdana, Sans-serif;
+  font: 16px 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Verdana, Sans-serif;
 }
 form textarea {
     height: 325px;
@@ -1237,4 +1237,13 @@ a.back-to-top {
   font-size: 0.7em;
   padding-right: 16px;
   background: url(../images/back-to-top.png) no-repeat right 2px;
+}
+
+#errorPage {
+  margin: 30px 50px;
+  padding: 0;
+}
+#errorPage img {
+  /*border: none;*/
+  /*padding: 0;*/
 }

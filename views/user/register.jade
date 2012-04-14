@@ -4,7 +4,7 @@
       ul
         - each err in user.errors
           li= err
-  form(action='/register', method='POST')
+  form(action='/register', method='POST', enctype='multipart/form-data')
     
     input(type='hidden', name='_csrf', value=csrfToken)
     
@@ -20,7 +20,7 @@
       label(for='userPassword') Lozinka: 
         span.required *
       input(type='password', id='userPassword', name='user[password]', value=user.password)
-    #fullDetails
+    #full(style='display: none;')
       label(for='userNameFirst') Ime: 
       input(type='text', id='userNameFirst', name='user[name][first]', value=user.name.first)
 
@@ -36,7 +36,7 @@
       label(for='userBioWebsite') Website/Blog: 
       input(type='text', id='userBioWebsite', name='user[bio][website]', value=user.bio.website)
 
-      label(for='userBioGithub') Github: 
+      label(for='userBioGithub') GitHub: 
       input(type='text', id='userBioGithub', name='user[bio][github]', value=user.bio.github)
 
       label(for='userBioTwitter') Twitter: 
@@ -48,16 +48,18 @@
       label(for='userBioAbout') O meni: 
       textarea(id='userBioAbout', name='user[bio][about]')=user.bio.about
 
-    a(href='#', id='showFullDetails') Da, hoću da ostavim više informacija o sebi.
+    a(href='#', id='showFull') Da, želim da ostavim više podataka o sebi.
     br
     input(type='submit', value='Registruj se', class='submit')
 
+- if (user.displayFullForm)
+  script
+    $('#full').css('display', 'block');
 script(type='text/javascript')
-  $('#fullDetails').hide();
-  $('#showFullDetails').on('click', function () {
-    $('#fullDetails').toggle(200);
+  $('#showFull').on('click', function () {
+    $('#full').toggle(200);
     $("html, body").animate({
-        scrollTop: $('#fullDetails').offset().top
+        scrollTop: $('#full').offset().top
       }, {
       duration: 400,
       easing: "swing"

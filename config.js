@@ -43,8 +43,8 @@ module.exports = function () {
   app.use(express.static(__dirname + '/public'));
     
   app.use(function (req, res, next) {
-    var message = 'Nemaaaa togaaaa ovdeeee';
-    res.render('error/404', { status: 404, message: message, url: req.url });
+    var message = 'Tražena stranica nije pronađena.';
+    res.render('error/404', { status: 404, message: message });
   });
 
   app.configure('development', function () {
@@ -56,16 +56,21 @@ module.exports = function () {
 
       if (err instanceof HttpError) {
         switch (err.status) {
+          case 400:
+            err.message = 'Vaš zahtev nije validan. Molimo Vas ne pokušavajte to ponovo.';
+          break;
           case 403:
-            err.message = 'Ne moze breeeeeasdfasdf v cxc';
+            err.message = 'Nemate dozvolu za pristup ovoj stranici.';
           break;
           case 404:
-            err.message = 'Nemaaaa togaaaa ovdeeee';
+            err.message = 'Tražena stranica nije pronađena.';
           break;
           default:
-            err.message = 'Nesto je crklo i radim na tome.';
+            err.message = 'Nešto nije kako treba i već radimo na tome. Hvala na razumevanju.';
           break;
         }
+      } else {
+        err.message = 'Nešto nije u redu i već radimo na tome. Hvala na razumevanju.';
       }
 
       res.render('error/500', { status: err.status || 500, message: err.message });
