@@ -40,9 +40,9 @@ html
           a(href='/') email
           a(href='/') rss
 
-        form(id='quick-search')
+        form(action='/search/', id='quick-search')
           fieldset(class='search')
-            input(class='tbox', type='text', value='search')
+            input(class='tbox', type='text', name='term')
             button(class='btn', type='submit', value='search')
 
     #content-wrap

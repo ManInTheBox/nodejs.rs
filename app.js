@@ -54,13 +54,13 @@ function profileOwner(req, res, next) {
 function postOwner(req, res, next) {
   var conditions = {
     titleUrl: req.params.postTitle,
-    owner: req.session.user._id
+    _owner: req.session.user._id
   };
 
   if ('undefined' !== typeof req.params.postId) {
     conditions = {
       _id: req.params.postId,
-      owner: req.session.user._id
+      _owner: req.session.user._id
     };
   }
 
@@ -137,6 +137,10 @@ app.put('/post/:postTitle/edit', loginRequired, grantAccess(postOwner), routes.p
 app.post('/post/:postId/comment/new', loginRequired, routes.post.comment.new);
 
 app.del('/post/:postId/comment/:commentId/delete', loginRequired, routes.post.comment.delete);
+
+app.get('/search/:term', function (req, res) {
+  res.end(req.params.term);
+})
 
 app.listen(3000);
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);

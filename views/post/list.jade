@@ -1,5 +1,6 @@
 .main-content
   != messages()
+  a(href='/post/new', class='align-right') Napiši članak
 - each post in posts
   article.post
     .primary
@@ -7,7 +8,7 @@
         a(href='/post/#{post.titleUrl}')= post.title
       p.post-info tagovi: 
         - each tag, i in post.tags
-          a(href='/search?tag=' + encodeURIComponent(tag)) #{tag}
+          a(href='/search/' + encodeURIComponent(tag)) #{tag}
           - if (i < post.tags.length - 1)
             | , 
 

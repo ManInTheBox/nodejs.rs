@@ -1,25 +1,27 @@
-article.post
-  .main-content
-    h1 Editovanje: #{post.title}
-    form(action='/post/#{post.titleUrl}/edit', method='POST', class='edit')
-      - if (post.errors)
-        div(class='error')
-          ul
-            - each err in post.errors
-              li= err
+.main-content
+  != messages()
+  - if (post.errors)
+    div(class='error')
+      ul
+        - each err in post.errors
+          li= err
+  form(action='/post/#{post.titleUrl}/edit', method='POST')
 
-      input(type='hidden', name='_csrf', value=csrfToken)
-      input(type='hidden', name='_method', value='PUT')
+    input(type='hidden', name='_csrf', value=csrfToken)
+    input(type='hidden', name='_method', value='PUT')
 
-      div
-        label(for='postTitle') Naslov: 
-        input(type='text', id='postTitle', name='post[title]', value=post.title)
-      div
-        label(for='postContent') Sadrzaj: 
-        textarea(id='postContent', name='post[content]')= post.content
-      div
-        label(for='postTags') Tagovi 
-          span (razdvojiti ih zarezom)
-        input(type='text', id='postTags', name='post[tags]', value=post.tags)
-      .no-border
-        input(type='submit', value='Sacuvaj', class='button')
+    div
+      label(for='postTitle') Naslov: 
+        span.required *
+      input(type='text', id='postTitle', name='post[title]', value=post.title)
+    div
+      label(for='postContent') Sadržaj: 
+        span.required *
+      textarea(id='postContent', name='post[content]')= post.content
+    div
+      label(for='postTags') Tagovi (odvojiti zarezima): 
+      input(type='text', id='postTags', name='post[tags]', value=post.tags)
+
+    input(type='submit', value='Sačuvaj', class='submit')
+    a(href='/post/#{post.titleUrl}')
+      input(type='button', value='Odustani', class='submit')

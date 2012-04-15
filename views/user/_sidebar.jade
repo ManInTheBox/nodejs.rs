@@ -1,0 +1,30 @@
+.about-me
+  h3 O korisniku
+  p
+    a(href='/user/#{data.user.name.username}')
+      img(src='/images/users/#{data.user.name.username}_small.jpg', class="align-left")
+    = data.user.bio.about
+
+  .clearfix
+
+  p.small
+    label Website/Blog:
+    br
+    a(href='#{user.bio.website}')= user.bio.website
+    br
+    label GitHub:
+    br
+    a(href='#{user.bio.github}')= user.bio.github
+    br  
+    label Twitter:
+    br
+    a(href='#{user.bio.twitter}')= user.bio.twitter
+- if (data.posts.length)
+  .sidemenu.popular
+    h3 Članci od ovog autora
+    ul
+      - each post in data.posts
+        li
+          a(href='/post/#{post.titleUrl}')= substring(post.title)
+.sidemenu.popular
+  p Ovo je neki opis sajta.

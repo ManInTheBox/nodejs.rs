@@ -62,7 +62,7 @@ var User = new db.Schema({
     },
     website: {
       type: String,
-      validate: [ helpers.UrlValidator, 'url', 'Website nije ispravna URL adresa.' ]
+      validate: [ helpers.UrlValidator, 'url', 'Website/Blog nije ispravna URL adresa.' ]
     },
     github: {
       type: String,

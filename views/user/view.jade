@@ -1,18 +1,36 @@
-article.post
-  .main-content
-    != messages()
-    h3= user.name.full
+.main-content
+  != messages()
+  h3
+    = user.name.username
     - if (session.user && session.user._id == user._id)
-      a(href='/user/#{user.name.username}/edit') Edit
-    p
-      img(src='/images/users/' + user.photo.name + '_large.jpg', class='align-left')
+      a(href='/user/#{user.name.username}/edit') &nbsp;Edit
+  
+  img(src='/images/users/#{user.name.username}_large.jpg', class='align-left')
 
-    p E-mail: 
-      a(href='mailto:#{user.email}')= user.email
-    p GitHub: 
+
+  .desc
+    label Ime: 
+    = user.name.full
+  .desc
+    label GitHub: 
       a(href='#{user.bio.github}', target='_blank')= user.bio.github
-    p Twitter: 
+  .desc
+    label Twitter: 
       a(href='#{user.bio.twitter}', target='_blank')= user.bio.twitter
-    p Website: 
+  .desc
+    label Website/Blog: 
       a(href='#{user.bio.website}', target='_blank')= user.bio.website
-    blockquote= user.bio.about
+  .desc
+    label Lokacija: 
+    = user.bio.location
+  .desc
+    label Kompanija: 
+    = user.bio.company
+  .desc
+    label E-mail: 
+      a(href='mailto:#{user.email}')= user.email
+
+
+  .clearfix
+
+  blockquote= user.bio.about || 'Korisnik nije ostavio podatke.'

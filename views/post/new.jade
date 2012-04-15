@@ -1,19 +1,26 @@
-form(action='/post/new', method='POST')
-  - if ('undefined' !== typeof post.errors)
+.main-content
+  != messages()
+  - if (post.errors)
     div(class='error')
       ul
         - each err in post.errors
           li= err
-          
-  input(type='hidden', name='_csrf', value=csrfToken)
+  form(action='/post/new', method='POST')
+            
+    input(type='hidden', name='_csrf', value=csrfToken)
 
-  label(for='postTitle') Naslov: 
-  input(type='text', id='postTitle', name='post[title]', value=post.title)
-  br
-  label(for='postContent') Sadrzaj: 
-  textarea(id='postContent', name='post[content]')= post.content
-  br
-  label(for='postTags') Tagovi: 
-  input(type='text', id='postTags', name='post[tags]')= post.tags
+    div
+      label(for='postTitle') Naslov: 
+        span.required *
+      input(type='text', id='postTitle', name='post[title]', value=post.title)
+    div
+      label(for='postContent') Sadržaj: 
+        span.required *
+      textarea(id='postContent', name='post[content]')= post.content
+    div
+      label(for='postTags') Tagovi (odvojiti zarezima): 
+      input(type='text', id='postTags', name='post[tags]')= post.tags
 
-  input(type='submit', value='Kreiraj')
+    input(type='submit', value='Kreiraj', class='submit')
+    a(href='/post')
+      input(type='button', value='Odustani', class='submit')

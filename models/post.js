@@ -7,9 +7,9 @@ var Post = new db.Schema({
     type: String, 
     set: helpers.toUpperCaseFirst,
     trim: true,
-    required: [ true, '{path|Naslov} je obavezno polje.' ],
-    min: [ 3, '{path|Naslov} je prekratak (minimum je {min} karaktera).' ],
-    max: [ 60, '{path|Naslov} je predugačak (maksimum je {max} karaktera).' ]
+    required: [ true, 'Naslov je obavezno polje.' ],
+    min: [ 3, 'Naslov je prekratak (minimum je {min} karaktera).' ],
+    max: [ 60, 'Naslov je predugačak (maksimum je {max} karaktera).' ]
   },
   titleUrl: {
     type: String,

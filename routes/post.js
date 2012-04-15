@@ -217,6 +217,7 @@ exports.delete = function (req, res, next) {
 /**
  * Edit action
  */
+
 exports.edit = function (req, res, next) {
   Post.findOne({ titleUrl: req.params.postTitle }, function (err, post) {
     if (err) return next(err);
@@ -230,7 +231,7 @@ exports.edit = function (req, res, next) {
       post.updatedAt = Date.now();
 
       if (!p.content.length) {
-        post.errors = ['Sadržaj je obavezno polje.'];
+        post.errors = [ 'Sadržaj je obavezno polje.' ];
         handleSidebar(req, res, next, post, function () {
           res.render('post/edit', { post: post });
         });
@@ -242,7 +243,7 @@ exports.edit = function (req, res, next) {
         post.save(function (err) {
           if (err) {
             if (~err.toString().indexOf('duplicate key')) {
-              post.errors = ['Naslov je već zauzet.'];
+              post.errors = [ 'Naslov je već zauzet.' ];
               post.titleUrl = originalTitleUrl;
             }
 

@@ -12,7 +12,8 @@ var util = require('util'),
 
 var User = require('../models/user'),
   Email = require('../models/email'),
-  Picture = require('../models/picture');
+  Picture = require('../models/picture')
+  Post = require('../models/post');
 
 /**
  * Register action
@@ -103,9 +104,6 @@ exports.register = function (req, res, next) {
       }
 
       res.on('user ready', function () {
-
-        return res.end('sad ce mejl');
-
         // everything is cool, send email and redirect to login
         var email = new Email({
           message: {
@@ -131,9 +129,8 @@ exports.register = function (req, res, next) {
  */
 
 exports.login = function (req, res, next) {
-  var user = new User();
-
-  var returnUrl = qs.parse(url.parse(req.url).query).returnUrl;
+  var user = new User(),
+    returnUrl = qs.parse(url.parse(req.url).query).returnUrl;
 
   if (returnUrl) {
     req.session.returnUrl = returnUrl;
@@ -178,7 +175,9 @@ exports.view = function (req, res, next) {
   User.findByUsername(req.params.username, function (err, user) {
     if (err) return next(err);
     if (!user) return next();
-    res.render('user/view', { user: user });
+    handleSidebar(req, res, next, user, function () {
+      res.render('user/view', { user: user });
+    });
   });
 };
 
@@ -192,84 +191,107 @@ exports.edit = function (req, res, next) {
     if (!user) return next(); // 404 will catch this...
 
     if (req.body.user) {
-      var u = req.body.user,
-        photo = req.files.user.photo.size ? req.files.user.photo : null;
+      var u = req.body.user;
+      u.photo = req.files.user.photo.size ? req.files.user.photo : null;
 
-      if (photo) {
-        if (!/jpe?g/.test(photo.type)) {
-          user.password = null;
-          user.errors = [ 'Dozovljeni format za fotografiju je "jpeg".' ];
-          return res.render('user/edit', { user: user });
-        }
+      if (u.password) {
+        user.password = u.password;
+        user.passwordRepeat = u.passwordRepeat;
 
-        var picture = new Picture({
-          path: photo.path,
-          name: req.session.user.name.username
-        });
-
-        picture.crop(function (err) {
-          if (err) return next(err);
-          picture.save(function (err) {
-            if (err) return next(err);
-            // process.nextTick(function () {
-              res.emit('photo', picture._id);
-            // });
+        if (!u.passwordRepeat) {
+          user.errors = [ 'Morate uneti potvrdu lozinke.' ];
+          handleSidebar(req, res, next, user, function () {
+            res.render('user/edit', { user: user });
           });
-        });
-      } else {
-        process.nextTick(function () {
-          res.emit('photo', undefined);
-        });
+          return;
+        } else if (u.password !== u.passwordRepeat) {
+          user.errors = [ 'Lozinke se ne poklapaju.' ];
+          handleSidebar(req, res, next, user, function () {
+            res.render('user/edit', { user: user });
+          });
+          return;
+        }
       }
 
-      res.on('photo', function (photo) {
-        if (u.password) {
-          user.password = u.password;
-          user.passwordRepeat = u.passwordRepeat;
+      var originalUsername = user.name.username;
 
-          if (!u.passwordRepeat) {
-            user.errors = [ 'Morate uneti potvrdu lozinke.' ];
-            return res.render('user/edit', { user: user });
-          } else if (u.password !== u.passwordRepeat) {
-            user.errors = [ 'Lozinke se ne poklapaju.' ];
-            return res.render('user/edit', { user: user });
+      user.name.first = u.name.first.length ? u.name.first : undefined;
+      user.name.last = u.name.last.length ? u.name.last : undefined;
+      user.name.username = u.name.username;
+      user.bio.about = u.bio.about.length ? u.bio.about : undefined;
+      user.bio.company = u.bio.company.length ? u.bio.company : undefined;
+      user.bio.website = u.bio.website.length ? u.bio.website : undefined;
+      user.bio.github = u.bio.github.length ? u.bio.github : undefined;
+      user.bio.twitter = u.bio.twitter.length ? u.bio.twitter : undefined;
+      user.bio.location = u.bio.location.length ? u.bio.location : undefined;
+
+      user.save(function (err) {
+        if (err) {
+          if (~err.toString().indexOf('duplicate key')) {
+            user.errors = [ 'Korisničko ime je već zauzeto.' ];
+            user.name.username = originalUsername;
           }
+          user.password = null; // don't display anything
+          handleSidebar(req, res, next, user, function () {
+            res.render('user/edit', { user: user });
+          });
+          return;
         }
 
-        user.name.first = u.name.first.length ? u.name.first : undefined;
-        user.name.last = u.name.last.length ? u.name.last : undefined;
-        user.name.username = u.name.username;
-        user.photo = photo;
-        user.bio.about = u.bio.about.length ? u.bio.about : undefined;
-        user.bio.company = u.bio.company.length ? u.bio.company : undefined;
-        user.bio.website = u.bio.website.length ? u.bio.website : undefined;
-        user.bio.github = u.bio.github.length ? u.bio.github : undefined;
-        user.bio.twitter = u.bio.twitter.length ? u.bio.twitter : undefined;
-        user.bio.location = u.bio.location.length ? u.bio.location : undefined;
+        if (u.password) {
+          User.update({ password: user.encryptPassword() }, function (err) {
+            if (err) return next(err);
+            req.session.user = user;
+            res.emit('ready for photo');
+          });
+        } else {
+          req.session.user = user;
+          process.nextTick(function () {
+            res.emit('ready for photo');
+          });
+        }
 
-        user.save(function (err) {
-          if (err) {
-            user.password = null; // don't display anything
-            return res.render('user/edit', { user: user });
-          }
+        res.on('ready for photo', function () {
+          if (u.photo) {
+            var picture = new Picture({
+              name: user.name.username,
+              size: u.photo.size,
+              type: u.photo.type
+            });
 
-          if (u.password) {
-            User.update({ password: user.encryptPassword() }, function (err) {
-              if (err) return next(err);
-              req.session.user = user;
-              req.flash('success', 'Uspešno sačuvane izmene profila.');
-              res.redirect('/user/' + user.name.username);
+            picture.store(u.photo.path, function (err) {
+              if (err) {
+                user.password = null;
+                user.errors = picture.errors;
+                handleSidebar(req, res, next, user, function () {
+                  res.render('user/edit', { user: user });
+                });
+                return;
+              } else {
+                User.update({ _id: user._id }, { photo: picture._id }, function (err) {
+                  if (err) return next(err);
+                  res.emit('photo done');
+                });
+              }
             });
           } else {
-            req.session.user = user;
-            req.flash('success', 'Uspešno sačuvane izmene profila.');
-            res.redirect('/user/' + user.name.username);
+            process.nextTick(function () {
+              res.emit('photo done');
+            });
           }
         });
+
+        res.on('photo done', function () {
+          req.flash('success', 'Uspešno sačuvane izmene profila.');
+          res.redirect('/user/' + user.name.username);
+        });
+
       });
     } else {
       user.password = null; // don't display anything
-      res.render('user/edit', { user: user });
+      handleSidebar(req, res, next, user, function () {
+        res.render('user/edit', { user: user });
+      });
     }
   });
 };
@@ -283,3 +305,17 @@ exports.logout = function (req, res) {
   req.flash('success', 'Uspešno ste se izlogovali.');
   res.redirect('/login');
 };
+
+function handleSidebar(req, res, next, user, cb) {
+  Post.findByAuthor(user._id, function (err, posts) {
+    if (err) return next(err);
+    req.sidebar = {
+      viewFile: 'user/_sidebar',
+      data: {
+        user: user,
+        posts: posts
+      }
+    };
+    cb();
+  });
+}
