@@ -1244,3 +1244,7 @@ a.back-to-top {
 /*textarea {
   word-wrap: none;
 }*/
+
+em {
+  font-style: italic;
+}

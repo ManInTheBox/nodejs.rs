@@ -5,7 +5,7 @@ var Post = require('../models/post'),
   flags = md.flags.autolink | md.flags.noHTML;
   path = require('path'),
   util = require('util'),
-  contentPath = path.normalize(__dirname + '/../public/stories/'),
+  contentPath = path.normalize(__dirname + '/../public/articles/'),
   HttpError = require('../httperror'),
   User = require('../models/user'),
   helpers = require('../helpers');
@@ -14,6 +14,7 @@ var Post = require('../models/post'),
 /**
  * List action
  */
+
 exports.list = function (req, res, next) {
   Post.find({}).desc('createdAt').populate('_owner').populate('comments').run(function (err, posts) {
     if (err) return next(err);
@@ -42,6 +43,7 @@ exports.list = function (req, res, next) {
 /**
  * New action
  */
+
 exports.new = function (req, res, next) {
   var post = new Post();
 
@@ -82,6 +84,7 @@ exports.new = function (req, res, next) {
 /**
  * View action
  */
+
 exports.view = function (req, res, next) {
 
   function isLoggedIn() {
@@ -126,7 +129,7 @@ exports.view = function (req, res, next) {
               comment.cssClass = (isLoggedIn() && isCommentOwner(comment)) ? ['thread-alt', 'depth-1'] : 'depth-1';
 
               // comment.text = md.parse(comment.text, flags);
-              comment.text = helpers.markdown(comment.text);
+              comment.text = helpers.miniMarkdown(comment.text);
 
               if (--length === 0)
                 res.emit('comments loaded');
@@ -156,6 +159,7 @@ exports.view = function (req, res, next) {
 /**
  * Download action
  */
+
 exports.download = function (req, res, next) {
   var fileName = path.join(contentPath, req.params.postTitle + '.md');
 
@@ -199,6 +203,7 @@ exports.download = function (req, res, next) {
 /**
  * Delete action
  */
+ 
 exports.delete = function (req, res, next) {
   Post.findById(req.params.postId, function (err, post) {
     if (err) return next(err);
@@ -258,7 +263,7 @@ exports.edit = function (req, res, next) {
             if (err) return next(err);
             fs.writeFile(filePath, p.content, function (err) {
               if (err) return next(err);
-              req.flash('success', 'Uspesno editovan post "' + post.title + '"');
+              req.flash('success', 'Uspešno editovan članak "' + post.title + '"');
               res.redirect('/post/' + post.titleUrl);
             });
           });
@@ -282,10 +287,13 @@ exports.edit = function (req, res, next) {
 /**
  * Post comment actions
  */
+
 exports.comment = {
+
   /**
    * New comment action
    */
+
   new: function (req, res, next) {
     var comment = new Comment({
       _owner: req.session.user._id,
@@ -303,14 +311,16 @@ exports.comment = {
       req.post.comments.push(comment);
       req.post.save(function (err) {
         if (err) return next(err);
-        req.flash('success', 'Novi komentar uspesno dodat.');
+        req.flash('success', 'Novi komentar uspešno dodat.');
         res.redirect('/post/' + req.post.titleUrl);
       });
     });
   },
+
   /**
    * Delete comment action
    */
+
   delete: function (req, res, next) {
     Comment.findById(req.params.commentId, function (err, comment) {
       if (err) return next(err);
@@ -329,8 +339,12 @@ exports.comment = {
 
           req.post.save(function (err) {
             if (err) return next(err);
-            req.flash('success', 'Uspesno obrisan komentar');
-            res.end();
+            if (req.xhr) {
+              return res.send('Komentar uspešno obrisan.');
+            } else {
+              req.flash('success', 'Komentar uspešno obrisan.');
+              res.end();
+            }
           });
         });
       } else { 
@@ -338,9 +352,11 @@ exports.comment = {
       }
     });
   },
+
   /**
    * Edit comment action
    */
+
   edit: function (req, res, next) {
     res.end('in progress...');
   }

@@ -85,3 +85,25 @@ exports.substring = function (string, length) {
   length = length || 30;
   return string.length > length ? string.substring(0, length) + '...' : string;
 };
+
+/**
+ * Parse mini markdown implementation.
+ * The following conversions are supported,
+ * primarily for the "flash" middleware:
+ *
+ *    _foo_ or *foo* become <em>foo</em>
+ *    __foo__ or **foo** become <strong>foo</strong>
+ *    [A](B) becomes <a href="B">A</a>
+ *
+ * @param {String} str
+ * @return {String}
+ * @api private
+ * @author TJ Holowaychuk (extracted from express.utils)
+ */
+
+exports.miniMarkdown = function(str){
+  return String(str)
+    .replace(/(__|\*\*)(.*?)\1/g, '<strong>$2</strong>')
+    .replace(/(_|\*)(.*?)\1/g, '<em>$2</em>')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+};

@@ -31,7 +31,18 @@ Post.path('tags').set(function (v) {
 });
 
 function normalizeTitle(v) {
-  return v.toLowerCase().replace(/\s/g, '-');
+  return v
+          .toLowerCase()
+          .replace(/č/g, 'c')
+          .replace(/ć/g, 'c')
+          .replace(/š/g, 's')
+          .replace(/đ/g, 'dj')
+          .replace(/ž/g, 'z')
+          .replace(/(\s)+/g, '-')
+          .replace(/[^a-zA-Z0-9-]/g, '')
+          .replace(/-{2,}/g, '')
+          .replace(/^-/, '')
+          .replace(/-$/, '');
 };
 
 Post.pre('save', function (next) {

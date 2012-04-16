@@ -1,6 +1,7 @@
 article.post.single
   .main-content
     != messages()
+    #ajaxResponse
     h3
       a(href='/post/#{post.titleUrl}')= post.title
     p.post-info Napisao 
@@ -23,13 +24,10 @@ article.post.single
     div!= post.content
     a(href='#top', class='back-to-top') vrh
 
-
 - if (session.user)
   != partial('_addComment')
 - else
   a(href='/login?returnUrl=' + encodeURIComponent('/post/#{post.titleUrl}#add-comment')) Dodaj komentar
-
-
 
 div(class='post-bottom-section', id='comments')  
   h3 Komentari korisnika
@@ -48,16 +46,16 @@ div(class='post-bottom-section', id='comments')
                   a(href='/post/#{post.titleUrl}#comment-#{comment._id}')= comment.createdAtFormatted
                   - if (canEditPost || session.user && session.user._id == comment._owner)
                     span(style='padding-left: 20px;')
-                      a(href='#', id="#{comment._id}", class='editComment')  Edituj 
+                      a(href='#', id="#{comment._id}", class='editComment')  Izmeni 
                       | | 
                       a(href='#', id='#{comment._id}', class='deleteComment') Obriši
             .comment-text
               != comment.text
 
 script(type='text/javascript')
-  $('#deletePost').click(function (e) {
+  $('#deletePost').on('click', function (e) {
     e.preventDefault();
-    confirm('Da li sigurno zelite da obrisete post?')
+    confirm('Da li sigurno želite da obrišete vaš članak?')
     ?
     $.ajax({
       url: '/post/#{post._id}/delete',
@@ -77,9 +75,10 @@ script(type='text/javascript')
   });
 
 script(type='text/javascript')
-  $('.deleteComment').click(function (e) {
+  $('.deleteComment').on('click', function (e) {
+    var self = this;
     e.preventDefault();
-    confirm('Da li sigurno zelite da obrisete vas komentar?')
+    confirm('Da li sigurno želite da obrišete vaš komentar?')
     ?
     $.ajax({
       url: '/post/#{post._id}/comment/' + $(this).attr('id') + '/delete',
@@ -89,19 +88,46 @@ script(type='text/javascript')
         '_csrf': '#{csrfToken}'
       },
       success: function (response) {
-        window.location.href = '/post/#{post.titleUrl}';
+        $('#ajaxResponse').attr('id', 'messages');
+        $('#messages').html(
+          '<ul class="success"><li>' + response + '</li></ul>'
+        );
+        $(self).parents('li.depth-1').slideUp(50, function () {
+          $(self).remove();
+          $("html, body").animate({
+              scrollTop: 0
+            }, {
+            duration: 400,
+            easing: "swing"
+          });
+        });
       },
       error: function (xhr) {
-        console.log(xhr.responseText);
+        console.log('err', xhr);
       }
     })
     : false;
   });
 
 script(type='text/javascript')
-  $('.editComment').click(function (e) {
-    e.preventDefault();
-    alert('uskoro....');
+  $('.editComment').toggle(function () {
+    var commentBox = $(this).parents('li.depth-1').find('.comment-text');
+    commentBox.html('<textarea>' + commentBox.text() + '</textarea>');
+    $(this).text('Sačuvaj ');
+    commentBox.find('textarea').focus();
+  }, function () {
+    var commentBox = $(this).parents('li.depth-1').find('.comment-text');
+    commentBox.text(commentBox.find('textarea').val());
+    $(this).text('Izmeni ');
+
+    // ovde ide ajax za edit...
+
+    $("html, body").animate({
+        scrollTop: 0
+      }, {
+      duration: 400,
+      easing: "swing"
+    });
   });
 
   $('#download').toggle(function () {
