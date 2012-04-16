@@ -129,7 +129,7 @@ exports.view = function (req, res, next) {
               comment.cssClass = (isLoggedIn() && isCommentOwner(comment)) ? ['thread-alt', 'depth-1'] : 'depth-1';
 
               // comment.text = md.parse(comment.text, flags);
-              comment.text = helpers.miniMarkdown(comment.text);
+              comment.text = helpers.markdown(comment.text);
 
               if (--length === 0)
                 res.emit('comments loaded');
@@ -263,7 +263,7 @@ exports.edit = function (req, res, next) {
             if (err) return next(err);
             fs.writeFile(filePath, p.content, function (err) {
               if (err) return next(err);
-              req.flash('success', 'Uspešno editovan članak "' + post.title + '"');
+              req.flash('success', 'Uspešno izmenjen članak "' + post.title + '"');
               res.redirect('/post/' + post.titleUrl);
             });
           });
@@ -343,11 +343,11 @@ exports.comment = {
               return res.send('Komentar uspešno obrisan.');
             } else {
               req.flash('success', 'Komentar uspešno obrisan.');
-              res.end();
+              res.redirect('/post/' + req.post.titleUrl);
             }
           });
         });
-      } else { 
+      } else {
         return next(new HttpError(403)); 
       }
     });
@@ -358,7 +358,31 @@ exports.comment = {
    */
 
   edit: function (req, res, next) {
-    res.end('in progress...');
+    Comment.findById(req.params.commentId, function (err, comment) {
+      if (err) return next(err);
+      if (!comment) return next();
+
+      var _id = req.session.user._id;
+      if (comment._owner == _id || req.post._owner == _id) {
+        comment.text = req.body.text;
+        comment.save(function (err) {
+          if (req.xhr) {
+            if (err) return res.send({ err: err.errors.text.message });
+            return res.send({
+              text: helpers.markdown(comment.text),
+              msg: 'Komentar uspešno izmenjen.'
+            });
+          } else {
+            if (err) return next(err);
+            req.flash('success', 'Komentar uspešno izmenjen.');
+            res.redirect('/post/' + req.post.titleUrl);
+          }
+        });
+      } else {
+        return next(new HttpError(403)); 
+      }
+
+    });
   }
 };
 

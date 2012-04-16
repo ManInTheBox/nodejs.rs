@@ -46,9 +46,9 @@ div(class='post-bottom-section', id='comments')
                   a(href='/post/#{post.titleUrl}#comment-#{comment._id}')= comment.createdAtFormatted
                   - if (canEditPost || session.user && session.user._id == comment._owner)
                     span(style='padding-left: 20px;')
-                      a(href='#', id="#{comment._id}", class='editComment')  Izmeni 
+                      a(href='#', rel="#{comment._id}", class='editComment')  Izmeni 
                       | | 
-                      a(href='#', id='#{comment._id}', class='deleteComment') Obriši
+                      a(href='#', rel='#{comment._id}', class='deleteComment') Obriši
             .comment-text
               != comment.text
 
@@ -81,7 +81,7 @@ script(type='text/javascript')
     confirm('Da li sigurno želite da obrišete vaš komentar?')
     ?
     $.ajax({
-      url: '/post/#{post._id}/comment/' + $(this).attr('id') + '/delete',
+      url: '/post/#{post._id}/comment/' + $(this).attr('rel') + '/delete',
       type: 'POST',
       data: { 
         '_method': 'DELETE',
@@ -103,7 +103,7 @@ script(type='text/javascript')
         });
       },
       error: function (xhr) {
-        console.log('err', xhr);
+        console.log(xhr.responseText);
       }
     })
     : false;
@@ -116,17 +116,42 @@ script(type='text/javascript')
     $(this).text('Sačuvaj ');
     commentBox.find('textarea').focus();
   }, function () {
+    var self = this;
     var commentBox = $(this).parents('li.depth-1').find('.comment-text');
-    commentBox.text(commentBox.find('textarea').val());
+    var newText = commentBox.find('textarea').val();
     $(this).text('Izmeni ');
 
-    // ovde ide ajax za edit...
-
-    $("html, body").animate({
-        scrollTop: 0
-      }, {
-      duration: 400,
-      easing: "swing"
+    $.ajax({
+      url: '/post/#{post._id}/comment/' + $(this).attr('rel') + '/edit',
+      type: 'POST',
+      data: {
+        '_method': 'PUT',
+        '_csrf': '#{csrfToken}',
+        'text': newText
+      },
+      success: function (r) {
+        $('#ajaxResponse').attr('id', 'messages');
+        if (r.err) {
+          $('#messages').html(
+            '<ul class="error"><li>' + r.err + '</li></ul>'
+          );
+        } else {
+          $('#messages').html(
+            '<ul class="success"><li>' + r.msg + '</li></ul>'
+          );
+          newText = r.text;
+        }
+        commentBox.html(newText);
+        $("html, body").animate({
+            scrollTop: 0
+          }, {
+          duration: 400,
+          easing: "swing"
+        });
+      },
+      error: function (xhr) {
+        console.log(xhr.responseText);
+      }
     });
   });
 

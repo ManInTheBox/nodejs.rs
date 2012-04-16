@@ -6,7 +6,7 @@ var Comment = new db.Schema({
     type: String,
     required: [ true, 'Sadržaj komentara je obavezno polje.' ],
     min: [ 2, 'Komentar je prekratak (minimum je {min} karaktera).' ],
-    max: [ 500, 'Komentar je predugačak (maksimum je {max} karaktera).' ]
+    max: [ 1000, 'Komentar je predugačak (maksimum je {max} karaktera).' ]
   },
   createdAt: { type: Date, default: Date.now }
 });

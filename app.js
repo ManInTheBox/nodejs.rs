@@ -73,7 +73,7 @@ function postOwner(req, res, next) {
 app.param('postId', function (req, res, next, postId) {
   Post.findById(postId, function (err, post) {
     if (err) return next(err);
-    if (!post) return next(new HttpError(404, 'Ne postoji trazeni post.'));
+    if (!post) return next(new HttpError(404));
     req.post = post;
     next();
   });
@@ -137,6 +137,7 @@ app.put('/post/:postTitle/edit', loginRequired, grantAccess(postOwner), routes.p
 app.post('/post/:postId/comment/new', loginRequired, routes.post.comment.new);
 
 app.del('/post/:postId/comment/:commentId/delete', loginRequired, routes.post.comment.delete);
+app.put('/post/:postId/comment/:commentId/edit', loginRequired, routes.post.comment.edit);
 
 app.get('/search/:term', function (req, res) {
   res.end(req.params.term);
