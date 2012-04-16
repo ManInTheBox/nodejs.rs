@@ -17,7 +17,7 @@ var Post = new db.Schema({
     unique: true
   },
   createdAt: { type: Date, default: Date.now },
-  updatedAt: Date,
+  updatedAt: { type: Date, default: Date.now },
   comments: [{ type: db.ObjectId, ref: 'Comment' }],
   tags: [ String ]
 });

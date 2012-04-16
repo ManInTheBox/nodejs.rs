@@ -4,7 +4,8 @@ article.post.single
     #ajaxResponse
     h3
       a(href='/post/#{post.titleUrl}')= post.title
-    p.post-info Napisao 
+    .post-info
+      | Napisao 
       a(href='/user/#{post._owner.name.username}')= post._owner.name.full || post._owner.name.username
       | , dana #{post.createdAtFormatted}
       span(style='float: right;')
@@ -17,9 +18,12 @@ article.post.single
           br
           a(href='/post/#{post.titleUrl}.pdf/download') Kao PDF format
       - if (canEditPost)
-        a(href='/post/#{post.titleUrl}/edit') Edituj 
-        | |  
-        a(href='#', id='deletePost') Obriši
+        span.small
+          a(href='/post/#{post.titleUrl}/edit') &nbsp;&nbsp;Izmeni 
+          | |  
+          a(href='#', id='deletePost') Obriši
+
+      span.small.clear &nbsp;&nbsp;Poslednji put ažurirano: #{post.updatedAtFormatted}
 
     div!= post.content
     a(href='#top', class='back-to-top') vrh
@@ -29,7 +33,7 @@ article.post.single
 - else
   a(href='/login?returnUrl=' + encodeURIComponent('/post/#{post.titleUrl}#add-comment')) Dodaj komentar
 
-div(class='post-bottom-section', id='comments')  
+#comments.post-bottom-section  
   h3 Komentari korisnika
   .primary
     ol.commentlist
@@ -45,12 +49,13 @@ div(class='post-bottom-section', id='comments')
                 span.comment-data
                   a(href='/post/#{post.titleUrl}#comment-#{comment._id}')= comment.createdAtFormatted
                   - if (canEditPost || session.user && session.user._id == comment._owner)
-                    span(style='padding-left: 20px;')
+                    span.small(style='padding-left: 20px;')
                       a(href='#', rel="#{comment._id}", class='editComment')  Izmeni 
                       | | 
                       a(href='#', rel='#{comment._id}', class='deleteComment') Obriši
             .comment-text
               != comment.text
+    a(href='#top', class='back-to-top') vrh
 
 script(type='text/javascript')
   $('#deletePost').on('click', function (e) {
@@ -111,16 +116,29 @@ script(type='text/javascript')
 
 script(type='text/javascript')
   $('.editComment').toggle(function () {
-    var commentBox = $(this).parents('li.depth-1').find('.comment-text');
-    commentBox.html('<textarea>' + commentBox.text() + '</textarea>');
-    $(this).text('Sačuvaj ');
-    commentBox.find('textarea').focus();
+    var self = this;
+    $.ajax({
+      url: '/post/#{post._id}/comment/' + $(this).attr('rel') + '/edit',
+      type: 'POST',
+      data: {
+        '_method': 'PUT',
+        '_csrf': '#{csrfToken}',
+        'get': true
+      },
+      success: function (r) {
+        var commentBox = $(self).parents('li.depth-1').find('.comment-text');
+        commentBox.html('<textarea>' + r + '</textarea>');
+        $(self).text('Sačuvaj ');
+        commentBox.find('textarea').focus();
+      },
+      error: function (xhr) {
+        console.log(xhr.responseText);
+      }  
+    });
   }, function () {
     var self = this;
     var commentBox = $(this).parents('li.depth-1').find('.comment-text');
     var newText = commentBox.find('textarea').val();
-    $(this).text('Izmeni ');
-
     $.ajax({
       url: '/post/#{post._id}/comment/' + $(this).attr('rel') + '/edit',
       type: 'POST',
@@ -130,6 +148,7 @@ script(type='text/javascript')
         'text': newText
       },
       success: function (r) {
+        $(self).text('Izmeni ');
         $('#ajaxResponse').attr('id', 'messages');
         if (r.err) {
           $('#messages').html(

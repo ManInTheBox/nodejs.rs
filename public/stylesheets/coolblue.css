@@ -1254,3 +1254,9 @@ a.back-to-top {
 em {
   font-style: italic;
 }
+
+.clear {
+  display: block;
+  clear: both;
+  padding: 0;
+}

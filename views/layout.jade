@@ -28,7 +28,7 @@ html
         nav
           ul
             li(id= currentUrl === '/' ? 'current' : null): a(href='/') Pocetna
-            li(id= ~currentUrl.indexOf('/post') ? 'current' : null): a(href='/post') Turorijali
+            li(id= ~currentUrl.indexOf('/post') ? 'current' : null): a(href='/post') Članci
             - if (!session.user)
               li(id= ~currentUrl.indexOf('/register') ? 'current' : null ): a(href='/register') Registracija
               li(id= ~currentUrl.indexOf('/login') ? 'current' : null): a(href='/login') Logovanje
