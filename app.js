@@ -109,6 +109,8 @@ app.get('/', routes.site.index);
 
 app.get('/search/:tag?', routes.site.search);
 
+app.get('/about', routes.site.about);
+
 app.get('/register', routes.user.register);
 app.post('/register', routes.user.register);
 

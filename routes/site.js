@@ -28,3 +28,7 @@ exports.search = function (req, res, next) {
 		res.send(q);
 	}
 };
+
+exports.about = function (req, res, next) {
+  res.render('site/about');
+};
