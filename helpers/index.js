@@ -82,7 +82,7 @@ exports.markdown = function (content) {
 };
 
 exports.substring = function (string, length) {
-  length = length || 30;
+  length = length || 27;
   return string.length > length ? string.substring(0, length) + '...' : string;
 };
 

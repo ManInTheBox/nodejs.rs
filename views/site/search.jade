@@ -1,0 +1,18 @@
+.main-content
+  h4 Rezultati pretrage za "#{q}"
+  .navigation.clearfix
+  ul.archive
+    each post in posts
+      li
+        .post-title: a(href='/post/#{post.titleUrl}')= post.title
+        .post-details
+          | Napisao 
+          a(href='#')= post._owner.name.username
+          | , dana 
+          a(href='/post/#{post.titleUrl}')= date(post.createdAt)
+          |  | 
+          | Tagovi: #{post.tags}
+  .navigation.clearfix
+    div
+      a(href='#') nazad
+      a(href='#') napred

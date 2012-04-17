@@ -16,7 +16,8 @@ module.exports = function () {
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
   app.set('view options', {
-    substring: helpers.substring
+    substring: helpers.substring,
+    date: helpers.formatDateFine
   });
   app.use(express.bodyParser());
   app.use(express.methodOverride());

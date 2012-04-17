@@ -105,7 +105,9 @@ function handleSidebar(req, res, next) {
 
 app.all('/*', handleSidebar);
 
-app.get('/', routes.index);
+app.get('/', routes.site.index);
+
+app.get('/search/:tag?', routes.site.search);
 
 app.get('/register', routes.user.register);
 app.post('/register', routes.user.register);
@@ -139,45 +141,10 @@ app.post('/post/:postId/comment/new', loginRequired, routes.post.comment.new);
 app.del('/post/:postId/comment/:commentId/delete', loginRequired, routes.post.comment.delete);
 app.put('/post/:postId/comment/:commentId/edit', loginRequired, routes.post.comment.edit);
 
-app.get('/search/:term', function (req, res) {
-  res.end(req.params.term);
-})
-
 app.listen(3000);
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 
 // process.on('uncaughtException', function (err) {
 //   console.log('uhvacen error:\n', err.stack);
 // });
-
-
-app.get('/test', function (req, res, next) {
-    // console.log(app.dynamicViewHelpers.currentUrl());
-    // return;
-
-  require('fs').readFile('/aaasdfasdf', function (err, f) {
-    if (err) return next(err);
-  });
-
-  // return next(new Error('nemaaaaa'));
-
-  // var Email = require('./models/email');
-  // var email = new Email({
-  //   message: {
-  //     to: ['zarko.stankovic@itsmyplay.com']
-  //   },
-  //   type: 1,
-  // });
-
-  // // email.bodyData: {
-  // //     'fullName': 'Zarko Stankovic',
-  // //     'category': 'Car nad carevima'
-  // //   };
-  // email.save(function (err) {
-  //   if (err) return next(err);
-  //   res.send(email);
-  // });
-});
-
-
 

@@ -1,8 +1,7 @@
-exports.index = function (req, res){
-  res.render('index', { 
-    title: 'Node Srbija'
-  });
-};
+/**
+ * Module exports
+ */
 
+exports.site = require('./site');
 exports.user = require('./user');
 exports.post = require('./post');
