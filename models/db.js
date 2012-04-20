@@ -1,9 +1,10 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
     ObjectId = Schema.ObjectId,
-    mongooseTypes = require('mongoose-types');
+    mongooseTypes = require('mongoose-types'),
+    credentials = require('../credentials');
     
-mongoose.connect('mongodb://localhost/nodejsrs');
+mongoose.connect(credentials.db);
 
 mongooseTypes.loadTypes(mongoose);
 

@@ -4,7 +4,8 @@ var fs = require('fs'),
 //    MongoStore = require('connect-session-mongo'),
   RedisStore = require('connect-redis')(express),
   helpers = require('./helpers'),
-  HttpError = require('./httperror');
+  HttpError = require('./httperror'),
+  credentials = require('./credentials');
 
 module.exports = function () {
 //        app.use(express.profiler());
@@ -23,7 +24,7 @@ module.exports = function () {
   app.use(express.methodOverride());
   app.use(express.cookieParser());
   app.use(express.session({
-    secret: 'neki fancy session secret key :PPP',
+    secret: credentials.session,
     store: new RedisStore()
 //            store: new MongoStore() // proveriti zasto baca exception...
   }));
