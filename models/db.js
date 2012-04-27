@@ -8,7 +8,7 @@ mongoose.connect(credentials.db);
 
 mongooseTypes.loadTypes(mongoose);
 
-// mongoose.set('debug', true);
+mongoose.set('debug', true);
 
 module.exports.mongoose = mongoose;
 module.exports.Schema = Schema;

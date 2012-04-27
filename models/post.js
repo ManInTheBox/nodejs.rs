@@ -23,7 +23,13 @@ var Post = new db.Schema({
 });
 
 Post.path('tags').set(function (v) {
-  var tags = v[0].replace(/\s/g, '').toLowerCase().split(',');
+  var tagsOrigin = v[0].replace(/\s/g, '').toLowerCase().split(',');
+
+  var tags = [];
+  for (var i = 0; i < tagsOrigin.length; i++) {
+    if (!~tags.indexOf(tagsOrigin[i]))
+      tags.push(tagsOrigin[i]);
+  }
 
   return (tags.length === 1 && tags[0].length === 0)
     ? undefined

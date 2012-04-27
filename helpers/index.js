@@ -107,3 +107,12 @@ exports.miniMarkdown = function(str){
     .replace(/(_|\*)(.*?)\1/g, '<em>$2</em>')
     .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
 };
+
+exports.encode = function (html) {
+  return html
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}

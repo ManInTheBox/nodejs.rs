@@ -18,7 +18,8 @@ module.exports = function () {
   app.set('view engine', 'jade');
   app.set('view options', {
     substring: helpers.substring,
-    date: helpers.formatDateFine
+    date: helpers.formatDateFine,
+    encode: helpers.encode
   });
   app.use(express.bodyParser());
   app.use(express.methodOverride());

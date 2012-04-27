@@ -25,7 +25,17 @@ exports.search = function (req, res, next) {
 		});
 	} else {
 		var q = qs.parse(url.parse(req.url).query).q;
-		res.send(q);
+    var conditions = {
+      $or: [
+        { title: new RegExp(q, 'i') },
+        { titleUrl: new RegExp(q, 'i') },
+        { tags: { $in: [new RegExp(q, 'i')] } }
+      ]
+    };
+    Post.find(conditions).populate('_owner').run(function (err, posts) {
+      if (err) return next(err);
+      res.render('site/search', { posts: posts, q: q });
+    });
 	}
 };
 
