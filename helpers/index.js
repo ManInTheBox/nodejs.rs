@@ -1,6 +1,9 @@
 var crypto = require('crypto'),
-  md = require('discount'),
-  mdFlags = md.flags.autolink | md.flags.noHTML;
+  marked = require('marked').setOptions({
+    gfm: true,
+    pedantic: false,
+    sanitize: true
+  });
 
 
 exports.toUpperCaseFirst = function (v) {
@@ -54,31 +57,31 @@ exports.formatDateFine = function (date) {
 };
 
 exports.markdown = function (content) {
-  var markdown = md.parse(content, mdFlags),
-    blocks = content.match(/```(javascript|bash|html)[\s\S]+?\r\n```/g);
+  // var markdown = md.parse(content, mdFlags),
+  //   blocks = content.match(/```(javascript|bash|html)[\s\S]+?\r\n```/g);
 
-  if (blocks) {
-    for (var i = 0; i < blocks.length; i++) {
-      var matches = /```(javascript|bash|html)([\s\S]+?)\r\n```/.exec(blocks[i]),
-        language = matches[1],
-        lines = matches[2].split('\r\n');
+  // if (blocks) {
+  //   for (var i = 0; i < blocks.length; i++) {
+  //     var matches = /```(javascript|bash|html)([\s\S]+?)\r\n```/.exec(blocks[i]),
+  //       language = matches[1],
+  //       lines = matches[2].split('\r\n');
 
-        for (var j = 1; j < lines.length; j++) {
-          content = content.replace(lines[j], '    ' + lines[j]);
-        }
-    }
+  //       for (var j = 1; j < lines.length; j++) {
+  //         content = content.replace(lines[j], '    ' + lines[j]);
+  //       }
+  //   }
 
-    var pattern = /<p><code>(javascript|bash|html)\n([\s\S]+?)<\/code><\/p>/g;
+  //   var pattern = /<p><code>(javascript|bash|html)\n([\s\S]+?)<\/code><\/p>/g;
 
 
-    markdown = md
-                .parse(content, mdFlags)
-                .replace(pattern, '<pre><code class="$1">$2</code></pre>')
-                // .replace(/<pre><code class="(javascript|bash|html)">[ ]{4}([\s\S]+)<\/code><\/pre>/g, '<pre><code class=$1>$2</code</pre>');
-    // console.log(markdown);
-  }
+  //   markdown = md
+  //               .parse(content, mdFlags)
+  //               .replace(pattern, '<pre><code class="$1">$2</code></pre>')
+  //               // .replace(/<pre><code class="(javascript|bash|html)">[ ]{4}([\s\S]+)<\/code><\/pre>/g, '<pre><code class=$1>$2</code</pre>');
+  //   // console.log(markdown);
+  // }
 
-  return markdown;
+  return marked(content);
 };
 
 exports.substring = function (string, length) {

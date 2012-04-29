@@ -1,8 +1,6 @@
 var Post = require('../models/post'),
   Comment = require('../models/comment'),
   fs = require('fs'),
-  md = require('discount'),
-  flags = md.flags.autolink | md.flags.noHTML;
   path = require('path'),
   util = require('util'),
   contentPath = path.normalize(__dirname + '/../public/articles/'),
@@ -25,7 +23,7 @@ exports.list = function (req, res, next) {
         var path = contentPath + post.titleUrl + '.md';
         fs.readFile(path, 'utf8', function (err, content) {
           if (err) return next(err);
-          post.content = md.parse(content.substring(0, 400), flags);
+          post.content = helpers.markdown(content.substring(0, 400));
           post.createdAtFormatted = helpers.formatDate(post.createdAt);
           post.commentsCount = post.comments.length;
           if (--length === 0) res.emit('posts');
@@ -110,8 +108,6 @@ exports.view = function (req, res, next) {
       if (err) return next(err);
       fs.readFile(fileName, 'utf8', function (err, file) {
         if (err) return next(err);
-        // var flags = md.flags.autolink | md.flags.noHTML;
-        // post.content = md.parse(file, flags);
 
         post.content = helpers.markdown(file);
 
@@ -129,7 +125,6 @@ exports.view = function (req, res, next) {
               comment.createdAtFormatted = helpers.formatDateFine(comment.createdAt);
               comment.cssClass = (isLoggedIn() && isCommentOwner(comment)) ? ['thread-alt', 'depth-1'] : 'depth-1';
 
-              // comment.text = md.parse(comment.text, flags);
               comment.text = helpers.markdown(comment.text);
 
               if (--length === 0)
@@ -183,7 +178,7 @@ exports.download = function (req, res, next) {
           contentType = 'application/pdf';
         break;
         default: // html
-          content = md.parse(file.toString());
+          content = helpers.markdown(file.toString());
           fileName += '.html';
           contentType = 'text/html'
         break;

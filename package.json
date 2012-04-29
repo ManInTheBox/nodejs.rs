@@ -1,26 +1,33 @@
 {
-    "name": "nodejs.rs-website"
-  , "description": "http://www.nodejs.rs website"
-  , "version": "0.0.1"
-  , "author": "Zarko Stankovic <stankovic.zarko@gmail.com>"
-  , "private": true
-  , "dependencies": {
-      "express": "2.5.x"
-    , "jade": ">= 0.0.1"
-    , "mongoose": "2.5.10"
-    , "express-messages": ">= 0.0.2"
-    , "discount": ">= 0.2.3"
-    , "mail": ">= 0.2.3"
-    , "imagemagick": "0.1.2"
-  }
-  , "devDependencies": {
-      "should": "*"
-    , "mocha": "latest"
-  }
-  , "engines": { "node": "0.6.x" }
-  , "main": "./app.js"
-  , "repository": {
-      "type": "git"
-    , "url": "git@github.com:ManInTheBox/nodejs.rs.git"
-  }
+  "description": "http://www.nodejs.rs website",
+  "version": "0.0.1",
+  "author": "Zarko Stankovic <stankovic.zarko@gmail.com>",
+  "private": true,
+  "dependencies": {
+    "express": "2.5.x",
+    "jade": ">= 0.0.1",
+    "mongoose": "2.5.10",
+    "express-messages": ">= 0.0.2",
+    "mail": ">= 0.2.3",
+    "imagemagick": "0.1.2",
+    "session-mongoose": "0.0.x",
+    "marked": ">= 0.2.4"
+  },
+  "devDependencies": {
+    "should": "*",
+    "mocha": "latest"
+  },
+  "engines": {
+    "node": "0.6.x"
+  },
+  "main": "./app.js",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:ManInTheBox/nodejs.rs.git"
+  },
+  "subdomain": "nodejsrs",
+  "scripts": {
+    "start": "app.js"
+  },
+  "name": "nodejsrs"
 }
