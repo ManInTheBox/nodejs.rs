@@ -23,7 +23,7 @@ article.post.single
           | |  
           a(href='#', id='deletePost') Obriši
 
-      span.small.clear &nbsp;&nbsp;Poslednji put ažurirano: #{post.updatedAtFormatted}
+      span.small.clear(style='position: absolute;') &nbsp;&nbsp;Poslednji put ažurirano: #{post.updatedAtFormatted}
 
     div!= post.content
     a(href='#top', class='back-to-top') vrh

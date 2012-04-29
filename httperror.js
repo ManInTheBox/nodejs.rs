@@ -1,3 +1,4 @@
+
 /**
  * Http error
  *
@@ -17,9 +18,11 @@ function HttpError (status, message) {
 /**
  * Inherits from Error.
  */
+
 HttpError.prototype.__proto__ = Error.prototype;
 
 /**
  * Module exports.
  */
+ 
 exports = module.exports = HttpError;

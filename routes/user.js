@@ -1,5 +1,6 @@
+
 /**
- * Helpers
+ * Helpers module dependencies.
  */
 
 var util = require('util'),
@@ -7,7 +8,7 @@ var util = require('util'),
   url = require('url');
 
 /**
- * Models
+ * Models module dependencies.
  */
 
 var User = require('../models/user'),
@@ -227,11 +228,12 @@ exports.edit = function (req, res, next) {
 
       user.save(function (err) {
         if (err) {
+          user.name.username = originalUsername;
+          user.password = null; // don't display anything
+          
           if (~err.toString().indexOf('duplicate key')) {
             user.errors = [ 'Korisničko ime je već zauzeto.' ];
-            user.name.username = originalUsername;
           }
-          user.password = null; // don't display anything
           handleSidebar(req, res, next, user, function () {
             res.render('user/edit', { user: user });
           });
@@ -306,6 +308,10 @@ exports.logout = function (req, res) {
   res.redirect('/login');
 };
 
+/**
+ * Provides sidebar data needed for view layout.
+ */
+
 function handleSidebar(req, res, next, user, cb) {
   Post.findByAuthor(user._id, function (err, posts) {
     if (err) return next(err);
@@ -318,4 +324,5 @@ function handleSidebar(req, res, next, user, cb) {
     };
     cb();
   });
+
 }

@@ -1,5 +1,6 @@
 .about-me
-  h3 O autoru
+  h3 Autor: 
+    a(href='/user/#{data.user.name.username}')= data.user.name.username
   p
     a(href='/user/#{data.user.name.username}')
       img(src='/images/users/#{data.user.name.username}_small.jpg', class="align-left")
@@ -16,3 +17,5 @@
     - each post in data.posts.newest
       li
         a(href='/post/#{post.titleUrl}')= substring(post.title)
+.sidemenu.popular
+  p Ovo je neki opis sajta.

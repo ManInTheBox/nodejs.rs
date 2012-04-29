@@ -1,24 +1,26 @@
 {
-    "name": "application-name"
+    "name": "nodejs.rs-website"
+  , "description": "http://www.nodejs.rs website"
   , "version": "0.0.1"
+  , "author": "Zarko Stankovic <stankovic.zarko@gmail.com>"
   , "private": true
   , "dependencies": {
-      "express": "2.5.4"
+      "express": "2.5.x"
     , "jade": ">= 0.0.1"
-    , "mongoose": ">= 2.5.10"
-    , "mongoose-types": ">= 1.0.3"
+    , "mongoose": "2.5.10"
     , "express-messages": ">= 0.0.2"
-    , "express-errors": ">= 0.0.8"
-    , "markdown": "0.3.1"
-    , "node-markdown": "0.1.0"
     , "discount": ">= 0.2.3"
-    , "connect-session-mongo": ">= 0.0.4"
-    , "connect-redis": "1.2.0"
     , "mail": ">= 0.2.3"
     , "imagemagick": "0.1.2"
   }
   , "devDependencies": {
       "should": "*"
     , "mocha": "latest"
+  }
+  , "engines": { "node": "0.6.x" }
+  , "main": "./app.js"
+  , "repository": {
+      "type": "git"
+    , "url": "git@github.com:ManInTheBox/nodejs.rs.git"
   }
 }
