@@ -1,22 +1,32 @@
 .main-content
   h4 Rezultati pretrage za "#{q}"
-  .navigation.clearfix
-  ul.archive
-    each post in posts
-      li
-        .post-title: a(href='/post/#{post.titleUrl}')= post.title
-        .post-details
-          | Napisao 
-          a(href='/user/#{post._owner.name.username}')= post._owner.name.username
-          | , dana 
-          a(href='/post/#{post.titleUrl}')= date(post.createdAt)
-          |  | 
-          | Tagovi: 
-          - var tags = post.tags.map(function (v) {
-          - return ' <a href="/search/' + encode(v) + '">' + encode(v) + '</a>';
-          - })
-          != tags
-  .navigation.clearfix
-    div
-      a(href='#') nazad
-      a(href='#') napred
+  - if (posts.length)
+    ul.archive
+      each post in posts
+        li
+          .post-title: a(href='/post/#{post.titleUrl}')= post.title
+          .post-details
+            | Napisao 
+            a(href='/user/#{post._owner.name.username}')= post._owner.name.username
+            | , dana 
+            a(href='/post/#{post.titleUrl}')= date(post.createdAt)
+            |  | 
+            | Tagovi: 
+            - var tags = post.tags.map(function (v) {
+            - return ' <a href="/search/' + encode(v) + '">' + encode(v) + '</a>';
+            - })
+            != tags
+    .navigation.clearfix
+      div
+        - if (searchByTag)
+          - if (previousPage)
+            a(href='/search/#{q}?page=#{previousPage}') &laquo; prethodna
+          - if (nextPage)
+            a(href='/search/#{q}?page=#{nextPage}') sledeća &raquo;
+        - else
+          - if (previousPage)
+            a(href='/search?q=#{q}&page=#{previousPage}') &laquo; prethodna
+          - if (nextPage)
+            a(href='/search?q=#{q}&page=#{nextPage}') sledeća &raquo;
+  - else
+    blockquote Vaša pretraga nije dala rezultate.

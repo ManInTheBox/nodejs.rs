@@ -252,11 +252,10 @@ app.del('/post/:postId/comment/:commentId/delete', loginRequired, routes.post.co
  * Starts the server.
  */
 
-app.listen(3000);
-console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
+app.listen(app.settings.env = 'development' ? 3000 : 80);
 
 /**
- * Catches all unhandled exceptions.
+ * Catches all exceptions that were not handled by application.
  */
 
 // process.on('uncaughtException', function (err) {

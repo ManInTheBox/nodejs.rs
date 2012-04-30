@@ -1,22 +1,16 @@
 !!!
 html
   head
-    - var title = title || 'Node Srbija'
+    - var title = title && title + ' - Node Srbija' || 'Node Srbija'
     title= title
     script(type='text/javascript', src='/javascripts/jquery-1.7.2.min.js')
     script(type='text/javascript', src='/javascripts/script.js')
 
-    //link(rel='stylesheet', href='/stylesheets/blueprint/screen.css', type='text/css', media='screen, projection')
-    //link(rel='stylesheet', href='/stylesheets/blueprint/print.css', type='text/css', media='print')
-    //link(rel='stylesheet', href='/stylesheets/style.css', type='text/css')
-    //if lt IE 8
-      //link(rel='stylesheet', href='/stylesheets/blueprint/ie.css', type='text/css', media='screen, projection')
-
     script(type='text/javascript', src='/javascripts/highlight/highlight.pack.js')
     script(type='text/javascript')
       hljs.initHighlightingOnLoad();
-    link(rel='stylesheet', href='/javascripts/highlight/styles/github.css', type='text/css')
 
+    link(rel='stylesheet', href='/javascripts/highlight/styles/github.css', type='text/css')
     link(rel='stylesheet', type='text/css', media='screen', href='/stylesheets/coolblue.css')
 
   body(id='top')
@@ -55,7 +49,7 @@ html
           | Copyright &copy; 2012 
           a(href='http://github.com/ManInTheBox', target='_blank') Žarko Stanković
           br
-          | Nodejs.rs izrađen sa
+          | Nodejs.rs izrađen sa 
           a(href='http://nodejs.org', target='_blank') Node.js
           |  koristeći 
           a(href='http://expressjs.com', target='_blank') Express

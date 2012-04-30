@@ -30,3 +30,10 @@
           - if (session.user && session.user._id == post._owner || isAdmin)
             li
               a(href='/post/#{post.titleUrl}/edit') Edituj
+
+.navigation.clearfix(style='padding-left: 300px;')
+  div
+  - if (previousPage)
+    a(href='/post?page=#{previousPage}') &laquo; prethodna
+  - if (nextPage)
+    a(href='/post?page=#{nextPage}') sledeća &raquo;

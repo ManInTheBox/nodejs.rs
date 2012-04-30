@@ -151,6 +151,9 @@ module.exports = function () {
 
   app.configure('production', function () {
     app.use(function (err, req, res, next) {
+      if ('object' !== typeof err)
+        err = { message: err };
+
       if (err instanceof HttpError) {
         switch (err.status) {
           case 400:

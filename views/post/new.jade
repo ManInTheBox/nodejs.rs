@@ -19,7 +19,7 @@
       textarea(id='postContent', name='post[content]')= post.content
     div
       label(for='postTags') Tagovi (odvojiti zarezima): 
-      input(type='text', id='postTags', name='post[tags]')= post.tags
+      input(type='text', id='postTags', name='post[tags]', value=post.tags)
 
     input(type='submit', value='Kreiraj', class='submit')
     a(href='/post')

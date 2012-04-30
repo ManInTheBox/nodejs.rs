@@ -22,8 +22,14 @@ article.post.single
           a(href='/post/#{post.titleUrl}/edit') &nbsp;&nbsp;Izmeni 
           | |  
           a(href='#', id='deletePost') Obriši
-
-      span.small.clear(style='position: absolute;') &nbsp;&nbsp;Poslednji put ažurirano: #{post.updatedAtFormatted}
+      span.small.clear(style='clear: none;')
+        | &nbsp;&nbsp;Poslednji put ažurirano: #{post.updatedAtFormatted}
+      span.small.clear(style='clear: none;')
+        | &nbsp;&nbsp;Tagovi: 
+        - each tag, i in post.tags
+          a(href='/search/' + encodeURIComponent(tag)) #{tag}
+          - if (i < post.tags.length - 1)
+            | , 
 
     div!= post.content
     a(href='#top', class='back-to-top') vrh
@@ -36,25 +42,29 @@ article.post.single
 #comments.post-bottom-section  
   h3 Komentari korisnika
   .primary
-    ol.commentlist
-      - each comment in post.comments
-        li(class=comment.cssClass)
-          div(id='comment-#{comment._id}')
-            .comment-info
-              a(href='/user/#{comment._ownerUsername}'): img(src='/images/users/#{comment._ownerUsername}_small.jpg')
-              cite
-                a(href='/user/#{comment._ownerUsername}')= comment._ownerFullName || comment._ownerUsername
-                |  je napisao:
-                br
-                span.comment-data
-                  a(href='/post/#{post.titleUrl}#comment-#{comment._id}')= comment.createdAtFormatted
-                  - if (canEditPost || session.user && session.user._id == comment._owner)
-                    span.small(style='padding-left: 20px;')
-                      a(href='#', rel="#{comment._id}", class='editComment')  Izmeni 
-                      | | 
-                      a(href='#', rel='#{comment._id}', class='deleteComment') Obriši
-            .comment-text
-              != comment.text
+    - if (post.comments.length)
+      ol.commentlist
+        - each comment in post.comments
+          li(class=comment.cssClass)
+            div(id='comment-#{comment._id}')
+              .comment-info
+                a(href='/user/#{comment._ownerUsername}'): img(src='/images/users/#{comment._ownerUsername}_small.jpg')
+                cite
+                  a(href='/user/#{comment._ownerUsername}')= comment._ownerFullName || comment._ownerUsername
+                  |  je napisao:
+                  br
+                  span.comment-data
+                    a(href='/post/#{post.titleUrl}#comment-#{comment._id}')= comment.createdAtFormatted
+                    - if (canEditPost || session.user && session.user._id == comment._owner)
+                      span.small(style='padding-left: 20px;')
+                        a(href='#', rel="#{comment._id}", class='editComment')  Izmeni 
+                        | | 
+                        a(href='#', rel='#{comment._id}', class='deleteComment') Obriši
+              .comment-text
+                != comment.text
+    - else
+      blockquote Još uvek niko nije ostavio komentar.
+
     a(href='#top', class='back-to-top') vrh
 
 script(type='text/javascript')
@@ -179,3 +189,5 @@ script(type='text/javascript')
   }, function () {
     $('.download-box').hide(200);
   });
+
+  $('.download-box').closeOnEscape();

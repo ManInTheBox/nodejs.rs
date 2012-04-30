@@ -6,7 +6,9 @@ var Post = require('../models/post'),
   contentPath = path.normalize(__dirname + '/../public/articles/'),
   HttpError = require('../httperror'),
   User = require('../models/user'),
-  helpers = require('../helpers');
+  helpers = require('../helpers'),
+  url = require('url');
+  qs = require('querystring');
 
 
 /**
@@ -14,27 +16,53 @@ var Post = require('../models/post'),
  */
 
 exports.list = function (req, res, next) {
-  Post.find({}).desc('createdAt').populate('_owner').populate('comments').run(function (err, posts) {
-    if (err) return next(err);
+  var page = +qs.parse(url.parse(req.url).query).page || 1;
+  var itemCount = 2;
 
-    var length = posts.length;
-    if (length) {
-      posts.forEach(function (post) {
-        var path = contentPath + post.titleUrl + '.md';
-        fs.readFile(path, 'utf8', function (err, content) {
-          if (err) return next(err);
-          post.content = helpers.markdown(content.substring(0, 400));
-          post.createdAtFormatted = helpers.formatDate(post.createdAt);
-          post.commentsCount = post.comments.length;
-          if (--length === 0) res.emit('posts');
-        });
-      });
-    } else {
-      res.emit('posts');
-    }
-    res.on('posts', function () {
-      res.render('post/list', { posts: posts });
-    });
+  Post.count(function (err, postCount) {
+    if (err) return next(err);
+    var pageCount = Math.ceil(postCount / itemCount) || 1;
+
+    if (page < 0)
+      page = 1; // show first page
+    if (page > pageCount)
+      page = pageCount; // show last page
+
+    var previousPage = page - 1;
+    var nextPage = page != pageCount ? page + 1 : null;
+
+    Post.find({})
+                .desc('createdAt')
+                .skip((page - 1) * itemCount)
+                .limit(itemCount)
+                .populate('_owner')
+                .populate('comments')
+                .run(function (err, posts) {
+                  if (err) return next(err);
+
+                  var length = posts.length;
+                  if (length) {
+                    posts.forEach(function (post) {
+                      var path = contentPath + post.titleUrl + '.md';
+                      fs.readFile(path, 'utf8', function (err, content) {
+                        if (err) return next(err);
+                        post.content = helpers.markdown(content.substring(0, 400));
+                        post.createdAtFormatted = helpers.formatDate(post.createdAt);
+                        post.commentsCount = post.comments.length;
+                        if (--length === 0) res.emit('posts');
+                      });
+                    });
+                  } else {
+                    res.emit('posts');
+                  }
+                  res.on('posts', function () {
+                    res.render('post/list', {
+                      posts: posts,
+                      previousPage: previousPage,
+                      nextPage: nextPage
+                    });
+                  });
+                });
   });
 };
 
