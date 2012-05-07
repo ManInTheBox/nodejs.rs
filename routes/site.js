@@ -20,8 +20,8 @@ var User = require('../models/user'),
  * Index action
  */
 
-exports.index = function (req, res, next){
-  res.render('index', {
+exports.index = function (req, res, next) {
+  res.render('site/index', {
     title: 'Dobrodošli na Node Srbija'
   });
 };

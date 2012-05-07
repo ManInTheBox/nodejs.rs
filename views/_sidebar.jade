@@ -5,8 +5,24 @@
     a(href='/user/#{data.user.name.username}')
       img(src='/images/users/#{data.user.name.username}_small.jpg', class="align-left")
     = data.user.bio.about
+
+  .clearfix
+
+  p.small
+    label Website/Blog:
+    br
+    a(href='#{data.user.bio.website}')= data.user.bio.website
+    br
+    label GitHub:
+    br
+    a(href='#{data.user.bio.github}')= data.user.bio.github
+    br  
+    label Twitter:
+    br
+    a(href='#{data.user.bio.twitter}')= data.user.bio.twitter
+
 .sidemenu.popular
-  h3 Još od istog autora
+  h3 Članci od ovog autora
   ul
     - each post in data.posts.author
       li

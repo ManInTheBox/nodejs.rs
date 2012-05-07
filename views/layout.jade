@@ -21,18 +21,20 @@ html
           h3 ovde se uci...
         nav
           ul
-            li(id= currentUrl === '/' ? 'current' : null): a(href='/') Pocetna
-            li(id= ~currentUrl.indexOf('/post') ? 'current' : null): a(href='/post') Članci
+            li(id= currentUrl === '/' ? 'current' : null): a(href='/') Početna
+            li(id= /\/post(?!.*\/new$)/.test(currentUrl) ? 'current' : null): a(href='/post') Članci
+            li(id= currentUrl === '/post/new' ? 'current' : null): a(href='/post/new') Napiši članak
+            li(id= currentUrl === '/about' ? 'current' : null): a(href='/about') O projektu
+            li: a(href='http://nodejs.org/api/', target='_blank') Dokumentacija
             - if (!session.user)
-              li(id= ~currentUrl.indexOf('/register') ? 'current' : null ): a(href='/register') Registracija
-              li(id= ~currentUrl.indexOf('/login') ? 'current' : null): a(href='/login') Logovanje
+              li(id= currentUrl === '/register' ? 'current' : null ): a(href='/register') Registracija
+              li(id= currentUrl === '/login' ? 'current' : null): a(href='/login') Logovanje
             - else
               li(id= ~currentUrl.indexOf('/user/#{session.user.name.username}') ? 'current' : null): a(href='/user/#{session.user.name.username}') Profil
-              li(id= ~currentUrl.indexOf('/logout') ? 'current' : null): a(href='/logout') Izloguj se
+              li(id= currentUrl === '/logout' ? 'current' : null): a(href='/logout') Izloguj se
         .subscribe
-          span Subscribe
-          a(href='/') email
-          a(href='/') rss
+          a(href='http://github.com/ManInTheBox/nodejs.rs', target='_blank').social.github
+          a(href='http://twitter.com/zarkostankovic', target='_blank').social.twitter
 
         form(action='/search', id='quick-search')
           fieldset(class='search')
@@ -58,8 +60,8 @@ html
           |  i 
           a(href='http://mongoosejs.com', target='_blank') Mongoose
           | . Hostovano na 
-          a(href='http://nodejitsu.com') Nodejitsu
-          | .
+          a(href='http://nodejitsu.com', target='_blank') Nodejitsu
+          |  platformi.
           br
           a(href='http://nodejs.org', target='_blank') Node.js 
           | je vlasništvo  

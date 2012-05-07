@@ -420,8 +420,9 @@ function checkPostSecurity(post, cb) {
     fileName = path.join(contentPath, normalizedTitle + '.md');
 
   process.nextTick(function () {
-    return fileName.indexOf(contentPath) === 0 && !~fileName.indexOf('\0')
-      ? cb(null) : cb(new HttpError(400, 'Vas zahtev nije validan.'));
+    return (fileName.indexOf(contentPath) === 0 && !~fileName.indexOf('\0'))
+      && !~fileName.indexOf('new.md')
+      ? cb(null) : cb(new HttpError(400));
   });
 
   return fileName;

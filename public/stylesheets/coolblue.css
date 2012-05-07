@@ -517,10 +517,17 @@ header nav ul {
     padding: 0;
   height: 60px;
 }
+
 header nav ul li {
     position: relative;
   float: left;
 }
+
+header nav ul li:hover {
+  background: #444444;
+}
+
+
 header nav ul a:link, header nav ul a:visited {
     font-family: Arial, Helvetica, Sans-Serif;
     font-size: 12px;
@@ -537,6 +544,9 @@ header nav ul li a:hover,
 header nav ul li a:active {
   border: none;
   color: #D67630;
+}
+header nav ul li#current {
+  background: #444444;
 }
 header nav ul li#current a {
   color: #D67630;
@@ -561,20 +571,24 @@ header div.subscribe {
     height: 30px;
     color: #BEBEBE;
     text-shadow: 0 -1px 0 rgba(10, 10, 10, 1);
-    background: url(../images/rss32.png) no-repeat 0 center;
-    padding-left: 28px;
-    right: 68px;
-    top: 18px;
+    /*background: url(../images/rss32.png) no-repeat 0 center;*/
+    /*padding-left: 28px;*/
+   right: 68px;
+   top: 18px;
 }
-header div.subscribe a {
+
+/*header div.subscribe a {
     padding-right: 3px;
     padding-left: 3px;
     color: #fff;
+}*/
+
+header div.subscribe a:hover {
+  opacity: 0.9;
+  -moz-opacity: 0.9;
+  filter:alpha(opacity=9);
 }
-header div.subscribe a:hover,
-header div.subscribe a:active {
-    color: #D67630;
-}
+
 
 /* Quick Search */
 header form#quick-search {
@@ -1259,4 +1273,28 @@ em {
   display: block;
   clear: both;
   padding: 0;
+}
+
+.social {
+  display: block;
+  float: right;
+  clear: none;
+  padding: 0;
+  margin: 0;
+}
+
+.twitter {
+  background-image: url('../images/twitter_32.png');
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  margin: 0;
+}
+
+.github {
+  background-image: url('../images/github_32.png');
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  margin: 0;
 }

@@ -1,0 +1,37 @@
+.main-content
+  :markdown
+
+    > Node.js je platforma izrađena na JavaScript izvršnom okruženju `Google Chrome`-a za jednostavnu izradu brzih, skalabilnih mrežnih aplikacija. Node.js koristi vođen-događajima, neblokirajući U/I model koji ga čini laganim i efikasnim, savršenim za aplikacije koje rade u realnom vremenu i iziskuju veće količine prenosa podataka i koje se izvršavaju preko distribuiranih uređaja.
+
+    #### PRIMER: WEBSERVER
+
+    Ovaj jednostavni web server napisan u `Node`-u odgovara sa "_Hello World_" na svaki zahtev.
+
+    ```javascript
+    var http = require('http');
+    http.createServer(function (req, res) {
+      res.writeHead(200, {'Content-Type': 'text/plain'});
+      res.end('Hello World\\n');
+    }).listen(1337, '127.0.0.1');
+    console.log('Server pokrenut na http://127.0.0.1:1337/');
+    ```
+
+    Da biste pokrenuli server, kopirajte kod u fajl `primer.js` i pokrenite ga sa `node` komandom:
+
+    ```bash
+    $ node primer.js
+    Server pokrenut na http://127.0.0.1:1337/
+    ```
+
+    Ovo je primer jednostavnog TCP servera koji sluša na portu 1337 i šalje nazad šta god da mu pošaljete:
+
+    ```javascript
+    var net = require('net');
+
+    var server = net.createServer(function (socket) {
+      socket.write('Šalje server\\r\\n');
+      socket.pipe(socket);
+    });
+
+    server.listen(1337, '127.0.0.1');
+    ```
