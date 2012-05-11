@@ -18,6 +18,14 @@ jQuery.prototype.closeOnEscape = function (speed) {
   return self;
 };
 
+window.onscroll = function fadeMenu() {
+  if ($(this).scrollTop() > 60) {
+    $('header').css('opacity', '0.7');
+  } else {
+    $('header').css('opacity', '1');
+  }
+};
+
 $(function() {
   $("a.back-to-top").click(function() {
     $("html, body").animate({
@@ -28,4 +36,13 @@ $(function() {
     });
     return false;
   });
+
+  $('header').hover(function () {
+    if ($(this).css('opacity') < 1)
+      $(this).css('opacity', 1);
+  }, function () {
+    if ($(window).scrollTop() > 60)
+      $(this).css('opacity', '0.7');
+  });
+
 });
