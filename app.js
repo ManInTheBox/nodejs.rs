@@ -7,7 +7,8 @@ var express = require('express'),
   routes = require('./routes'),
   HttpError = require('./httperror'),
   Post = require('./models/post'),
-  User = require('./models/user');
+  User = require('./models/user'),
+  credentials = require('./credentials');
 
 /**
  * Expose application.
@@ -48,12 +49,13 @@ function loginRequired(req, res, next) {
 
 function grantAccess(fn) {
   return function (req, res, next) {
-    if (req.session.user.name.username === 'admin') {
-      next();
+    for (var i = 0; i < credentials.admins.length; i++) {
+      if (credentials.admins[i].email === req.session.user.email) {
+        return next(); // forward admin users
+      }
     }
-    else {
-      fn(req, res, next);
-    }
+
+    fn(req, res, next);
   };
 }
 

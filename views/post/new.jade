@@ -16,6 +16,10 @@
     div
       label(for='postContent') Sadržaj: 
         span.required *
+        span.align-right(style='color: #666; font-size: 0.6em; font-weight: normal;')
+          | Uputstvo za 
+          a(href='/post/generalni-prirucnik-za-markdown-sintaksu', target='_blank') Markdown 
+          | sintaksu
       textarea(id='postContent', name='post[content]')= post.content
     div
       label(for='postTags') Tagovi (odvojiti zarezima): 

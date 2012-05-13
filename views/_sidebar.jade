@@ -33,5 +33,5 @@
     - each post in data.posts.newest
       li
         a(href='/post/#{post.titleUrl}')= substring(post.title)
-.sidemenu.popular
-  p Ovo je neki opis sajta.
+
+.sidemenu.popular!= partial('site/_aboutShort')

@@ -27,9 +27,9 @@
             a(href='/post/#{post.titleUrl}#comments') Komentari #{post.commentsCount}
           li.permalink
             a(href='/post/#{post.titleUrl}') Direktan link
-          - if (session.user && session.user._id == post._owner || isAdmin)
-            li
-              a(href='/post/#{post.titleUrl}/edit') Edituj
+          - if (session.user && session.user._id == post._owner._id || isAdmin)
+            li.pencil
+              a(href='/post/#{post.titleUrl}/edit') Izmeni članak
 
 .navigation.clearfix(style='padding-left: 300px;')
   div

@@ -5,7 +5,12 @@ div(class='post-bottom-section', id='add-comment')
       input(type='hidden', name='_csrf', value=csrfToken)
       div
         label(for='postComment') Komentar 
-          span.required *
+          span.required * 
+          span.align-right(style='color: #666; font-size: 0.6em; font-weight: normal;')
+            | Uputstvo za 
+            a(href='/post/generalni-prirucnik-za-markdown-sintaksu', target='_blank') Markdown 
+            | sintaksu
+
         textarea(id='postComment', name='post[comment]')
       
       input(type='submit', value='Pošalji', class='submit')

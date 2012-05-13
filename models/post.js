@@ -27,7 +27,7 @@ Post.path('tags').set(function (v) {
 
   var tags = [];
   for (var i = 0; i < tagsOrigin.length; i++) {
-    if (!~tags.indexOf(tagsOrigin[i]))
+    if (!~tags.indexOf(tagsOrigin[i]) && tagsOrigin[i].length)
       tags.push(tagsOrigin[i]);
   }
 
