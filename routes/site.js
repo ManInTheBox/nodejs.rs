@@ -104,5 +104,7 @@ exports.search = function (req, res, next) {
  */
 
 exports.about = function (req, res, next) {
-  res.render('site/about');
+  res.render('site/about', {
+    title: 'O projektu Node Srbija'
+  });
 };
