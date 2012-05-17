@@ -98,8 +98,8 @@ db.getCollection("comments").insert({
 
 /** emails records **/
 db.getCollection("emails").insert({
-  "body": "Dobrodosli na Node.js Srbija\nKliknite ovde za aktivaciju:<br \/>\nOva poruka je poslata na mika@mika.com",
   "_id": ObjectId("4faf0053c623fb1b1a000315"),
+  "body": "Dobrodosli na Node.js Srbija\nKliknite ovde za aktivaciju:<br \/>\nOva poruka je poslata na mika@mika.com",
   "sendingCounter": 0,
   "priority": 1,
   "type": 1,
@@ -114,8 +114,8 @@ db.getCollection("emails").insert({
   }
 });
 db.getCollection("emails").insert({
-  "body": "Dobrodosli na Node.js Srbija\nKliknite ovde za aktivaciju:<br \/>\nOva poruka je poslata na pera@pera.com",
   "_id": ObjectId("4faf007bc623fb1b1a0009ab"),
+  "body": "Dobrodosli na Node.js Srbija\nKliknite ovde za aktivaciju:<br \/>\nOva poruka je poslata na pera@pera.com",
   "sendingCounter": 0,
   "priority": 1,
   "type": 1,
@@ -130,8 +130,8 @@ db.getCollection("emails").insert({
   }
 });
 db.getCollection("emails").insert({
-  "body": "Dobrodosli na Node.js Srbija\nKliknite ovde za aktivaciju:<br \/>\nOva poruka je poslata na asdf@asfd.com",
   "_id": ObjectId("4fb448171289ad5915001c44"),
+  "body": "Dobrodosli na Node.js Srbija\nKliknite ovde za aktivaciju:<br \/>\nOva poruka je poslata na asdf@asfd.com",
   "sendingCounter": 0,
   "priority": 1,
   "type": 1,
@@ -148,10 +148,10 @@ db.getCollection("emails").insert({
 
 /** pictures records **/
 db.getCollection("pictures").insert({
+  "_id": ObjectId("4fb43939290017ed1300063a"),
   "name": "ManInTheBox",
   "size": 270187,
-  "type": "image\/jpeg",
-  "_id": ObjectId("4fb43939290017ed1300063a")
+  "type": "image\/jpeg"
 });
 db.getCollection("pictures").insert({
   "_id": ObjectId("4fb448161289ad5915001c43"),
@@ -160,27 +160,44 @@ db.getCollection("pictures").insert({
   "type": "image\/jpeg"
 });
 db.getCollection("pictures").insert({
+  "_id": ObjectId("4fb4496d1a7f533320000574"),
   "size": 93245,
-  "type": "image\/jpeg",
-  "_id": ObjectId("4fb4496d1a7f533320000574")
+  "type": "image\/jpeg"
 });
 db.getCollection("pictures").insert({
+  "_id": ObjectId("4fb449c91a7f533320000725"),
   "size": 42548,
+  "type": "image\/jpeg"
+});
+db.getCollection("pictures").insert({
+  "size": 93245,
   "type": "image\/jpeg",
-  "_id": ObjectId("4fb449c91a7f533320000725")
+  "_id": ObjectId("4fb510e49cf86a1c14000384")
+});
+db.getCollection("pictures").insert({
+  "_id": ObjectId("4fb511e39cf86a1c14000882"),
+  "name": "ManInTheBox",
+  "size": 58353,
+  "type": "image\/jpeg"
+});
+db.getCollection("pictures").insert({
+  "name": "ManInTheBox",
+  "size": 93245,
+  "type": "image\/jpeg",
+  "_id": ObjectId("4fb516d8873d69c1210001a5")
 });
 
 /** posts records **/
 db.getCollection("posts").insert({
+  "_id": ObjectId("4fa723967d5d172740000e10"),
   "titleUrl": "newproba",
   "_owner": ObjectId("4f9c7141ddcebc7022000022"),
   "title": "New\/proba",
-  "_id": ObjectId("4fa723967d5d172740000e10"),
   "comments": [
     
   ],
-  "updatedAt": ISODate("2012-05-10T23:37:27.993Z"),
-  "createdAt": ISODate("2012-05-07T01:21:26.70Z")
+  "updatedAt": ISODate("2012-05-17T16:33:58.852Z"),
+  "createdAt": ISODate("2012-05-07T01:21:26.700Z")
 });
 db.getCollection("posts").insert({
   "_id": ObjectId("4fa72801de899f5a460001b9"),
@@ -225,29 +242,54 @@ db.getCollection("posts").insert({
   "updatedAt": ISODate("2012-05-13T01:20:46.684Z")
 });
 db.getCollection("posts").insert({
-  "titleUrl": "asdfasf",
-  "_owner": ObjectId("4f9c7141ddcebc7022000022"),
-  "title": "Asdfasf",
   "_id": ObjectId("4fb02f42a11e41286e001628"),
+  "_owner": ObjectId("4f9c7141ddcebc7022000022"),
+  "createdAt": ISODate("2012-05-13T22:01:38.646Z"),
   "tags": [
     
   ],
-  "comments": [
+  "title": "Asdfasf",
+  "titleUrl": "asdfasf",
+  "updatedAt": ISODate("2012-05-13T22:01:38.646Z")
+});
+db.getCollection("posts").insert({
+  "_id": ObjectId("4fb5242eea84c7903e00000d"),
+  "_owner": ObjectId("4f9c7141ddcebc7022000022"),
+  "createdAt": ISODate("2012-05-17T16:15:42.737Z"),
+  "tags": [
     
   ],
-  "updatedAt": ISODate("2012-05-13T22:01:38.646Z"),
-  "createdAt": ISODate("2012-05-13T22:01:38.646Z")
+  "title": "Fdsa",
+  "titleUrl": "fdsa",
+  "updatedAt": ISODate("2012-05-17T16:15:42.737Z")
 });
 
 /** sessions records **/
 db.getCollection("sessions").insert({
-  "_id": ObjectId("4fb4367befc59cdf2a03df70"),
-  "data": "{\"lastAccess\":1337216310409,\"cookie\":{\"originalMaxAge\":14399996,\"expires\":\"2012-05-17T04:58:30.449Z\",\"httpOnly\":true,\"path\":\"\/\"},\"_csrf\":\"NKK5LgoWuEtfkWBliQD6I8Wp\",\"flash\":{},\"user\":{\"_id\":\"4f9c7141ddcebc7022000022\",\"email\":\"stankovic.zarko@gmail.com\",\"password\":\"5101d9d94c8cae583027f9279171d83d\",\"photo\":\"4fb4496d1a7f533320000574\",\"createdAt\":\"2012-04-28T22:37:53.460Z\",\"salt\":\"95d3e293492509d083c7a027b0195ef5\",\"bio\":{\"about\":\"Ja sam programer.  \\r\\n\\r\\n\\r\\nOvo je cool site.  <br \/>\\r\\n\\r\\n\\r\\nJa sam ga napravio.\\r\\n\\r\\n<script>alert('ojha')<\/script>\",\"company\":\"Max My Play, LLC\",\"github\":\"http:\/\/github.com\/ManInTheBox\",\"location\":\"Beograd, Srbija\",\"twitter\":\"http:\/\/twitter.com\/zarkostankovic\",\"website\":\"http:\/\/www.zarkostankovic.com\"},\"name\":{\"first\":\"Žarko\",\"last\":\"Stanković\",\"username\":\"ManInTheBox\"}}}",
-  "expires": ISODate("2012-05-17T04:58:30.449Z"),
-  "sid": "MMqQrPwpN8hlGqHHiw0Mousw.T2maGjxRo2hPyZ7LF\/LUsFfBmhlsNwrxPQ9HL\/CUnjg"
+  "_id": ObjectId("4fb50fdd26dca291109bc809"),
+  "data": "{\"lastAccess\":1337272518399,\"cookie\":{\"originalMaxAge\":14399991,\"expires\":\"2012-05-17T20:35:18.454Z\",\"httpOnly\":true,\"path\":\"\/\"},\"_csrf\":\"0ivhHWvcJBzh33JpsXTMyvk6\",\"flash\":{}}",
+  "expires": ISODate("2012-05-17T20:35:18.454Z"),
+  "sid": "m64MDeuhhwcA8abVlj1qvt1T.VRkk1E9k7LoRTrD1vfwLoN0\/9VTSNq9uoJ\/7qBJldlA"
 });
 
 /** system.indexes records **/
+db.getCollection("system.indexes").insert({
+  "v": 1,
+  "key": {
+    "_id": 1
+  },
+  "ns": "nodejsrs.sessions",
+  "name": "_id_"
+});
+db.getCollection("system.indexes").insert({
+  "v": 1,
+  "key": {
+    "sid": 1
+  },
+  "unique": true,
+  "ns": "nodejsrs.sessions",
+  "name": "sid_1"
+});
 db.getCollection("system.indexes").insert({
   "v": 1,
   "key": {
@@ -264,6 +306,14 @@ db.getCollection("system.indexes").insert({
   "unique": true,
   "ns": "nodejsrs.users",
   "name": "name.username_1"
+});
+db.getCollection("system.indexes").insert({
+  "v": 1,
+  "key": {
+    "expires": 1
+  },
+  "ns": "nodejsrs.sessions",
+  "name": "expires_1"
 });
 db.getCollection("system.indexes").insert({
   "v": 1,
@@ -296,6 +346,14 @@ db.getCollection("system.indexes").insert({
   "key": {
     "_id": 1
   },
+  "ns": "nodejsrs.comments",
+  "name": "_id_"
+});
+db.getCollection("system.indexes").insert({
+  "v": 1,
+  "key": {
+    "_id": 1
+  },
   "ns": "nodejsrs.emails",
   "name": "_id_"
 });
@@ -307,45 +365,12 @@ db.getCollection("system.indexes").insert({
   "ns": "nodejsrs.pictures",
   "name": "_id_"
 });
-db.getCollection("system.indexes").insert({
-  "v": 1,
-  "key": {
-    "_id": 1
-  },
-  "ns": "nodejsrs.comments",
-  "name": "_id_"
-});
-db.getCollection("system.indexes").insert({
-  "v": 1,
-  "key": {
-    "_id": 1
-  },
-  "ns": "nodejsrs.sessions",
-  "name": "_id_"
-});
-db.getCollection("system.indexes").insert({
-  "v": 1,
-  "key": {
-    "sid": 1
-  },
-  "unique": true,
-  "ns": "nodejsrs.sessions",
-  "name": "sid_1"
-});
-db.getCollection("system.indexes").insert({
-  "v": 1,
-  "key": {
-    "expires": 1
-  },
-  "ns": "nodejsrs.sessions",
-  "name": "expires_1"
-});
 
 /** users records **/
 db.getCollection("users").insert({
   "_id": ObjectId("4f9c7141ddcebc7022000022"),
   "bio": {
-    "about": "Ja sam programer.  \r\n\r\n\r\nOvo je cool site.  <br \/>\r\n\r\n\r\nJa sam ga napravio.\r\n\r\n<script>alert('ojha')<\/script>",
+    "about": "Asdfasdf",
     "company": "Max My Play, LLC",
     "github": "http:\/\/github.com\/ManInTheBox",
     "location": "Beograd, Srbija",
@@ -360,13 +385,13 @@ db.getCollection("users").insert({
     "username": "ManInTheBox"
   },
   "password": "5101d9d94c8cae583027f9279171d83d",
-  "photo": ObjectId("4fb449c91a7f533320000725"),
+  "photo": ObjectId("4fb516d8873d69c1210001a5"),
   "salt": "95d3e293492509d083c7a027b0195ef5"
 });
 db.getCollection("users").insert({
+  "_id": ObjectId("4faf0053c623fb1b1a000314"),
   "password": "77e64507e4fe04dc034873eec46b10cd",
   "email": "mika@mika.com",
-  "_id": ObjectId("4faf0053c623fb1b1a000314"),
   "createdAt": ISODate("2012-05-13T00:29:07.180Z"),
   "salt": "7ab13aa7cc914895308248662bfc89eb",
   "name": {
@@ -374,9 +399,9 @@ db.getCollection("users").insert({
   }
 });
 db.getCollection("users").insert({
+  "_id": ObjectId("4faf007bc623fb1b1a0009aa"),
   "password": "ad4e9325008f7e5f6ec1b2ea4d0d6cf4",
   "email": "pera@pera.com",
-  "_id": ObjectId("4faf007bc623fb1b1a0009aa"),
   "createdAt": ISODate("2012-05-13T00:29:47.797Z"),
   "salt": "5fe1bfc73d6ed66a860251f0ccc1a8e6",
   "name": {

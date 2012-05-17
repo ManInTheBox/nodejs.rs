@@ -17,7 +17,7 @@ var Post = require('../models/post'),
 
 exports.list = function (req, res, next) {
   var page = +qs.parse(url.parse(req.url).query).page || 1;
-  var itemCount = 2;
+  var itemCount = 5;
 
   Post.count(function (err, postCount) {
     if (err) return next(err);
@@ -146,12 +146,15 @@ exports.view = function (req, res, next) {
 
         if (length) {
           post.comments.forEach(function (comment) {
-            User.findById(comment._owner, [ 'name.first', 'name.last', 'name.username' ], function (err, user) {
+            User.findById(comment._owner, [ 'name.first', 'name.last', 'name.username', 'photo' ]).populate('photo', ['name']).run(function (err, user) {
               if (err) return next(err);
+
               comment._ownerUsername = user.name.username;
               comment._ownerFullName = user.name.full;
               comment.createdAtFormatted = helpers.formatDateFine(comment.createdAt);
               comment.cssClass = (isLoggedIn() && isCommentOwner(comment)) ? ['thread-alt', 'depth-1'] : 'depth-1';
+              comment._ownerPhotoId = user.photo._id;
+              comment._ownerPhotoName = user.photo.name;
 
               comment.text = helpers.markdown(comment.text);
 
@@ -442,7 +445,7 @@ function handleSidebar(req, res, next, post, cb) {
       cb();
     });
   } else {
-    User.findOne({ _id: post._owner}, function (err, user) {
+    User.findOne({ _id: post._owner}).populate('photo').run(function (err, user) {
       if (err) return next(err);
       Post.findByAuthor(post._owner).ne('_id', post._id).run(function (err, posts) {
         if (err) return next(err);

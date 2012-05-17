@@ -6,7 +6,7 @@
       a(href='/user/#{user.name.username}/edit')
         em.small &nbsp;Izmeni
   
-  img(src='/images/users/#{user.photo._id}_large.jpg', class='align-left')
+  img(src='/images/users/#{user.photo._id}_large.jpg', class='align-left', title=user.photo.name)
 
 
   .desc
@@ -31,7 +31,8 @@
     label E-mail: 
       a(href='mailto:#{user.email}')= user.email
 
-
   .clearfix
 
-  blockquote= user.bio.about || 'Korisnik nije ostavio podatke.'
+  //- jade bug (gh-628)
+  - var bio = user.bio.about || 'Korisnik nije ostavio podatke.';
+  <blockquote>#{bio}</blockquote>

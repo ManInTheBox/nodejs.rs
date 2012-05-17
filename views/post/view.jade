@@ -48,7 +48,8 @@ article.post.single
           li(class=comment.cssClass)
             div(id='comment-#{comment._id}')
               .comment-info
-                a(href='/user/#{comment._ownerUsername}'): img(src='/images/users/#{comment._ownerUsername}_small.jpg')
+                a(href='/user/#{comment._ownerUsername}')
+                  img(src='/images/users/#{comment._ownerPhotoId}_small.jpg', title=comment._ownerPhotoName)
                 cite
                   a(href='/user/#{comment._ownerUsername}')= comment._ownerFullName || comment._ownerUsername
                   |  je napisao:
@@ -63,7 +64,8 @@ article.post.single
               .comment-text
                 != comment.text
     - else
-      blockquote Još uvek niko nije ostavio komentar.
+      //- jade bug (gh-628)
+      <blockquote>Još uvek niko nije ostavio komentar.</blockquote>
 
     a(href='#top', class='back-to-top') vrh
 
@@ -171,6 +173,9 @@ script(type='text/javascript')
           newText = r.text;
         }
         commentBox.html(newText);
+        commentBox.find('pre code').each(function (i, e) {
+          hljs.highlightBlock(e);
+        });
         $("html, body").animate({
             scrollTop: 0
           }, {

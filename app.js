@@ -260,6 +260,6 @@ app.listen(app.settings.env = 'development' ? 3000 : 80);
  * Catches all exceptions that were not handled by application.
  */
 
-process.on('uncaughtException', function (err) {
-  console.error('Uhvacen error:\n', err.message);
-});
+// process.on('uncaughtException', function (err) {
+//   console.error('Uhvacen error:\n', err.message);
+// });

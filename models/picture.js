@@ -25,6 +25,7 @@ const MAX_SIZE = 1024 * 1024 * 2;
  */
 
 var Picture = new db.Schema({
+  name: String,
   size: {
     type: Number,
     max: [ MAX_SIZE, 'Dozvoljena maksimalna veličina fotografije je 2MB.' ]

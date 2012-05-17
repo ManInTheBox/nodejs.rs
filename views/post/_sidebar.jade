@@ -3,7 +3,7 @@
     a(href='/user/#{data.user.name.username}')= data.user.name.username
   p
     a(href='/user/#{data.user.name.username}')
-      img(src='/images/users/#{data.user.name.username}_small.jpg', class="align-left")
+      img(src='/images/users/#{data.user.photo._id}_small.jpg', class="align-left", title=data.user.photo.name)
     = data.user.bio.about
 
   .clearfix
@@ -27,6 +27,6 @@
     ul
       - each post in data.posts
         li
-          a(href='/post/#{post.titleUrl}')= substring(post.title)
+          a(href='/post/#{post.titleUrl}', title=post.title)= substring(post.title)
 
 .sidemenu.popular!= partial('site/_aboutShort')
