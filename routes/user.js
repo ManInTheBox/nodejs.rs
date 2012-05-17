@@ -256,7 +256,6 @@ exports.edit = function (req, res, next) {
         res.on('ready for photo', function () {
           if (u.photo) {
             var picture = new Picture({
-              name: user.name.username,
               size: u.photo.size,
               type: u.photo.type
             });

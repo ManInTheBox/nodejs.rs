@@ -129,8 +129,46 @@ db.getCollection("emails").insert({
     "from": "register@nodejs.rs"
   }
 });
+db.getCollection("emails").insert({
+  "body": "Dobrodosli na Node.js Srbija\nKliknite ovde za aktivaciju:<br \/>\nOva poruka je poslata na asdf@asfd.com",
+  "_id": ObjectId("4fb448171289ad5915001c44"),
+  "sendingCounter": 0,
+  "priority": 1,
+  "type": 1,
+  "createdAt": ISODate("2012-05-17T00:36:39.195Z"),
+  "sent": false,
+  "message": {
+    "subject": "Registracija na nodejs.rs",
+    "to": [
+      "asdf@asfd.com"
+    ],
+    "from": "register@nodejs.rs"
+  }
+});
 
 /** pictures records **/
+db.getCollection("pictures").insert({
+  "name": "ManInTheBox",
+  "size": 270187,
+  "type": "image\/jpeg",
+  "_id": ObjectId("4fb43939290017ed1300063a")
+});
+db.getCollection("pictures").insert({
+  "_id": ObjectId("4fb448161289ad5915001c43"),
+  "name": "Dojocat - OCTOCATS!",
+  "size": 67687,
+  "type": "image\/jpeg"
+});
+db.getCollection("pictures").insert({
+  "size": 93245,
+  "type": "image\/jpeg",
+  "_id": ObjectId("4fb4496d1a7f533320000574")
+});
+db.getCollection("pictures").insert({
+  "size": 42548,
+  "type": "image\/jpeg",
+  "_id": ObjectId("4fb449c91a7f533320000725")
+});
 
 /** posts records **/
 db.getCollection("posts").insert({
@@ -203,10 +241,10 @@ db.getCollection("posts").insert({
 
 /** sessions records **/
 db.getCollection("sessions").insert({
-  "_id": ObjectId("4fb011fc538aa5cb9d6754e4"),
-  "data": "{\"lastAccess\":1336951726273,\"cookie\":{\"originalMaxAge\":14399992,\"expires\":\"2012-05-14T03:28:46.294Z\",\"httpOnly\":true,\"path\":\"\/\"},\"_csrf\":\"NRq2PDScTDCS8IX5h8MiaM2U\",\"flash\":{},\"user\":{\"_id\":\"4f9c7141ddcebc7022000022\",\"email\":\"stankovic.zarko@gmail.com\",\"password\":\"5101d9d94c8cae583027f9279171d83d\",\"createdAt\":\"2012-04-28T22:37:53.460Z\",\"salt\":\"95d3e293492509d083c7a027b0195ef5\",\"bio\":{\"about\":\"Ja sam programer.  \\r\\n\\r\\n\\r\\nOvo je cool site.  <br \/>\\r\\n\\r\\n\\r\\nJa sam ga napravio.\\r\\n\\r\\n<script>alert('ojha')<\/script>\",\"company\":\"Max My Play, LLC\",\"github\":\"http:\/\/github.com\/ManInTheBox\",\"location\":\"Beograd, Srbija\",\"twitter\":\"http:\/\/twitter.com\/zarkostankovic\",\"website\":\"http:\/\/www.zarkostankovic.com\"},\"name\":{\"first\":\"Žarko\",\"last\":\"Stanković\",\"username\":\"ManInTheBox\"}}}",
-  "expires": ISODate("2012-05-14T03:28:46.294Z"),
-  "sid": "hGkC2NmthOT95vRHetxGt59A.tYS2bfwZouIS+bucJ\/w6Xrbl4iUxzzomoT5filww37U"
+  "_id": ObjectId("4fb4367befc59cdf2a03df70"),
+  "data": "{\"lastAccess\":1337216310409,\"cookie\":{\"originalMaxAge\":14399996,\"expires\":\"2012-05-17T04:58:30.449Z\",\"httpOnly\":true,\"path\":\"\/\"},\"_csrf\":\"NKK5LgoWuEtfkWBliQD6I8Wp\",\"flash\":{},\"user\":{\"_id\":\"4f9c7141ddcebc7022000022\",\"email\":\"stankovic.zarko@gmail.com\",\"password\":\"5101d9d94c8cae583027f9279171d83d\",\"photo\":\"4fb4496d1a7f533320000574\",\"createdAt\":\"2012-04-28T22:37:53.460Z\",\"salt\":\"95d3e293492509d083c7a027b0195ef5\",\"bio\":{\"about\":\"Ja sam programer.  \\r\\n\\r\\n\\r\\nOvo je cool site.  <br \/>\\r\\n\\r\\n\\r\\nJa sam ga napravio.\\r\\n\\r\\n<script>alert('ojha')<\/script>\",\"company\":\"Max My Play, LLC\",\"github\":\"http:\/\/github.com\/ManInTheBox\",\"location\":\"Beograd, Srbija\",\"twitter\":\"http:\/\/twitter.com\/zarkostankovic\",\"website\":\"http:\/\/www.zarkostankovic.com\"},\"name\":{\"first\":\"Žarko\",\"last\":\"Stanković\",\"username\":\"ManInTheBox\"}}}",
+  "expires": ISODate("2012-05-17T04:58:30.449Z"),
+  "sid": "MMqQrPwpN8hlGqHHiw0Mousw.T2maGjxRo2hPyZ7LF\/LUsFfBmhlsNwrxPQ9HL\/CUnjg"
 });
 
 /** system.indexes records **/
@@ -322,6 +360,7 @@ db.getCollection("users").insert({
     "username": "ManInTheBox"
   },
   "password": "5101d9d94c8cae583027f9279171d83d",
+  "photo": ObjectId("4fb449c91a7f533320000725"),
   "salt": "95d3e293492509d083c7a027b0195ef5"
 });
 db.getCollection("users").insert({
@@ -343,4 +382,15 @@ db.getCollection("users").insert({
   "name": {
     "username": "pera"
   }
+});
+db.getCollection("users").insert({
+  "_id": ObjectId("4fb448161289ad5915001c42"),
+  "createdAt": ISODate("2012-05-17T00:36:38.989Z"),
+  "email": "asdf@asfd.com",
+  "name": {
+    "username": "asdf"
+  },
+  "password": "369dc40fa549d44f7cbf51d884c5bb05",
+  "photo": ObjectId("4fb448161289ad5915001c43"),
+  "salt": "bb48d0734ffdb501e8e95bd42e81cc30"
 });
