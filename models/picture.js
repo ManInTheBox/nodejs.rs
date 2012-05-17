@@ -12,7 +12,7 @@ var db = require('./db'),
  * Default `Picture._id`
  */
 
-const DEFAULT = '4fb448161289ad5915001c43';
+const DEFAULT = '4fb5537c0cdda82c0f000f55';
 
 /**
  * Maximum picture file size.
@@ -33,7 +33,8 @@ var Picture = new db.Schema({
   type: {
     type: String,
     match: [ /(jpe?g|png|gif)/, 'Dozvoljeni formati za fotografiju su: "jpeg, png, gif".' ]
-  }
+  },
+  ext: String
 });
 
 /**
@@ -77,6 +78,12 @@ Picture.statics.DEFAULT = DEFAULT;
  */
 
 Picture.statics.MAX_SIZE = MAX_SIZE;
+
+/**
+ * Expose static `Picture.STORE_PATH`
+ */
+
+Picture.statics.STORE_PATH = storePath;
 
 /**
  * Exports `Picture` model

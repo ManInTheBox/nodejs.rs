@@ -5,7 +5,8 @@
 
 var util = require('util'),
   qs = require('querystring'),
-  url = require('url');
+  url = require('url'),
+  fs = require('fs');
 
 /**
  * Models module dependencies.
@@ -187,7 +188,7 @@ exports.view = function (req, res, next) {
  */
 
 exports.edit = function (req, res, next) {
-  User.findOne({ 'name.username': req.params.username }, function (err, user) {
+  User.findOne({ 'name.username': req.params.username }).populate('photo').run(function (err, user) {
     if (err) return next(err);
     if (!user) return next(); // 404 will catch this...
 
@@ -255,10 +256,13 @@ exports.edit = function (req, res, next) {
 
         res.on('ready for photo', function () {
           if (u.photo) {
+
+            var dot = u.photo.name.lastIndexOf('.');
             var picture = new Picture({
               name: user.name.username,
               size: u.photo.size,
-              type: u.photo.type
+              type: u.photo.type,
+              ext: u.photo.name.substring(dot + 1)
             });
 
             picture.store(u.photo.path, function (err) {
@@ -272,7 +276,20 @@ exports.edit = function (req, res, next) {
               } else {
                 User.update({ _id: user._id }, { photo: picture._id }, function (err) {
                   if (err) return next(err);
-                  res.emit('photo done');
+                  var oldPicture = user.photo._id.toString();
+                  if (oldPicture != Picture.DEFAULT) {
+                    var picturePath = Picture.STORE_PATH + oldPicture;
+                    fs.unlink(picturePath + '_large.' + user.photo.ext, function (err) {
+                      if (err) return next(err);
+                      fs.unlink(picturePath + '_small.' + user.photo.ext, function (err) {
+                        if (err) return next(err);
+                        req.sesion.user.photo = picture;
+                        res.emit('photo done');
+                      });
+                    });
+                  } else {
+                    res.emit('photo done');
+                  }
                 });
               }
             });
