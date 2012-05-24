@@ -5,8 +5,8 @@
     - if (session.user && session.user._id == user._id)
       a(href='/user/#{user.name.username}/edit')
         em.small &nbsp;Izmeni
-  
-  img(src='/images/users/#{user.photo._id}_large.jpg', class='align-left', title=user.photo.name)
+
+  img(src='/images/users/#{user.photo.large}', class='align-left', title=user.photo.name)
 
 
   .desc

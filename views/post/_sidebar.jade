@@ -3,7 +3,7 @@
     a(href='/user/#{data.user.name.username}')= data.user.name.username
   p
     a(href='/user/#{data.user.name.username}')
-      img(src='/images/users/#{data.user.photo._id}_small.jpg', class="align-left", title=data.user.photo.name)
+      img(src='/images/users/#{data.user.photo.small}', class="align-left", title=data.user.photo.name)
     = data.user.bio.about
 
   .clearfix

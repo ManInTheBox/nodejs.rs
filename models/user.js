@@ -1,7 +1,8 @@
 var db = require('./db'),
   util = require('util'),
   crypto = require('crypto'),
-  helpers = require('../helpers');
+  helpers = require('../helpers'),
+  Picture = require('./picture');
     
 var User = new db.Schema({
   name: {
@@ -43,7 +44,8 @@ var User = new db.Schema({
   },
   photo: {
     type: db.ObjectId,
-    ref: 'Picture'
+    ref: 'Picture',
+    default: Picture.DEFAULT
   },
   bio: {
     about: {

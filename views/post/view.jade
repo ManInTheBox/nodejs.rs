@@ -49,7 +49,7 @@ article.post.single
             div(id='comment-#{comment._id}')
               .comment-info
                 a(href='/user/#{comment._ownerUsername}')
-                  img(src='/images/users/#{comment._ownerPhotoId}_small.jpg', title=comment._ownerPhotoName)
+                  img(src='/images/users/#{comment._ownerPhoto}', title=comment._ownerPhotoName)
                 cite
                   a(href='/user/#{comment._ownerUsername}')= comment._ownerFullName || comment._ownerUsername
                   |  je napisao:

@@ -8,7 +8,8 @@ var Post = require('../models/post'),
   User = require('../models/user'),
   helpers = require('../helpers'),
   url = require('url');
-  qs = require('querystring');
+  qs = require('querystring'),
+  credentials = require('../credentials');
 
 
 /**
@@ -107,6 +108,7 @@ exports.new = function (req, res, next) {
   }
 };
 
+
 /**
  * View action
  */
@@ -118,7 +120,11 @@ exports.view = function (req, res, next) {
   }
 
   function isAdmin() {
-    return req.session.user.name.username === 'admin';
+    for (var i = 0; i < credentials.admins.length; i++) {
+      if (req.session.user.email === credentials.admins[i].email)
+        return true;
+    }
+    return false;
   }
 
   function isPostOwner(post) {
@@ -153,7 +159,7 @@ exports.view = function (req, res, next) {
               comment._ownerFullName = user.name.full;
               comment.createdAtFormatted = helpers.formatDateFine(comment.createdAt);
               comment.cssClass = (isLoggedIn() && isCommentOwner(comment)) ? ['thread-alt', 'depth-1'] : 'depth-1';
-              comment._ownerPhotoId = user.photo._id;
+              comment._ownerPhoto = user.photo.small;
               comment._ownerPhotoName = user.photo.name;
 
               comment.text = helpers.markdown(comment.text);
@@ -411,7 +417,7 @@ exports.comment = {
           });
         }
       } else {
-        return next(new HttpError(403)); 
+        return next(new HttpError(403));
       }
     });
   }

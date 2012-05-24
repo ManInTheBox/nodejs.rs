@@ -12,7 +12,7 @@ var db = require('./db'),
  * Default `Picture._id`
  */
 
-const DEFAULT = '4fb5537c0cdda82c0f000f55';
+const DEFAULT = '4fbeb036b65eb1c21f0003e3';
 
 /**
  * Maximum picture file size.
@@ -48,7 +48,7 @@ Picture.methods.store = function (path, cb) {
     if (err) return cb(err);
     var opts = {
       srcPath: path,
-      dstPath: storePath + self._id + '_small.jpg',
+      dstPath: storePath + self._id + '_small.' + self.ext,
       width: 42,
       height: 42,
       quality: 1
@@ -56,7 +56,7 @@ Picture.methods.store = function (path, cb) {
 
     imagemagick.crop(opts, function (err, stdout, stderr) {
       if (err) return cb(err);
-      opts.dstPath = storePath + self._id + '_large.jpg';
+      opts.dstPath = storePath + self._id + '_large.' + self.ext;
       opts.width = 200;
       opts.height = 200;
       imagemagick.crop(opts, function (err, stdout, stderr) {
@@ -66,6 +66,26 @@ Picture.methods.store = function (path, cb) {
     });
   });
 };
+
+/**
+ * Virtual getter for large image name
+ *
+ * @return {String} small image name
+ */
+
+Picture.virtual('large').get(function () {
+  return this._id + '_large.' + this.ext;
+});
+
+/**
+ * Virtual getter for small image name
+ *
+ * @return {String} small image name
+ */
+
+Picture.virtual('small').get(function () {
+  return this._id + '_small.' + this.ext;
+});
 
 /**
  * Expose static `Picture.DEFAULT`

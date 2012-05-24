@@ -262,7 +262,7 @@ exports.edit = function (req, res, next) {
               name: user.name.username,
               size: u.photo.size,
               type: u.photo.type,
-              ext: u.photo.name.substring(dot + 1)
+              ext: u.photo.name.substring(dot + 1).toLowerCase()
             });
 
             picture.store(u.photo.path, function (err) {
@@ -278,13 +278,15 @@ exports.edit = function (req, res, next) {
                   if (err) return next(err);
                   var oldPicture = user.photo._id.toString();
                   if (oldPicture != Picture.DEFAULT) {
-                    var picturePath = Picture.STORE_PATH + oldPicture;
-                    fs.unlink(picturePath + '_large.' + user.photo.ext, function (err) {
-                      if (err) return next(err);
-                      fs.unlink(picturePath + '_small.' + user.photo.ext, function (err) {
+                    Picture.remove({ _id: oldPicture }, function () {
+                      var picturePath = Picture.STORE_PATH + oldPicture;
+                      fs.unlink(picturePath + '_large.' + user.photo.ext, function (err) {
                         if (err) return next(err);
-                        req.sesion.user.photo = picture;
-                        res.emit('photo done');
+                        fs.unlink(picturePath + '_small.' + user.photo.ext, function (err) {
+                          if (err) return next(err);
+                          req.session.user.photo = picture;
+                          res.emit('photo done');
+                        });
                       });
                     });
                   } else {
