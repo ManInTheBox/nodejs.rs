@@ -45,28 +45,29 @@ html
         #main!= body
         #sidebar!= partial(sidebar.viewFile || '_sidebar', { data: sidebar.data })
     footer
-      p.footer-left
-        span
-          | Copyright &copy; 2012 
-          a(href='http://github.com/ManInTheBox', target='_blank') Žarko Stanković
-          br
-          | Nodejs.rs izrađen sa 
-          a(href='http://nodejs.org', target='_blank') Node.js
-          |  koristeći 
-          a(href='http://expressjs.com', target='_blank') Express
-          | , 
-          a(href='http://jade-lang.com', target='_blank') Jade
-          |  i 
-          a(href='http://mongoosejs.com', target='_blank') Mongoose
-          | . Hostovano na 
-          a(href='http://nodejitsu.com', target='_blank') Nodejitsu
-          |  platformi.
-          br
-          a(href='http://nodejs.org', target='_blank') Node.js 
-          | je vlasništvo  
-          a(href='http://www.joyent.com', target='_blank') Joyent, Inc
-          | . 
-      p.footer-right
-        a(href='mailto:stankovic.zarko@gmail.com') Kontakt | 
-        a(href='http://github.com/ManInTheBox/nodejs.rs', target='_blank') GitHub | 
-        a(href='http://github.com/ManInTheBox/nodejs.rs/issues', target='_blank') Prijavi bug
+      #footer
+        p.footer-left
+          span
+            | Copyright &copy; 2012 
+            a(href='http://github.com/ManInTheBox', target='_blank') Žarko Stanković
+            br
+            | Nodejs.rs izrađen sa 
+            a(href='http://nodejs.org', target='_blank') Node.js
+            |  koristeći 
+            a(href='http://expressjs.com', target='_blank') Express
+            | , 
+            a(href='http://jade-lang.com', target='_blank') Jade
+            |  i 
+            a(href='http://mongoosejs.com', target='_blank') Mongoose
+            | . Hostovano na 
+            a(href='http://nodejitsu.com', target='_blank') Nodejitsu
+            |  platformi.
+            br
+            a(href='http://nodejs.org', target='_blank') Node.js 
+            | je vlasništvo  
+            a(href='http://www.joyent.com', target='_blank') Joyent, Inc
+            | . 
+        p.footer-right
+          a(href='mailto:stankovic.zarko@gmail.com') Kontakt | 
+          a(href='http://github.com/ManInTheBox/nodejs.rs', target='_blank') GitHub | 
+          a(href='http://github.com/ManInTheBox/nodejs.rs/issues', target='_blank') Prijavi bug

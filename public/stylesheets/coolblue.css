@@ -63,7 +63,7 @@ html {
 body {
   font: 15px/24px Georgia, Serif;
   color: #454545;
-    background: url(../images/bg.png);
+  /* background: url(../images/bg.png); */
 }
 /* Links */
 a:link, a:visited {
@@ -461,6 +461,9 @@ header {
     margin-left: 0;
 }
 footer {
+  background: #205a86 url('../images/bg.png');
+}
+footer #footer {
   clear: both;
     width: 978px;
   margin: 0 auto;
@@ -470,7 +473,7 @@ footer {
     font-size: 11px;
   color: #C2DBE7;
     overflow: hidden;
-    background: url(../images/footer-line.png) repeat-x left top;
+    /*background: url(../images/footer-line.png) repeat-x left top;*/
 }
 
 /* --------------------------------------------------------------------------
