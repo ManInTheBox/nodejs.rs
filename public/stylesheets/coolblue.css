@@ -903,7 +903,7 @@ footer p.footer-right {
 }
 
 aside {
-    position: relative;
+    /*position: relative;*/
     width: 135px;
     float: left;
 }
