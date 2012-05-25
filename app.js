@@ -101,6 +101,7 @@ function postOwner(req, res, next) {
  */
 
 function commentOwner(req, res, next) {
+  // comment owner
   var conditions = {
     _id: req.params.commentId,
     _owner: req.session.user._id
@@ -108,11 +109,14 @@ function commentOwner(req, res, next) {
   Comment.count(conditions, function (err, count) {
     if (err) return next(err);
     if (count === 1) return next();
-    // TODO: napraviti ovo
-    Post.find({}).where(req.params.commentid).in('comments').run(function (err, comment) {
+    // post owner that this comment belongs to
+    conditions = {
+      comments: { $in : [req.params.commentId] },
+      _owner: req.session.user._id
+    };
+    Post.find(conditions, function (err, comment) {
       if (err) return next(err);
-      console.log(comment);
-      return false;
+      return !!comment.length ? next() : next(new HttpError(403));
     });
   });
 }
@@ -271,7 +275,7 @@ app.put('/post/:postId/comment/:commentId/edit', loginRequired, grantAccess(comm
  * Delete post comment route.
  */
 
-app.del('/post/:postId/comment/:commentId/delete', loginRequired, routes.post.comment.delete);
+app.del('/post/:postId/comment/:commentId/delete', loginRequired, grantAccess(commentOwner), routes.post.comment.delete);
 
 /**
  * Starts the server.

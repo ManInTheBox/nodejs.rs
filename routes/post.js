@@ -152,7 +152,11 @@ exports.view = function (req, res, next) {
 
         if (length) {
           post.comments.forEach(function (comment) {
-            User.findById(comment._owner, [ 'name.first', 'name.last', 'name.username', 'photo' ]).populate('photo', ['name']).run(function (err, user) {
+            User
+              .findById(comment._owner, [ 'name.first', 'name.last', 'name.username', 'photo' ])
+              .populate('photo', ['name', 'ext'])
+              .run(function (err, user) {
+
               if (err) return next(err);
 
               comment._ownerUsername = user.name.username;
@@ -360,29 +364,25 @@ exports.comment = {
       if (!comment) return next();
 
       var _id = req.session.user._id;
-      if (comment._owner == _id || req.post._owner == _id) {
-        comment.remove(function (err) {
+      comment.remove(function (err) {
+        if (err) return next(err);
+        var pos = req.post.comments.indexOf(comment._id);
+        req.post.comments.splice(pos, 1); // manually remove it... mongoose bug?
+
+        if (req.post.comments.length === 0) {
+          req.post.comments = undefined; // tell mongoose to remove comments key... mongoose bug?
+        }
+
+        req.post.save(function (err) {
           if (err) return next(err);
-          var pos = req.post.comments.indexOf(comment._id);
-          req.post.comments.splice(pos, 1); // manually remove it... mongoose bug?
-
-          if (req.post.comments.length === 0) {
-            req.post.comments = undefined; // tell mongoose to remove comments key... mongoose bug?
+          if (req.xhr) {
+            return res.send('Komentar uspešno obrisan.');
+          } else {
+            req.flash('success', 'Komentar uspešno obrisan.');
+            res.redirect('/post/' + req.post.titleUrl);
           }
-
-          req.post.save(function (err) {
-            if (err) return next(err);
-            if (req.xhr) {
-              return res.send('Komentar uspešno obrisan.');
-            } else {
-              req.flash('success', 'Komentar uspešno obrisan.');
-              res.redirect('/post/' + req.post.titleUrl);
-            }
-          });
         });
-      } else {
-        return next(new HttpError(403)); 
-      }
+      });
     });
   },
 
@@ -396,29 +396,24 @@ exports.comment = {
       if (!comment) return next();
 
       var _id = req.session.user._id;
-      // if (comment._owner == _id || req.post._owner == _id) {
-
-        if (req.body.get) {
-          return res.send(comment.text);
-        } else {
-          comment.text = req.body.text;
-          comment.save(function (err) {
-            if (req.xhr) {
-              if (err) return res.send({ err: err.errors.text.message });
-              return res.send({
-                text: helpers.markdown(comment.text),
-                msg: 'Komentar uspešno izmenjen.'
-              });
-            } else {
-              if (err) return next(err);
-              req.flash('success', 'Komentar uspešno izmenjen.');
-              res.redirect('/post/' + req.post.titleUrl);
-            }
-          });
-        }
-      // } else {
-        // return next(new HttpError(403));
-      // }
+      if (req.body.get) {
+        return res.send(comment.text);
+      } else {
+        comment.text = req.body.text;
+        comment.save(function (err) {
+          if (req.xhr) { // ajax request
+            if (err) return res.send({ err: err.errors.text.message });
+            return res.send({
+              text: helpers.markdown(comment.text),
+              msg: 'Komentar uspešno izmenjen.'
+            });
+          } else {
+            if (err) return next(err);
+            req.flash('success', 'Komentar uspešno izmenjen.');
+            res.redirect('/post/' + req.post.titleUrl);
+          }
+        });
+      }
     });
   }
 };
