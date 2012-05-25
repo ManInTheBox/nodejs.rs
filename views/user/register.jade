@@ -53,16 +53,20 @@
     input(type='submit', value='Registruj se', class='submit')
 
 - if (user.displayFullForm)
-  script
+  script(type="text/javascript")
     $('#full').css('display', 'block');
 script(type='text/javascript')
   $('#showFull').on('click', function () {
-    $('#full').toggle(200);
-    $("html, body").animate({
-        scrollTop: $('#full').offset().top
-      }, {
-      duration: 400,
-      easing: "swing"
+    $('#full').toggle(0, function () {
+      var scrollTop = $(this).css('display') === 'block'
+        ? $(this).offset().top - $('nav').height()
+        : 0;
+      $("html, body").animate({
+          scrollTop: scrollTop
+        }, {
+        duration: 400,
+        easing: "swing"
+      });
     });
     return false;
   });
