@@ -396,7 +396,7 @@ exports.comment = {
       if (!comment) return next();
 
       var _id = req.session.user._id;
-      if (comment._owner == _id || req.post._owner == _id) {
+      // if (comment._owner == _id || req.post._owner == _id) {
 
         if (req.body.get) {
           return res.send(comment.text);
@@ -416,9 +416,9 @@ exports.comment = {
             }
           });
         }
-      } else {
-        return next(new HttpError(403));
-      }
+      // } else {
+        // return next(new HttpError(403));
+      // }
     });
   }
 };

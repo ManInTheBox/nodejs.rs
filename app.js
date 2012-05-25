@@ -8,6 +8,7 @@ var express = require('express'),
   HttpError = require('./httperror'),
   Post = require('./models/post'),
   User = require('./models/user'),
+  Comment = require('./models/comment'),
   credentials = require('./credentials');
 
 /**
@@ -91,6 +92,28 @@ function postOwner(req, res, next) {
   Post.count(conditions, function (err, count) {
     if (err) return next(err);
     return count === 1 ? next() : next(new HttpError(403));
+  });
+}
+
+/**
+ * Grants access to comment owner
+ * or post owner that comment belongs to.
+ */
+
+function commentOwner(req, res, next) {
+  var conditions = {
+    _id: req.params.commentId,
+    _owner: req.session.user._id
+  };
+  Comment.count(conditions, function (err, count) {
+    if (err) return next(err);
+    if (count === 1) return next();
+    // TODO: napraviti ovo
+    Post.find({}).where(req.params.commentid).in('comments').run(function (err, comment) {
+      if (err) return next(err);
+      console.log(comment);
+      return false;
+    });
   });
 }
 
@@ -242,7 +265,7 @@ app.post('/post/:postId/comment/new', loginRequired, routes.post.comment.new);
  * Edit post comment route.
  */
 
-app.put('/post/:postId/comment/:commentId/edit', loginRequired, routes.post.comment.edit);
+app.put('/post/:postId/comment/:commentId/edit', loginRequired, grantAccess(commentOwner), routes.post.comment.edit);
 
 /**
  * Delete post comment route.

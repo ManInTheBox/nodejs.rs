@@ -86,18 +86,30 @@ db.getCollection("comments").insert({
 db.getCollection("comments").insert({
   "_owner": ObjectId("4fbebbb4617d7f8039000569"),
   "text": "mikin komentar",
-  "_id": ObjectId("4fbebceb4d03919d3e0001bd"),
-  "createdAt": ISODate("2012-05-24T22:57:47.351Z")
+  "_id": ObjectId("4fbee185dd1f0fa712001682"),
+  "createdAt": ISODate("2012-05-25T01:33:57.749Z")
+});
+db.getCollection("comments").insert({
+  "_owner": ObjectId("4fbeba84617d7f80390000ab"),
+  "text": "pera 1",
+  "_id": ObjectId("4fbee6f659cd416a17000691"),
+  "createdAt": ISODate("2012-05-25T01:57:10.697Z")
+});
+db.getCollection("comments").insert({
+  "_owner": ObjectId("4fbeba84617d7f80390000ab"),
+  "text": "pera 2",
+  "_id": ObjectId("4fbee6fa59cd416a1700071e"),
+  "createdAt": ISODate("2012-05-25T01:57:14.687Z")
 });
 
 /** emails records **/
 db.getCollection("emails").insert({
-  "body": "Dobrodosli na Node.js Srbija\nKliknite ovde za aktivaciju:<br \/>\nOva poruka je poslata na pera@pera.com",
   "_id": ObjectId("4fbeba84617d7f80390000ac"),
+  "body": "Dobrodosli na Node.js Srbija\nKliknite ovde za aktivaciju:<br \/>\nOva poruka je poslata na pera@pera.com",
   "sendingCounter": 0,
   "priority": 1,
   "type": 1,
-  "createdAt": ISODate("2012-05-24T22:47:32.730Z"),
+  "createdAt": ISODate("2012-05-24T22:47:31.730Z"),
   "sent": false,
   "message": {
     "subject": "Registracija na nodejs.rs",
@@ -108,8 +120,8 @@ db.getCollection("emails").insert({
   }
 });
 db.getCollection("emails").insert({
-  "body": "Dobrodosli na Node.js Srbija\nKliknite ovde za aktivaciju:<br \/>\nOva poruka je poslata na mika@mika.com",
   "_id": ObjectId("4fbebbb5617d7f803900056b"),
+  "body": "Dobrodosli na Node.js Srbija\nKliknite ovde za aktivaciju:<br \/>\nOva poruka je poslata na mika@mika.com",
   "sendingCounter": 0,
   "priority": 1,
   "type": 1,
@@ -133,43 +145,26 @@ db.getCollection("pictures").insert({
   "type": "image\/jpeg"
 });
 db.getCollection("pictures").insert({
+  "_id": ObjectId("4fbeb6524757f93d2d000f8b"),
   "name": "ManInTheBox",
   "size": 168291,
   "type": "image\/jpeg",
-  "ext": "jpg",
-  "_id": ObjectId("4fbeb6524757f93d2d000f8b")
+  "ext": "jpg"
 });
 db.getCollection("pictures").insert({
+  "_id": ObjectId("4fbebbb4617d7f803900056a"),
   "name": "mika",
   "size": 1896383,
-  "type": "image\/jpeg",
-  "_id": ObjectId("4fbebbb4617d7f803900056a")
+  "type": "image\/jpeg"
 });
 
 /** posts records **/
-db.getCollection("posts").insert({
-  "_id": ObjectId("4fbebc21617d7f8039000895"),
-  "_owner": ObjectId("4fbebbb4617d7f8039000569"),
-  "comments": [
-    ObjectId("4fbebc61617d7f8039000c65")
-  ],
-  "createdAt": ISODate("2012-05-24T22:54:25.976Z"),
-  "tags": [
-    "test",
-    "mika",
-    "post"
-  ],
-  "title": "Mikin članak",
-  "titleUrl": "mikin-clanak",
-  "updatedAt": ISODate("2012-05-24T22:55:08.588Z")
-});
 db.getCollection("posts").insert({
   "_id": ObjectId("4faef290118a08be140007d7"),
   "_owner": ObjectId("4f9c7141ddcebc7022000022"),
   "comments": [
     ObjectId("4faef814812b1c3e16000d8a"),
-    ObjectId("4faf1c4d9e0c09cb23000cb2"),
-    ObjectId("4fbebceb4d03919d3e0001bd")
+    ObjectId("4faf1c4d9e0c09cb23000cb2")
   ],
   "createdAt": ISODate("2012-05-12T23:30:24.769Z"),
   "tags": [
@@ -181,6 +176,36 @@ db.getCollection("posts").insert({
   "titleUrl": "generalni-prirucnik-za-markdown-sintaksu",
   "updatedAt": ISODate("2012-05-12T23:53:05.756Z")
 });
+db.getCollection("posts").insert({
+  "_id": ObjectId("4fbee17bdd1f0fa712001582"),
+  "_owner": ObjectId("4fbebbb4617d7f8039000569"),
+  "comments": [
+    ObjectId("4fbee185dd1f0fa712001682"),
+    ObjectId("4fbee6f659cd416a17000691"),
+    ObjectId("4fbee6fa59cd416a1700071e")
+  ],
+  "createdAt": ISODate("2012-05-25T01:33:47.999Z"),
+  "tags": [
+    
+  ],
+  "title": "Mikin clanak",
+  "titleUrl": "mikin-clanak",
+  "updatedAt": ISODate("2012-05-25T01:33:47.999Z")
+});
+db.getCollection("posts").insert({
+  "titleUrl": "perin-post",
+  "_owner": ObjectId("4fbeba84617d7f80390000ab"),
+  "title": "Perin post",
+  "_id": ObjectId("4fbee314dd1f0fa7120028e8"),
+  "tags": [
+    
+  ],
+  "comments": [
+    
+  ],
+  "updatedAt": ISODate("2012-05-25T01:40:36.370Z"),
+  "createdAt": ISODate("2012-05-25T01:40:36.370Z")
+});
 
 /** sessions records **/
 db.getCollection("sessions").insert({
@@ -189,25 +214,14 @@ db.getCollection("sessions").insert({
   "expires": ISODate("2012-05-25T03:17:37.396Z"),
   "sid": "0JlafnP1NCRDDHWqaL8nQCwf.bnEP06Uc4b\/Cw3e+POTQd6eCgxeHK7dmHcY0qtvIvKk"
 });
+db.getCollection("sessions").insert({
+  "_id": ObjectId("4fbed8a488afd8caebaf254f"),
+  "data": "{\"lastAccess\":1337911717403,\"cookie\":{\"originalMaxAge\":14399989,\"expires\":\"2012-05-25T06:08:37.405Z\",\"httpOnly\":true,\"path\":\"\/\"},\"_csrf\":\"bLe71f0ztWcXkK82OxyrbQGS\",\"flash\":{},\"user\":{\"_id\":\"4fbebbb4617d7f8039000569\",\"password\":\"8e902c1c04f5f07a0c3ddeba16a0dea8\",\"email\":\"mika@mika.com\",\"createdAt\":\"2012-05-24T22:52:36.328Z\",\"salt\":\"5d0d9ff91068ce00eb9f0fb4aad20742\",\"bio\":{},\"photo\":\"4fbebbb4617d7f803900056a\",\"name\":{\"username\":\"mika\"}}}",
+  "expires": ISODate("2012-05-25T06:08:37.405Z"),
+  "sid": "lgUwj2p6f54lR5bkWSZy04g2.+luVbCwJ6G\/BpN4ngOHHchMl8Pacrjyy6k0wg1UbZuI"
+});
 
 /** system.indexes records **/
-db.getCollection("system.indexes").insert({
-  "v": 1,
-  "key": {
-    "_id": 1
-  },
-  "ns": "nodejsrs.sessions",
-  "name": "_id_"
-});
-db.getCollection("system.indexes").insert({
-  "v": 1,
-  "key": {
-    "sid": 1
-  },
-  "unique": true,
-  "ns": "nodejsrs.sessions",
-  "name": "sid_1"
-});
 db.getCollection("system.indexes").insert({
   "v": 1,
   "key": {
@@ -224,6 +238,23 @@ db.getCollection("system.indexes").insert({
   "unique": true,
   "ns": "nodejsrs.users",
   "name": "name.username_1"
+});
+db.getCollection("system.indexes").insert({
+  "v": 1,
+  "key": {
+    "_id": 1
+  },
+  "ns": "nodejsrs.sessions",
+  "name": "_id_"
+});
+db.getCollection("system.indexes").insert({
+  "v": 1,
+  "key": {
+    "sid": 1
+  },
+  "unique": true,
+  "ns": "nodejsrs.sessions",
+  "name": "sid_1"
 });
 db.getCollection("system.indexes").insert({
   "v": 1,
@@ -307,24 +338,27 @@ db.getCollection("users").insert({
   "salt": "95d3e293492509d083c7a027b0195ef5"
 });
 db.getCollection("users").insert({
-  "password": "d381915869faaba9f089acf9a3d4bc6d",
-  "email": "pera@pera.com",
-  "_id": ObjectId("4fbeba84617d7f80390000ab"),
-  "createdAt": ISODate("2012-05-24T22:47:32.726Z"),
-  "salt": "d75f5c509a53eedddb1f9f36db22f508",
-  "photo": ObjectId("4fbeb036b65eb1c21f0003e3"),
-  "name": {
-    "username": "pera"
-  }
-});
-db.getCollection("users").insert({
+  "_id": ObjectId("4fbebbb4617d7f8039000569"),
   "password": "8e902c1c04f5f07a0c3ddeba16a0dea8",
   "email": "mika@mika.com",
-  "_id": ObjectId("4fbebbb4617d7f8039000569"),
   "createdAt": ISODate("2012-05-24T22:52:36.328Z"),
   "salt": "5d0d9ff91068ce00eb9f0fb4aad20742",
   "photo": ObjectId("4fbebbb4617d7f803900056a"),
   "name": {
     "username": "mika"
   }
+});
+db.getCollection("users").insert({
+  "_id": ObjectId("4fbeba84617d7f80390000ab"),
+  "bio": {
+    "about": "Ovo je admin izmenio"
+  },
+  "createdAt": ISODate("2012-05-24T22:47:32.726Z"),
+  "email": "pera@pera.com",
+  "name": {
+    "username": "pera"
+  },
+  "password": "d381915869faaba9f089acf9a3d4bc6d",
+  "photo": ObjectId("4fbeb036b65eb1c21f0003e3"),
+  "salt": "d75f5c509a53eedddb1f9f36db22f508"
 });

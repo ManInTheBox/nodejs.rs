@@ -56,11 +56,11 @@ article.post.single
                   br
                   span.comment-data
                     a(href='/post/#{post.titleUrl}#comment-#{comment._id}')= comment.createdAtFormatted
-                    - if (canEditPost || session.user && session.user._id == comment._owner)
-                      span.small(style='padding-left: 20px;')
-                        a(href='#', rel="#{comment._id}", class='editComment')  Izmeni 
-                        | | 
-                        a(href='#', rel='#{comment._id}', class='deleteComment') Obriši
+                    //- if (canEditPost || session.user && session.user._id == comment._owner)
+                    span.small(style='padding-left: 20px;')
+                      a(href='#', rel="#{comment._id}", class='editComment')  Izmeni 
+                      | | 
+                      a(href='#', rel='#{comment._id}', class='deleteComment') Obriši
               .comment-text
                 != comment.text
     - else
