@@ -976,32 +976,22 @@ aside .post-meta ul li a:hover { color: #CC3300; }
 
 /* Post Bottom */
 .post-bottom-section {
-    position: relative;
-    margin: 10px 0 20px 0;
-    padding: 0 0 20px 0;
-    width: 726px;
-    overflow: hidden;
-    border-bottom: 1px solid #E5E5E5;
-}
-.post-bottom-section h4 {
-    position: absolute;
-    left: 0px; top: 5px;
-    text-align: right;
-  width: 135px;
-    font-size: 18px;
-    font-weight: bold;
-    letter-spacing: 0;
-    margin: 0;
-    padding: 0;
-}
-.post-bottom-section .primary form {
-  position: relative;
-  top: 15px; left: 0;
-  margin: 0 0 20px 0;
-    width: 447px;
+  display: block;
+  float: right;
+  clear: both;
+  width: 726px;
+  margin: 10px 0 20px 0;
+  padding: 0 0 10px 0;
+  border-bottom: 1px solid #E5E5E5;
 }
 
-.post-bottom-section .primary form textarea {
+.post-bottom-section form {
+  top: 15px; left: 0;
+  margin: 0 0 20px 0;
+  width: 447px;
+}
+
+.post-bottom-section form textarea {
   width: 425px;
 }
 
