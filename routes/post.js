@@ -37,7 +37,7 @@ exports.list = function (req, res, next) {
       .skip((page - 1) * itemCount)
       .limit(itemCount)
       .populate('_owner', ['name.username']) // need only username
-      .populate('comments', {}) // need only count - none fields
+      .populate('comments', ['_id']) // need only count - none fields
       .run(function (err, posts) {
         if (err) return next(err);
 
