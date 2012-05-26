@@ -9,6 +9,8 @@ var fs = require('fs'),
   MongoStore = require('session-mongoose'),
   helpers = require('./helpers'),
   HttpError = require('./httperror'),
+  InternalError = require('./models/internalerror'),
+  util = require('util'),
   credentials = require('./credentials');
 
 /**
@@ -156,6 +158,31 @@ module.exports = function () {
 
   app.configure('production', function () {
     app.use(function (err, req, res, next) {
+      
+      // take care only for 'real' errors
+      if (!(err instanceof HttpError) || err.status == 500) {
+        // if user is logged in save his _id
+        var _user = req.session.user
+          ? req.session.user._id
+          : undefined;
+
+        var internalError = new InternalError({
+          _user: _user,
+          name: err.name,
+          message: err.message,
+          stack: err.stack,
+          url: req.url,
+          referrer: req.header('referrer'),
+          browser: req.header('user-agent'),
+          method: req.method
+        });
+
+        // user doesn't need to wait while saving error
+        // this is for internal purposes, so display
+        // 500 error page to user and do it in background 
+        internalError.save();
+      }
+
       if ('object' !== typeof err)
         err = { message: err };
 
@@ -180,6 +207,7 @@ module.exports = function () {
 
       res.render('error/500', { status: err.status || 500, message: err.message });
     });
+
     app.use(express.errorHandler());
   });
 

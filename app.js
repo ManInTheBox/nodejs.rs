@@ -9,6 +9,7 @@ var express = require('express'),
   Post = require('./models/post'),
   User = require('./models/user'),
   Comment = require('./models/comment'),
+  InternalError = require('./models/internalerror'),
   credentials = require('./credentials');
 
 /**
@@ -192,6 +193,13 @@ app.get('/search/:tag?', routes.site.search);
 app.get('/about', routes.site.about);
 
 /**
+ * Error site route.
+ * // TODO: only admins!
+ */
+
+ app.get('/error', routes.site.error);
+
+/**
  * Register user route.
  */
 
@@ -291,5 +299,12 @@ app.listen(app.settings.env = 'development' ? 3000 : 80);
  */
 
 // process.on('uncaughtException', function (err) {
-//   console.error('Uhvacen error:\n', err.message);
+//   console.log('uhvacen error');
+//   var internalError = new InternalError({
+//     err: err
+//   });
+//   internalError.save(function (err) {
+//     if (err) console.log('ne mogu da sacuvam', err);
+//     console.log('error sacuvan');
+//   });
 // });

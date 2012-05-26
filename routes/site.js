@@ -14,6 +14,7 @@ var qs = require('querystring'),
 var User = require('../models/user'),
   Email = require('../models/email'),
   Picture = require('../models/picture')
+  InternalError = require('../models/internalerror')
   Post = require('../models/post');
 
 /**
@@ -106,5 +107,17 @@ exports.search = function (req, res, next) {
 exports.about = function (req, res, next) {
   res.render('site/about', {
     title: 'O projektu Node Srbija'
+  });
+};
+
+/**
+ * Error action.
+ * Displays list of internal errors.
+ * Available only to admin users.
+ */
+exports.error = function (req, res, next) {
+  InternalError.find({}, function (err, errors) {
+    if (err) return next(err);
+    res.render('site/error', { errors: errors });
   });
 };
