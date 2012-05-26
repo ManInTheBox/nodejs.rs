@@ -2,7 +2,7 @@
   != messages()
   h3
     = user.name.username
-    - if (session.user && session.user._id == user._id)
+    - if (isAdmin || session.user && session.user._id == user._id)
       a(href='/user/#{user.name.username}/edit')
         em.small &nbsp;Izmeni
 
