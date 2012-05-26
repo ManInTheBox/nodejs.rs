@@ -180,7 +180,7 @@ module.exports = function () {
 
       res.render('error/500', { status: err.status || 500, message: err.message });
     });
-    app.use(express.errorHandler()); 
+    app.use(express.errorHandler());
   });
 
 };

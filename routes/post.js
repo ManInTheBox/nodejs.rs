@@ -33,37 +33,36 @@ exports.list = function (req, res, next) {
     var nextPage = page != pageCount ? page + 1 : null;
 
     Post.find({})
-                .desc('createdAt')
-                .skip((page - 1) * itemCount)
-                .limit(itemCount)
-                .populate('_owner')
-                .populate('comments')
-                .run(function (err, posts) {
-                  if (err) return next(err);
+      .desc('createdAt')
+      .skip((page - 1) * itemCount)
+      .limit(itemCount)
+      .populate('_owner', ['name.username']) // need only username
+      .populate('comments', {}) // need only count - none fields
+      .run(function (err, posts) {
+        if (err) return next(err);
 
-                  var length = posts.length;
-                  if (length) {
-                    posts.forEach(function (post) {
-                      var path = contentPath + post.titleUrl + '.md';
-                      fs.readFile(path, 'utf8', function (err, content) {
-                        if (err) return next(err);
-                        post.content = helpers.markdown(content.substring(0, 400));
-                        post.createdAtFormatted = helpers.formatDate(post.createdAt);
-                        post.commentsCount = post.comments.length;
-                        if (--length === 0) res.emit('posts');
-                      });
-                    });
-                  } else {
-                    res.emit('posts');
-                  }
-                  res.on('posts', function () {
-                    res.render('post/list', {
-                      posts: posts,
-                      previousPage: previousPage,
-                      nextPage: nextPage
-                    });
-                  });
-                });
+        var length = posts.length;
+        if (length) {
+          posts.forEach(function (post) {
+            var path = contentPath + post.titleUrl + '.md';
+            fs.readFile(path, 'utf8', function (err, content) {
+              if (err) return next(err);
+              post.content = helpers.markdown(content.substring(0, 400));
+              post.createdAtFormatted = helpers.formatDate(post.createdAt);
+              if (--length === 0) res.emit('posts');
+            });
+          });
+        } else {
+          res.emit('posts');
+        }
+        res.on('posts', function () {
+          res.render('post/list', {
+            posts: posts,
+            previousPage: previousPage,
+            nextPage: nextPage
+          });
+        });
+      });
   });
 };
 

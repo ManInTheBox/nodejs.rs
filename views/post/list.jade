@@ -24,7 +24,7 @@
             a(href='/user/#{post._owner.name.username}', title='Napisao #{post._owner.name.username}')= post._owner.name.full || post._owner.name.username
           li.time= post.createdAtFormatted
           li.comment
-            a(href='/post/#{post.titleUrl}#comments') Komentari #{post.commentsCount}
+            a(href='/post/#{post.titleUrl}#comments') Komentari #{post.comments.length}
           li.permalink
             a(href='/post/#{post.titleUrl}') Direktan link
           - if (session.user && session.user._id == post._owner._id || isAdmin)

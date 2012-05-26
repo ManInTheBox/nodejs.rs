@@ -108,15 +108,15 @@ function commentOwner(req, res, next) {
   };
   Comment.count(conditions, function (err, count) {
     if (err) return next(err);
-    if (count === 1) return next();
+    if (count) return next();
     // post owner that this comment belongs to
     conditions = {
       comments: { $in : [req.params.commentId] },
       _owner: req.session.user._id
     };
-    Post.find(conditions, function (err, comment) {
+    Post.count(conditions, function (err, count) {
       if (err) return next(err);
-      return !!comment.length ? next() : next(new HttpError(403));
+      return !!count ? next() : next(new HttpError(403));
     });
   });
 }
@@ -141,6 +141,9 @@ app.param('postId', function (req, res, next, postId) {
  */
 
 function handleSidebar(req, res, next) {
+  // accept only GET requests (when sidebar is visible)
+  if (req.method !== 'GET') return next();
+
   User.findByUsername('ManInTheBox', function (err, user) {
     if (err) return next(err);
     Post.findByAuthor(user._id, function (err, authorPosts) {
@@ -165,10 +168,10 @@ function handleSidebar(req, res, next) {
 // Routes
 
 /**
- * Handle sidebar for all routes.
+ * Handle sidebar for all routes except for public directory.
  */
 
-app.all('/*', handleSidebar);
+app.all(/^\/(?!articles|images|javascripts|stylesheets)(.*)$/i, handleSidebar);
 
 /**
  * Root site route.

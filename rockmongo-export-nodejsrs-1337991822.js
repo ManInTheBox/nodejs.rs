@@ -34,6 +34,13 @@ db.getCollection("posts").ensureIndex({
   "unique": true
 });
 
+/** posts indexes **/
+db.getCollection("posts").ensureIndex({
+  "_owner": 1
+},[
+  
+]);
+
 /** sessions indexes **/
 db.getCollection("sessions").ensureIndex({
   "_id": 1
@@ -78,58 +85,16 @@ db.getCollection("users").ensureIndex({
 
 /** comments records **/
 db.getCollection("comments").insert({
-  "_id": ObjectId("4fbebc61617d7f8039000c65"),
-  "_owner": ObjectId("4fbebbb4617d7f8039000569"),
-  "createdAt": ISODate("2012-05-24T22:55:29.976Z"),
-  "text": "mikin komentar ojha"
+  "_owner": ObjectId("4f9c7141ddcebc7022000022"),
+  "text": "sdf",
+  "_id": ObjectId("4fc01ccc56907e9512000003"),
+  "createdAt": ISODate("2012-05-25T23:59:08.657Z")
 });
 db.getCollection("comments").insert({
   "_owner": ObjectId("4fbeba84617d7f80390000ab"),
-  "text": "pera 3",
-  "_id": ObjectId("4fbfb2219a4542b73c000009"),
-  "createdAt": ISODate("2012-05-25T16:24:01.459Z")
-});
-db.getCollection("comments").insert({
-  "_owner": ObjectId("4f9c7141ddcebc7022000022"),
-  "text": "zarko 2",
-  "_id": ObjectId("4fbfb2919a4542b73c00069b"),
-  "createdAt": ISODate("2012-05-25T16:25:53.301Z")
-});
-db.getCollection("comments").insert({
-  "_owner": ObjectId("4f9c7141ddcebc7022000022"),
-  "text": "fsd",
-  "_id": ObjectId("4fbfd5ce09640b974c001f7b"),
-  "createdAt": ISODate("2012-05-25T18:56:14.847Z")
-});
-db.getCollection("comments").insert({
-  "_owner": ObjectId("4f9c7141ddcebc7022000022"),
-  "text": "asdf",
-  "_id": ObjectId("4fbfd5d009640b974c002009"),
-  "createdAt": ISODate("2012-05-25T18:56:16.695Z")
-});
-db.getCollection("comments").insert({
-  "_owner": ObjectId("4f9c7141ddcebc7022000022"),
-  "text": "asdf",
-  "_id": ObjectId("4fbfd5d209640b974c002098"),
-  "createdAt": ISODate("2012-05-25T18:56:18.304Z")
-});
-db.getCollection("comments").insert({
-  "_owner": ObjectId("4f9c7141ddcebc7022000022"),
-  "text": "adfs",
-  "_id": ObjectId("4fbfd5d309640b974c002128"),
-  "createdAt": ISODate("2012-05-25T18:56:19.767Z")
-});
-db.getCollection("comments").insert({
-  "_owner": ObjectId("4f9c7141ddcebc7022000022"),
-  "text": "afsd",
-  "_id": ObjectId("4fbfd5d509640b974c0021b9"),
-  "createdAt": ISODate("2012-05-25T18:56:21.793Z")
-});
-db.getCollection("comments").insert({
-  "_owner": ObjectId("4f9c7141ddcebc7022000022"),
-  "text": "sfad",
-  "_id": ObjectId("4fbfd5d709640b974c00224b"),
-  "createdAt": ISODate("2012-05-25T18:56:23.695Z")
+  "text": "sdfa",
+  "_id": ObjectId("4fc021627c4438d213000052"),
+  "createdAt": ISODate("2012-05-26T00:18:42.698Z")
 });
 
 /** emails records **/
@@ -182,21 +147,17 @@ db.getCollection("pictures").insert({
   "ext": "jpg"
 });
 db.getCollection("pictures").insert({
+  "_id": ObjectId("4fbfb0a8d1efdc1b390001f7"),
   "name": "mika",
   "size": 1896383,
   "type": "image\/jpeg",
-  "ext": "jpg",
-  "_id": ObjectId("4fbfb0a8d1efdc1b390001f7")
+  "ext": "jpg"
 });
 
 /** posts records **/
 db.getCollection("posts").insert({
   "_id": ObjectId("4faef290118a08be140007d7"),
   "_owner": ObjectId("4f9c7141ddcebc7022000022"),
-  "comments": [
-    ObjectId("4faef814812b1c3e16000d8a"),
-    ObjectId("4faf1c4d9e0c09cb23000cb2")
-  ],
   "createdAt": ISODate("2012-05-12T23:30:24.769Z"),
   "tags": [
     "markdown",
@@ -208,31 +169,10 @@ db.getCollection("posts").insert({
   "updatedAt": ISODate("2012-05-12T23:53:05.756Z")
 });
 db.getCollection("posts").insert({
-  "_id": ObjectId("4fbee314dd1f0fa7120028e8"),
-  "titleUrl": "perin-post",
-  "_owner": ObjectId("4fbeba84617d7f80390000ab"),
-  "title": "Perin post",
-  "tags": [
-    
-  ],
-  "comments": [
-    
-  ],
-  "updatedAt": ISODate("2012-05-25T01:40:36.370Z"),
-  "createdAt": ISODate("2012-05-25T01:40:36.370Z")
-});
-db.getCollection("posts").insert({
   "_id": ObjectId("4fbee17bdd1f0fa712001582"),
   "_owner": ObjectId("4fbebbb4617d7f8039000569"),
   "comments": [
-    ObjectId("4fbfb2219a4542b73c000009"),
-    ObjectId("4fbfb2919a4542b73c00069b"),
-    ObjectId("4fbfd5ce09640b974c001f7b"),
-    ObjectId("4fbfd5d009640b974c002009"),
-    ObjectId("4fbfd5d209640b974c002098"),
-    ObjectId("4fbfd5d309640b974c002128"),
-    ObjectId("4fbfd5d509640b974c0021b9"),
-    ObjectId("4fbfd5d709640b974c00224b")
+    ObjectId("4fc021627c4438d213000052")
   ],
   "createdAt": ISODate("2012-05-25T01:33:47.999Z"),
   "tags": [
@@ -242,13 +182,27 @@ db.getCollection("posts").insert({
   "titleUrl": "mikin-clanak",
   "updatedAt": ISODate("2012-05-25T19:25:33.277Z")
 });
+db.getCollection("posts").insert({
+  "_id": ObjectId("4fbee314dd1f0fa7120028e8"),
+  "_owner": ObjectId("4fbeba84617d7f80390000ab"),
+  "comments": [
+    ObjectId("4fc01ccc56907e9512000003")
+  ],
+  "createdAt": ISODate("2012-05-25T01:40:36.370Z"),
+  "tags": [
+    
+  ],
+  "title": "Perin post",
+  "titleUrl": "perin-post",
+  "updatedAt": ISODate("2012-05-25T01:40:36.370Z")
+});
 
 /** sessions records **/
 db.getCollection("sessions").insert({
-  "_id": ObjectId("4fbfa78f8bef6dfce483eba7"),
-  "data": "{\"lastAccess\":1337974158000,\"cookie\":{\"originalMaxAge\":14399982,\"expires\":\"2012-05-25T23:29:17.994Z\",\"httpOnly\":true,\"path\":\"\/\"},\"_csrf\":\"Z5Xjd6OntURG1Xq0WMnSOeTQ\",\"flash\":{},\"user\":{\"_id\":\"4f9c7141ddcebc7022000022\",\"email\":\"stankovic.zarko@gmail.com\",\"password\":\"5101d9d94c8cae583027f9279171d83d\",\"createdAt\":\"2012-04-28T22:37:53.460Z\",\"salt\":\"95d3e293492509d083c7a027b0195ef5\",\"bio\":{\"about\":\"Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst...\",\"company\":\"Max My Play, LLC\",\"github\":\"http:\/\/github.com\/ManInTheBox\",\"location\":\"Beograd, Srbija\",\"twitter\":\"http:\/\/twitter.com\/zarkostankovic\",\"website\":\"http:\/\/www.zarkostankovic.com\"},\"photo\":{\"_id\":\"4fbeb6524757f93d2d000f8b\",\"name\":\"ManInTheBox\",\"size\":168291,\"type\":\"image\/jpeg\",\"ext\":\"jpg\"},\"name\":{\"first\":\"Žarko\",\"last\":\"Stanković\",\"username\":\"ManInTheBox\"}}}",
-  "expires": ISODate("2012-05-25T23:29:17.994Z"),
-  "sid": "6bzLqH0osF4GTssKflNC3RrJ.hqFyrDqXuskz3YJAOykiW0uKK09wYIGe\/6prVW38L64"
+  "_id": ObjectId("4fbff474f968afb842063351"),
+  "data": "{\"lastAccess\":1337991798358,\"cookie\":{\"originalMaxAge\":14399990,\"expires\":\"2012-05-26T04:23:18.349Z\",\"httpOnly\":true,\"path\":\"\/\"},\"_csrf\":\"Nha61zn91prK4P3b735GWNgu\",\"flash\":{}}",
+  "expires": ISODate("2012-05-26T04:23:18.349Z"),
+  "sid": "qnKTxc4mrfytCmOvoqh1nmYq.65pKOr8Ore4GjprEf0sWjL1wp\/s8aE83MjxpEQcxnyo"
 });
 
 /** system.indexes records **/
@@ -343,6 +297,14 @@ db.getCollection("system.indexes").insert({
   "unique": true,
   "ns": "nodejsrs.users",
   "name": "email_1"
+});
+db.getCollection("system.indexes").insert({
+  "v": 1,
+  "key": {
+    "_owner": 1
+  },
+  "ns": "nodejsrs.posts",
+  "name": "_owner_1"
 });
 
 /** users records **/
