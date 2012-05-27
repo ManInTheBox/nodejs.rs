@@ -196,3 +196,11 @@ script(type='text/javascript')
   });
 
   $('.download-box').closeOnEscape();
+
+  $('.raw-file').live('click', function (e) {
+    e.preventDefault();
+    var file = $(this).attr('rel');
+    var raw = $(this).parents().text();
+    console.log(raw);
+    window.open('/post/#{post.titleUrl}/raw/' + file, '');
+  });

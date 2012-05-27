@@ -272,6 +272,12 @@ app.del('/post/:postId/delete', loginRequired, grantAccess(postOwner), routes.po
 app.get('/post/:postTitle.:format?/download', routes.post.download);
 
 /**
+ *
+ */
+
+ app.get('/post/:postTitle/raw/:name', routes.post.raw);
+
+/**
  * New post comment route.
  */
 

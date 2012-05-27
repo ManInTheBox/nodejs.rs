@@ -2,9 +2,34 @@ var crypto = require('crypto'),
   marked = require('marked').setOptions({
     gfm: true,
     pedantic: false,
-    sanitize: true
-  });
+    sanitize: true,
+    highlight: function (code, lang) {
+      var raw = /\[raw=.*\]/.exec(code);
+      if (raw) {
+        code = code.replace(raw[0], '').substring(1);
+        raw = raw[0]
+                .replace('[raw=', '')
+                .replace(']', '')
+                .trim();
+        raw = encode(raw);
 
+        return !!raw.length
+          ? [
+              '<a class="raw-file" href="#',
+              raw,
+              '" rel="',
+              raw,
+              '">',
+              raw,
+              '</a>',
+              '<input type="hidden" value="[raw=' + raw + ']" />',
+              code,
+              '<input type="hidden" value="[/raw=' + raw + ']" />'
+            ].join('')
+          : code;
+      }
+    }
+  });
 
 exports.toUpperCaseFirst = function (v) {
   return v.charAt(0).toUpperCase() + v.slice(1);
@@ -111,11 +136,11 @@ exports.miniMarkdown = function(str){
     .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
 };
 
-exports.encode = function (html) {
+exports.encode = encode = function (html) {
   return html
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
-}
+};

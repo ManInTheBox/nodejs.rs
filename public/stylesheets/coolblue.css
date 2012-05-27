@@ -1311,3 +1311,12 @@ em {
   padding: 0;
   margin: 0;
 }
+
+.raw-file {
+  float: right;
+  border: 1px solid #FFFFFF;
+  font-size: 0.8em;
+  background: #FFFFFF;
+  border: 1px solid #E4E6E9;
+  padding: 0 5px;
+}

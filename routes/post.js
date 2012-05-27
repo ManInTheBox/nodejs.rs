@@ -321,6 +321,34 @@ exports.edit = function (req, res, next) {
 };
 
 /**
+ *
+ */
+
+exports.raw = function (req, res, next) {
+  Post.findOne({ titleUrl: req.params.postTitle }, function (err, post) {
+    if (err) return next(err);
+    if (!post) return next();
+
+    var name = req.params.name;
+    var filename = checkPostSecurity(post, function (err) {
+      if (err) return next(err);
+      fs.readFile(filename, 'utf8', function (err, file) {
+        if (err) return next(err);
+        file = helpers.markdown(file);
+        var startSearch = '<input type="hidden" value="[raw=' + name + ']" />',
+          endSearch = '<input type="hidden" value="[/raw=' + name + ']" />',
+          start = file.indexOf(startSearch),
+          end = file.indexOf(endSearch),
+          content = file.substring(start + startSearch.length, end);
+          res.end(content);
+          // TODO: srediti kad nije pronadjen code block (promenio raw name)
+      });
+    });
+
+  });
+};
+
+/**
  * Post comment actions
  */
 
