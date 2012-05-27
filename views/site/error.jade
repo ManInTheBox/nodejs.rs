@@ -1,4 +1,45 @@
 .main-content
+  != messages()
+  h4
+    | Ukupan broj novih grešaka: 
+    span(style='color: ' + (newCount ? '#FF0000' : '#0000FF') + ';')= newCount
   - each err in errors
-    pre
-      code.javascript= err.toString()
+    div(style='margin-bottom: 30px;')
+      - if (!err.viewed)
+        span(style='font-size: 0.8em; background: #FFEBEB; border: 1px solid #FFBABA; padding: 0 5px; float: right;') New
+        br
+      label Date: 
+      code= err.createdAt
+      br
+      label Name: 
+      code= err.name
+      br
+      label Message: 
+      code= err.message
+      br
+      label User: 
+      -if (err._user)
+        a(href='/user/#{err._user.name.username}')= err._user.name.username
+      br
+      label URL: 
+      a(href=err.url)= err.url
+      br
+      label Refferer: 
+      a(href=err.referrer)= err.referrer
+      br
+      label Method: 
+      code= err.method
+      br
+      label Browser: 
+      code(style='font-size: 0.65em;')= err.browser
+      br
+      label Stack trace:
+      pre
+        code.nohighlight= err.stack
+      hr
+  .navigation.clearfix(style='padding-left: 300px;')
+    div
+    - if (previousPage)
+      a(href='/error?page=#{previousPage}') &laquo; prethodna
+    - if (nextPage)
+      a(href='/error?page=#{nextPage}') sledeća &raquo;

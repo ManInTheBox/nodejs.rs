@@ -115,9 +115,46 @@ exports.about = function (req, res, next) {
  * Displays list of internal errors.
  * Available only to admin users.
  */
+
 exports.error = function (req, res, next) {
-  InternalError.find({}, function (err, errors) {
+  var page = +qs.parse(url.parse(req.url).query).page || 1;
+  var itemCount = 10;
+
+  InternalError.count(function (err, count) {
     if (err) return next(err);
-    res.render('site/error', { errors: errors });
+    var pageCount = Math.ceil(count / itemCount) || 1;
+
+    if (page < 0)
+      page = 1; // show first page
+    if (page > pageCount)
+      page = pageCount; // show last page
+
+    var previousPage = page - 1;
+    var nextPage = page != pageCount ? page + 1 : null;
+
+    InternalError
+      .find({})
+      .skip((page - 1) * itemCount)
+      .limit(itemCount)
+      .desc('createdAt')
+      .populate('_user', ['name.username'])
+      .run(function (err, errors) {
+        if (err) return next(err);
+        InternalError.count({ viewed: false }, function (err, newCount) {
+          if (err) return next(err);
+          var _errors = errors.map(function (error) {
+            return error._id;
+          });
+          InternalError.update({ _id: { $in: _errors }}, { viewed: true }, { multi: true }, function (err, n) {
+            if (err) return next(err);
+            res.render('site/error', {
+              errors: errors,
+              previousPage: previousPage,
+              nextPage: nextPage,
+              newCount: newCount
+            });
+          });
+        });
+    });
   });
 };

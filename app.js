@@ -36,7 +36,7 @@ function loginRequired(req, res, next) {
   } else {
     req.session.returnUrl = req.url;
     req.flash('error', 'Morate se prvo ulogovati.');
-    res.redirect('/login');
+    return res.redirect('/login');
   }
 }
 
@@ -44,7 +44,8 @@ function loginRequired(req, res, next) {
  * Performs authorization.
  *
  * Access is automatically granted to admin users, otherwise provided
- * function is called to perform authorization.
+ * function is called to perform authorization. If no function 
+ * is provided request will be ended with 404 status.
  * 
  * @param {Function} function to perform authorization
  */
@@ -57,7 +58,10 @@ function grantAccess(fn) {
       }
     }
 
-    fn(req, res, next);
+    if (fn) // forward to auth fn
+      fn(req, res, next);
+    else
+      return next(new HttpError(404));
   };
 }
 
@@ -142,9 +146,6 @@ app.param('postId', function (req, res, next, postId) {
  */
 
 function handleSidebar(req, res, next) {
-  // accept only GET requests (when sidebar is visible)
-  if (req.method !== 'GET') return next();
-
   User.findByUsername('ManInTheBox', function (err, user) {
     if (err) return next(err);
     Post.findByAuthor(user._id, function (err, authorPosts) {
@@ -197,7 +198,7 @@ app.get('/about', routes.site.about);
  * // TODO: only admins!
  */
 
- app.get('/error', routes.site.error);
+ app.get('/error', loginRequired, grantAccess(), routes.site.error);
 
 /**
  * Register user route.

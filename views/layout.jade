@@ -25,6 +25,8 @@ html
             li(id= currentUrl === '/post/new' ? 'current' : null): a(href='/post/new') Napiši članak
             li(id= currentUrl === '/about' ? 'current' : null): a(href='/about') O projektu
             li: a(href='http://nodejs.org/api/', target='_blank') Dokumentacija
+            - if (isAdmin)
+              li(id= currentUrl === '/error' ? 'current' : null): a(href='/error') Admin
             - if (!session.user)
               li(id= currentUrl === '/register' ? 'current' : null ): a(href='/register') Registracija
               li(id= currentUrl === '/login' ? 'current' : null): a(href='/login') Logovanje

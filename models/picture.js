@@ -21,7 +21,7 @@ const DEFAULT = '4fbeb036b65eb1c21f0003e3';
 const MAX_SIZE = 1024 * 1024 * 2;
 
 /**
- * Defines `PictureSchema`
+ * Defines `Picture` schema.
  */
 
 var Picture = new db.Schema({
