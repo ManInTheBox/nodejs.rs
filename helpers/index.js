@@ -6,7 +6,9 @@ var crypto = require('crypto'),
     highlight: function (code, lang) {
       var raw = /\[raw=.*\]/.exec(code);
       if (raw) {
-        code = code.replace(raw[0], '').substring(1);
+        code = code.replace(raw[0], '').trim();
+        // need to encode b/c marked will just skip encoding
+        code = encode(code);
         raw = raw[0]
                 .replace('[raw=', '')
                 .replace(']', '')
@@ -15,17 +17,11 @@ var crypto = require('crypto'),
 
         return !!raw.length
           ? [
-              '<a class="raw-file" href="#',
-              raw,
-              '" rel="',
-              raw,
-              '">',
-              raw,
-              '</a>',
-              '<input type="hidden" value="[raw=' + raw + ']" />',
+              '<a class="raw-file" href="#@{raw}">@{raw}</a>',
+              '<input type="hidden" value="[raw=@{raw}]" />',
               code,
-              '<input type="hidden" value="[/raw=' + raw + ']" />'
-            ].join('')
+              '<input type="hidden" value="[/raw=@{raw}]" />'
+            ].join('').replace(/@{raw}/g, raw)
           : code;
       }
     }
@@ -81,32 +77,10 @@ exports.formatDateFine = function (date) {
   return date.getDate() + '. ' + months[date.getMonth()] + ' ' + date.getFullYear() + ' ' + hours + ':' + minutes;
 };
 
-exports.markdown = function (content) {
-  // var markdown = md.parse(content, mdFlags),
-  //   blocks = content.match(/```(javascript|bash|html)[\s\S]+?\r\n```/g);
-
-  // if (blocks) {
-  //   for (var i = 0; i < blocks.length; i++) {
-  //     var matches = /```(javascript|bash|html)([\s\S]+?)\r\n```/.exec(blocks[i]),
-  //       language = matches[1],
-  //       lines = matches[2].split('\r\n');
-
-  //       for (var j = 1; j < lines.length; j++) {
-  //         content = content.replace(lines[j], '    ' + lines[j]);
-  //       }
-  //   }
-
-  //   var pattern = /<p><code>(javascript|bash|html)\n([\s\S]+?)<\/code><\/p>/g;
-
-
-  //   markdown = md
-  //               .parse(content, mdFlags)
-  //               .replace(pattern, '<pre><code class="$1">$2</code></pre>')
-  //               // .replace(/<pre><code class="(javascript|bash|html)">[ ]{4}([\s\S]+)<\/code><\/pre>/g, '<pre><code class=$1>$2</code</pre>');
-  //   // console.log(markdown);
-  // }
-
-  return marked(content);
+exports.markdown = function (content, shouldDecode) {
+  return !shouldDecode
+    ? marked(content)
+    : decode(marked(content));
 };
 
 exports.substring = function (string, length) {
@@ -143,4 +117,13 @@ exports.encode = encode = function (html) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
+};
+
+exports.decode = decode = function (html) {
+  return html
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#039;/g, "'");
 };

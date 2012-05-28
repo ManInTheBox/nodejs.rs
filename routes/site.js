@@ -33,7 +33,7 @@ exports.index = function (req, res, next) {
 
 exports.search = function (req, res, next) {
   var page = +qs.parse(url.parse(req.url).query).page || 1;
-  var itemCount = 2;
+  var itemCount = 10;
 
 	if (req.params.tag) {
     var conditions = {

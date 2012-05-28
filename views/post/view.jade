@@ -199,8 +199,6 @@ script(type='text/javascript')
 
   $('.raw-file').live('click', function (e) {
     e.preventDefault();
-    var file = $(this).attr('rel');
-    var raw = $(this).parents().text();
-    console.log(raw);
-    window.open('/post/#{post.titleUrl}/raw/' + file, '');
+    var file = $(this).attr('href').replace('#', '');
+    window.open('/post/#{post.titleUrl}/raw/' + file, '_blank');
   });

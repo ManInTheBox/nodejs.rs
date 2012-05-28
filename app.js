@@ -272,7 +272,7 @@ app.del('/post/:postId/delete', loginRequired, grantAccess(postOwner), routes.po
 app.get('/post/:postTitle.:format?/download', routes.post.download);
 
 /**
- *
+ * View raw file route.
  */
 
  app.get('/post/:postTitle/raw/:name', routes.post.raw);
@@ -294,6 +294,9 @@ app.put('/post/:postId/comment/:commentId/edit', loginRequired, grantAccess(comm
  */
 
 app.del('/post/:postId/comment/:commentId/delete', loginRequired, grantAccess(commentOwner), routes.post.comment.delete);
+
+
+app.get('/test', routes.post.test); // PDF
 
 /**
  * Starts the server.

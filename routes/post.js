@@ -94,7 +94,7 @@ exports.new = function (req, res, next) {
           post.content = p.content;
           res.render('post/new', { post: post });
         } else {
-          fs.writeFile(fileName, p.content, function (err) {
+          fs.writeFile(fileName, p.content.trim(), function (err) {
             if (err) return next(err);
             req.flash('success', 'Novi članak uspešno kreiran.');
             res.redirect('/post');
@@ -297,7 +297,7 @@ exports.edit = function (req, res, next) {
 
           fs.rename(contentPath + originalTitleUrl + '.md', filePath, function (err) {
             if (err) return next(err);
-            fs.writeFile(filePath, p.content, function (err) {
+            fs.writeFile(filePath, p.content.trim(), function (err) {
               if (err) return next(err);
               req.flash('success', 'Uspešno izmenjen članak "' + post.title + '"');
               res.redirect('/post/' + post.titleUrl);
@@ -321,27 +321,46 @@ exports.edit = function (req, res, next) {
 };
 
 /**
- *
+ * View raw file action
  */
 
 exports.raw = function (req, res, next) {
-  Post.findOne({ titleUrl: req.params.postTitle }, function (err, post) {
+  Post.findOne({ titleUrl: req.params.postTitle }).populate('comments').run(function (err, post) {
     if (err) return next(err);
-    if (!post) return next();
+    if (!post) return next(); // 404
 
     var name = req.params.name;
     var filename = checkPostSecurity(post, function (err) {
       if (err) return next(err);
       fs.readFile(filename, 'utf8', function (err, file) {
         if (err) return next(err);
-        file = helpers.markdown(file);
+        file = helpers.markdown(file, true);
         var startSearch = '<input type="hidden" value="[raw=' + name + ']" />',
           endSearch = '<input type="hidden" value="[/raw=' + name + ']" />',
           start = file.indexOf(startSearch),
           end = file.indexOf(endSearch),
           content = file.substring(start + startSearch.length, end);
-          res.end(content);
-          // TODO: srediti kad nije pronadjen code block (promenio raw name)
+
+          // no raw files found in post, try to find some in comments
+          if (start === -1 || end === -1) {
+            var length = post.comments.length;
+            post.comments.forEach(function (comment) {
+              comment.text = helpers.markdown(comment.text, true);
+              start = comment.text.indexOf(startSearch);
+              end = comment.text.indexOf(endSearch);
+              content = comment.text.substring(start + startSearch.length, end);
+
+              // found raw file in comment - respond and exit
+              if (start !== -1 || end !== -1) {
+               // stop here
+               return res.send(content, { 'Content-Type': 'text/plain' });
+              } else if (--length === 0) { // no raw files found in comments
+                return next(); // 404
+              }
+            });
+          } else { // found raw file
+            res.send(content, { 'Content-Type': 'text/plain' });
+          }
       });
     });
 
@@ -489,3 +508,98 @@ function handleSidebar(req, res, next, post, cb) {
     });
   }
 }
+
+// TEST: PDF
+exports.test = function (req, res, next) {
+
+  var post = contentPath + '/zarkov-post.md';
+
+  var filename = 'zarkov-post';
+
+  var jquery = contentPath + '/../javascripts/jquery-1.7.2.min.js';
+  var script = contentPath + '/../javascripts/script.js';
+  var hl = contentPath + '/../javascripts/highlight/highlight.pack.js';
+  var gh = contentPath + '/../javascripts/highlight/styles/github.css';
+  var css = contentPath + '/../stylesheets/coolblue.css';
+
+  fs.readFile(post, 'utf8', function (err, file) {
+    if (err) return next(err);
+    fs.readFile(jquery, 'utf8', function (err, jquery) {
+      if (err) return next(err);
+      fs.readFile(script, 'utf8', function (err, script) {
+        if (err) return next(err);
+        fs.readFile(hl, 'utf8', function (err, hl) {
+          if (err) return next(err);
+          fs.readFile(gh, 'utf8', function (err, gh) {
+            if (err) return next(err);
+            fs.readFile(css, 'utf8', function (err, css) {
+              if (err) return next(err);
+
+              file = helpers.markdown(file);
+              var html = [
+                '<html>',
+                '  <head>',
+                '    <script type="text/javascript">',
+                '      ' + jquery,
+                '    </script>',
+                '    <script type="text/javascript">',
+                '      ' + script,
+                '    </script>',
+                '    <script type="text/javascript">',
+                '      ' + hl,
+                '    </script>',
+                '    <script type="text/javascript">',
+                '      hljs.initHighlightingOnLoad();',
+                '    </script>',
+                '    <style type="text/css">',
+                '      ' + gh,
+                '    </style>',
+                '    <style type="text/css">',
+                '      ' + css,
+                '    </style>',
+                '  </head>',
+                '  <body style="margin: 0 auto; width: 978px;">',
+                '    ' + file,
+                '    <div style="text-align: center; font-size: 0.8em;">',
+                '      Preuzeto sa Node Srbija - <a href="http://nodejs.rs">http://nodejs.rs</a>',
+                '    </div>',
+                // '<script>(function(m){var s=new Date().getTime();while(new Date().getTime()<s+m);})(60000);</script>',
+                '  </body>',
+                '</html>'
+              ].join('\n');
+
+              var pdf = require('pdfcrowd');
+              var client = new pdf.Pdfcrowd('mika', '1b6ee48398ef301cd90c86a962365a03');
+              client.convertHtml(
+                html, {
+                  pdf: function (rstream) {
+                    res.setHeader('Content-Type', 'application/pdf');
+                    res.setHeader('Cache-Control', 'no-cache');
+                    res.setHeader('Accept-Ranges', 'none');
+                    res.setHeader('Content-Disposition', 'attachment; filename="' + filename + '.pdf"');
+                    rstream.pipe(res);
+                    // on read end rstrim.pipe(res) will automatically call res.end()!
+                  },
+                  error: function (message, status) {
+                    // forward as 500 to error handler
+                    return next(new HttpError(status, '('+status+') '+message));
+                  },
+                  end: function () {
+                    // opened for download count implementation
+                  }
+                }, {
+                author: 'Zarko Stankovic' + ' - Node Srbija (http://nodejs.rs)',
+                page_layout: 2,
+                page_mode: 2
+              });
+
+
+              // res.send(html);
+
+            });
+          });
+        });
+      });
+    });
+  });
+};

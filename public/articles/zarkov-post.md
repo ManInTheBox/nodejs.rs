@@ -1,59 +1,148 @@
-U sledecem delu koda pokazacu vam kako da izvrsite autorizaciju. Ako je user `admin` automatski ide dalje. Ako nije i ako je prosledjena druga funkcija za autorizaciju ona se poziva. U suprotnom baca se `404`.
+U ovom tutorijalu cu vam pokazati `cool` kod :)
+
+*kod*
 
 ```javascript
-[raw=auth.js]
+[raw=comments.js]
 /**
- * Performs authorization.
- *
- * Access is automatically granted to admin users, otherwise provided
- * function is called to perform authorization. If no function 
- * is provided request will be ended with 404 status.
- * 
- * @param {Function} function to perform authorization
+ * Post comment actions
  */
 
-function grantAccess(fn) {
-  return function (req, res, next) {
-    for (var i = 0; i < credentials.admins.length; i++) {
-      if (credentials.admins[i].email === req.session.user.email) {
-        return next(); // forward admin users
+exports.comment = {
+
+  /**
+   * New comment action
+   */
+
+  new: function (req, res, next) {
+    var comment = new Comment({
+      _owner: req.session.user._id,
+      text: req.body.post.comment
+    });
+    comment.save(function (err) {
+      if (err) {
+        var errors = [];
+        for (var msg in err.errors)
+          errors.push(err.errors[msg].message);
+
+        req.flash('error', errors);
+        return res.redirect('back');
       }
-    }
+      req.post.comments.push(comment);
+      req.post.save(function (err) {
+        if (err) return next(err);
+        req.flash('success', 'Novi komentar uspešno dodat.');
+        res.redirect('/post/' + req.post.titleUrl);
+      });
+    });
+  },
 
-    if (fn) // forward to auth fn
-      fn(req, res, next);
-    else
-      return next(new HttpError(404));
-  };
-}
-```
+  /**
+   * Delete comment action
+   */
 
-vrlo jednostavno :)
+  delete: function (req, res, next) {
+    Comment.findById(req.params.commentId, function (err, comment) {
+      if (err) return next(err);
+      if (!comment) return next();
 
-sad primer konkretne funkcije za autorizaciju
+      var _id = req.session.user._id;
+      comment.remove(function (err) {
+        if (err) return next(err);
+        var pos = req.post.comments.indexOf(comment._id);
+        req.post.comments.splice(pos, 1); // manually remove it... mongoose bug?
 
-```javascript
-[raw=post-owner.js]
-/**
- * Grants access to post owner.
- */
+        if (req.post.comments.length === 0) {
+          req.post.comments = undefined; // tell mongoose to remove comments key... mongoose bug?
+        }
 
-function postOwner(req, res, next) {
-  var conditions = {
-    titleUrl: req.params.postTitle,
-    _owner: req.session.user._id
-  };
+        req.post.save(function (err) {
+          if (err) return next(err);
+          if (req.xhr) {
+            return res.send('Komentar uspešno obrisan.');
+          } else {
+            req.flash('success', 'Komentar uspešno obrisan.');
+            res.redirect('/post/' + req.post.titleUrl);
+          }
+        });
+      });
+    });
+  },
 
-  if ('undefined' !== typeof req.params.postId) {
-    conditions = {
-      _id: req.params.postId,
-      _owner: req.session.user._id
-    };
+  /**
+   * Edit comment action
+   */
+
+  edit: function (req, res, next) {
+    Comment.findById(req.params.commentId, function (err, comment) {
+      if (err) return next(err);
+      if (!comment) return next();
+
+      var _id = req.session.user._id;
+      if (req.body.get) {
+        return res.send(comment.text);
+      } else {
+        comment.text = req.body.text;
+        comment.save(function (err) {
+          if (req.xhr) { // ajax request
+            if (err) return res.send({ err: err.errors.text.message });
+            return res.send({
+              text: helpers.markdown(comment.text),
+              msg: 'Komentar uspešno izmenjen.'
+            });
+          } else {
+            if (err) return next(err);
+            req.flash('success', 'Komentar uspešno izmenjen.');
+            res.redirect('/post/' + req.post.titleUrl);
+          }
+        });
+      }
+    });
   }
+};
 
-  Post.count(conditions, function (err, count) {
-    if (err) return next(err);
-    return count === 1 ? next() : next(new HttpError(403));
+
+function checkPostSecurity(post, cb) {
+  var normalizedTitle = post.normalizeTitle(post.title),
+    fileName = path.join(contentPath, normalizedTitle + '.md');
+
+  process.nextTick(function () {
+    return (fileName.indexOf(contentPath) === 0 && !~fileName.indexOf('\0'))
+      && !~fileName.indexOf('new.md')
+      ? cb(null) : cb(new HttpError(400));
   });
+
+  return fileName;
+}
+
+function handleSidebar(req, res, next, post, cb) {
+  if (post._owner.length) {
+    Post.findByAuthor(post._owner).ne('_id', post._id).run(function (err, posts) {
+      if (err) return next(err);
+      req.sidebar = {
+        viewFile: 'post/_sidebar',
+        data: {
+          user: post._owner,
+          posts: posts
+        }
+      };
+      cb();
+    });
+  } else {
+    User.findOne({ _id: post._owner}).populate('photo').run(function (err, user) {
+      if (err) return next(err);
+      Post.findByAuthor(post._owner).ne('_id', post._id).run(function (err, posts) {
+        if (err) return next(err);
+        req.sidebar = {
+          viewFile: 'post/_sidebar',
+          data: {
+            user: user,
+            posts: posts
+          }
+        };
+        cb();
+      });
+    });
+  }
 }
 ```

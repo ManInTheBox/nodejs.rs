@@ -160,7 +160,7 @@ module.exports = function () {
     app.use(function (err, req, res, next) {
       
       // take care only for 'real' errors
-      if (!(err instanceof HttpError) || err.status == 500) {
+      if (!(err instanceof HttpError) || err.status >= 500) {
         // if user is logged in save his _id
         var _user = req.session.user
           ? req.session.user._id
