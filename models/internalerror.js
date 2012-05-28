@@ -13,6 +13,7 @@ var InternalError = new db.Schema({
   _user: { type: db.ObjectId, ref: 'User' },
   name: { type: String },
   message: { type: String },
+  status: { type: Number },
   stack: { type: String },
   createdAt: { type: Date, default: Date.now },
   url: { type: String },

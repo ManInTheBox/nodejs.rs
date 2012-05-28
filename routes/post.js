@@ -9,6 +9,7 @@ var Post = require('../models/post'),
   helpers = require('../helpers'),
   url = require('url');
   qs = require('querystring'),
+  pdf = require('pdfcrowd'),
   credentials = require('../credentials');
 
 
@@ -197,43 +198,175 @@ exports.view = function (req, res, next) {
  */
 
 exports.download = function (req, res, next) {
-  var fileName = path.join(contentPath, req.params.postTitle + '.md');
 
-  if (fileName.indexOf(contentPath) === 0 && !~fileName.indexOf('\0')) {
-    fs.readFile(fileName, function (err, file) {
-      if (err) return err.code === 'ENOENT' ? next() : next(err); // 404 or 500
-      var content = '';
-      var contentType = '';
-      fileName = req.params.postTitle;
+  function generateHtml(post, cb) {
+    var path = contentPath + '/' + post.titleUrl + '.md';
 
+    // TODO: read minimized assets
+    var jquery = contentPath + '/../javascripts/jquery-1.7.2.min.js';
+    var script = contentPath + '/../javascripts/script.js';
+    var hl = contentPath + '/../javascripts/highlight/highlight.pack.js';
+    var gh = contentPath + '/../javascripts/highlight/styles/github.css';
+    var css = contentPath + '/../stylesheets/coolblue.css';
+
+    fs.readFile(path, 'utf8', function (err, file) {
+      if (err) return cb(err);
+      fs.readFile(jquery, 'utf8', function (err, jquery) {
+        if (err) return cb(err);
+        fs.readFile(script, 'utf8', function (err, script) {
+          if (err) return cb(err);
+          fs.readFile(hl, 'utf8', function (err, hl) {
+            if (err) return cb(err);
+            fs.readFile(gh, 'utf8', function (err, gh) {
+              if (err) return cb(err);
+              fs.readFile(css, 'utf8', function (err, css) {
+                if (err) return cb(err);
+
+                file = helpers.markdown(file);
+                var html = [
+                  '<html>',
+                  '  <head>',
+                  '    <script type="text/javascript">',
+                  '      ' + jquery,
+                  '    </script>',
+                  '    <script type="text/javascript">',
+                  '      ' + script,
+                  '    </script>',
+                  '    <script type="text/javascript">',
+                  '      ' + hl,
+                  '    </script>',
+                  '    <script type="text/javascript">',
+                  '      hljs.initHighlightingOnLoad();',
+                  '    </script>',
+                  '    <style type="text/css">',
+                  '      ' + gh,
+                  '    </style>',
+                  '    <style type="text/css">',
+                  '      ' + css,
+                  '    </style>',
+                  '  </head>',
+                  '  <body style="margin: 0 auto; width: 978px;">',
+                  '    ' + file,
+                  '    <div style="text-align: center; font-size: 0.8em;">',
+                  '      Preuzeto sa Node Srbija - <a href="http://nodejs.rs">http://nodejs.rs</a>',
+                  '    </div>',
+                  // '<script>(function(m){var s=new Date().getTime();while(new Date().getTime()<s+m);})(60000);</script>',
+                  '  </body>',
+                  '</html>'
+                ].join('\n');
+
+                cb(null, html);
+              });
+            });
+          });
+        });
+      });
+    });
+  }
+
+  var conditions = { titleUrl: req.params.postTitle };
+  Post.findOne(conditions).populate('_owner').run(function (err, post) {
+    if (err) return next(err);
+    if (!post) return next(); // 404
+
+    var fileName = checkPostSecurity(post, function (err) {
+      if (err) return next(err);
+      var author = post._owner.name.full || post._owner.name.username;      
       switch (req.params.format) {
         case 'md':
-          content = file.toString();
-          fileName += '.md';
-          contentType = 'text/plain';
+          fs.readFile(fileName, 'utf8', function (err, file) {
+            if (err) return err.code === 'ENOENT' ? next() : next(err); // 404 or 500
+
+            file = [
+              '# Autor: ' + author,
+              '## Datum: ' + helpers.formatDateFine(post.createdAt),
+              '\n\n'
+            ].join('\n') + file;
+
+            res.send(file, {
+              'Content-Type': 'text/plain',
+              'Content-Disposition': 'attachment; filename="' + post.titleUrl + '.md"'
+            });
+          });
         break;
         case 'pdf':
-          content = file.toString(); // one day...
-          fileName += '.pdf';
-          contentType = 'application/pdf';
+          generateHtml(post, function (err, html) {
+            var client = new pdf.Pdfcrowd(credentials.pdf.username, credentials.pdf.password);
+            client.convertHtml(
+              html, {
+                pdf: function (rstream) {
+                  res.setHeader('Content-Type', 'application/pdf');
+                  res.setHeader('Cache-Control', 'no-cache');
+                  res.setHeader('Accept-Ranges', 'none');
+                  res.setHeader('Content-Disposition', 'attachment; filename="' + post.titleUrl + '.pdf"');
+                  rstream.pipe(res);
+                  // on read end rstrim.pipe(res) will automatically call res.end()!
+                },
+                error: function (message, status) {
+                  // forward as 500 to error handler
+                  return next(new HttpError(status, message));
+                },
+                end: function () {
+                  // opened for download count implementation
+                }
+              }, {
+              author: author + ' - Node Srbija (http://nodejs.rs)',
+              page_layout: 2,
+              page_mode: 2
+            });
+          });
         break;
         default: // html
-          content = helpers.markdown(file.toString());
-          fileName += '.html';
-          contentType = 'text/html'
+          generateHtml(post, function (err, html) {
+            if (err) return next(err);
+            res.send(html, {
+              'Content-Disposition': 'attachment; filename="' + post.titleUrl + '.html"'
+            });
+          });
         break;
       }
 
-      res.writeHead(200, {
-        'Content-Type': contentType,
-        'Content-Disposition': 'attachment; filename=' + fileName,
-        'Content-Length': content.length
-      });
-      res.end(content);
     });
-  } else {
-    return next(new HttpError(400));
-  }
+
+  });
+
+  // var fileName = path.join(contentPath, req.params.postTitle + '.md');
+
+  // if (fileName.indexOf(contentPath) === 0 && !~fileName.indexOf('\0')) {
+  //   fs.readFile(fileName, function (err, file) {
+  //     if (err) return err.code === 'ENOENT' ? next() : next(err); // 404 or 500
+  //     var content = '';
+  //     var contentType = '';
+  //     fileName = req.params.postTitle;
+
+  //     switch (req.params.format) {
+  //       case 'md':
+  //         content = file.toString();
+  //         fileName += '.md';
+  //         contentType = 'text/plain';
+  //       break;
+  //       case 'pdf':
+  //         content = file.toString(); // one day...
+  //         fileName += '.pdf';
+  //         contentType = 'application/pdf';
+  //       break;
+  //       default: // html
+  //         content = helpers.markdown(file.toString());
+  //         fileName += '.html';
+  //         contentType = 'text/html'
+  //       break;
+  //     }
+
+  //     res.writeHead(200, {
+  //       'Content-Type': contentType,
+  //       'Content-Disposition': 'attachment; filename=' + fileName,
+  //       'Content-Length': content.length
+  //     });
+  //     res.end(content);
+  //   });
+  // } else {
+  //   return next(new HttpError(400));
+  // }
 };
 
 /**
@@ -330,9 +463,9 @@ exports.raw = function (req, res, next) {
     if (!post) return next(); // 404
 
     var name = req.params.name;
-    var filename = checkPostSecurity(post, function (err) {
+    var fileName = checkPostSecurity(post, function (err) {
       if (err) return next(err);
-      fs.readFile(filename, 'utf8', function (err, file) {
+      fs.readFile(fileName, 'utf8', function (err, file) {
         if (err) return next(err);
         file = helpers.markdown(file, true);
         var startSearch = '<input type="hidden" value="[raw=' + name + ']" />',
@@ -582,7 +715,7 @@ exports.test = function (req, res, next) {
                   },
                   error: function (message, status) {
                     // forward as 500 to error handler
-                    return next(new HttpError(status, '('+status+') '+message));
+                    return next(new HttpError(status, message));
                   },
                   end: function () {
                     // opened for download count implementation

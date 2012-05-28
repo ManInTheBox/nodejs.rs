@@ -165,11 +165,14 @@ module.exports = function () {
         var _user = req.session.user
           ? req.session.user._id
           : undefined;
+        // if typeof err.status === 'undefined' that's ok for mongoose
+        var status = err.status;
 
         var internalError = new InternalError({
           _user: _user,
           name: err.name,
           message: err.message,
+          status: status,
           stack: err.stack,
           url: req.url,
           referrer: req.header('referrer'),

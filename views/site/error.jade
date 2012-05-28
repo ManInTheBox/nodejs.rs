@@ -17,6 +17,9 @@
       label Message: 
       code= err.message
       br
+      label Status: 
+      code= err.status
+      br
       label User: 
       -if (err._user)
         a(href='/user/#{err._user.name.username}')= err._user.name.username
