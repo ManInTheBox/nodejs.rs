@@ -334,15 +334,31 @@ exports.download = function (req, res, next) {
  */
  
 exports.delete = function (req, res, next) {
-  Post.findById(req.params.postId, function (err, post) {
+  Post.findById(req.params.postId).populate('comments').run(function (err, post) {
     if (err) return next(err);
     if (!post) return next(); // 404 will catch this...
-    post.remove(function (err) {
-      if (err) return next(err);
-      fs.unlink(contentPath + post.titleUrl + '.md', function (err) {
+
+    if (post.comments.length) { // remove subdocs - comments
+      post.comments.forEach(function (v, i, a) {
+        v.remove(function (err) {
+          if (err) return next(err);
+          if (i === a.length-1) res.emit('comments removed');
+        });
+      });
+    } else {
+      process.nextTick(function () {
+        res.emit('comments removed');
+      });
+    }
+
+    res.on('comments removed', function () {
+      post.remove(function (err) {
         if (err) return next(err);
-        req.flash('success', 'Uspesno obrisan post.');
-        res.end();
+        fs.unlink(contentPath + post.titleUrl + '.md', function (err) {
+          if (err) return next(err);
+          req.flash('success', 'Uspešno obrisan članak.');
+          res.end();
+        });
       });
     });
   });
