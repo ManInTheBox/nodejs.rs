@@ -182,6 +182,7 @@ db.getCollection("internalerrors").insert({
   "createdAt": ISODate("2012-05-28T02:04:05.576Z")
 });
 db.getCollection("internalerrors").insert({
+  "_id": ObjectId("4fc3bc0a0c4b8cc41700000c"),
   "_user": ObjectId("4f9c7141ddcebc7022000022"),
   "name": "HttpError",
   "message": "Sorry, we couldn't process your request.",
@@ -190,7 +191,6 @@ db.getCollection("internalerrors").insert({
   "url": "\/test",
   "browser": "Mozilla\/5.0 (X11; Linux i686) AppleWebKit\/536.5 (KHTML, like Gecko) Chrome\/19.0.1084.52 Safari\/536.5",
   "method": "GET",
-  "_id": ObjectId("4fc3bc0a0c4b8cc41700000c"),
   "viewed": true,
   "createdAt": ISODate("2012-05-28T17:55:22.758Z")
 });
@@ -261,21 +261,6 @@ db.getCollection("posts").insert({
   "updatedAt": ISODate("2012-05-27T03:45:28.480Z")
 });
 db.getCollection("posts").insert({
-  "_id": ObjectId("4fc29b7b37a1e02c2a000022"),
-  "_owner": ObjectId("4f9c7141ddcebc7022000022"),
-  "comments": [
-    ObjectId("4fc29e4848a2624c2b00036a"),
-    ObjectId("4fc2a1451301f2d52b0000f0")
-  ],
-  "createdAt": ISODate("2012-05-27T21:24:11.902Z"),
-  "tags": [
-    
-  ],
-  "title": "Test 1]\\  2  23 <script>alert('a')<\/script>",
-  "titleUrl": "test-1-2-23-scriptalertascript",
-  "updatedAt": ISODate("2012-05-27T21:35:54.446Z")
-});
-db.getCollection("posts").insert({
   "_id": ObjectId("4fc033b16866612719000d9d"),
   "_owner": ObjectId("4f9c7141ddcebc7022000022"),
   "comments": [
@@ -289,18 +274,107 @@ db.getCollection("posts").insert({
   ],
   "title": "Zarkov post",
   "titleUrl": "zarkov-post",
-  "updatedAt": ISODate("2012-05-27T23:46:00.313Z")
+  "updatedAt": ISODate("2012-05-29T00:16:58.134Z")
+});
+db.getCollection("posts").insert({
+  "_id": ObjectId("4fc29b7b37a1e02c2a000022"),
+  "_owner": ObjectId("4f9c7141ddcebc7022000022"),
+  "comments": [
+    ObjectId("4fc29e4848a2624c2b00036a"),
+    ObjectId("4fc2a1451301f2d52b0000f0")
+  ],
+  "createdAt": ISODate("2012-05-27T21:24:11.902Z"),
+  "tags": [
+    
+  ],
+  "title": "Test 1]\\  2  23 <script>alert('a')<\/script> __proba__",
+  "titleUrl": "test-1-2-23-scriptalertascript-proba",
+  "updatedAt": ISODate("2012-05-29T01:20:04.160Z")
 });
 
 /** sessions records **/
 db.getCollection("sessions").insert({
-  "_id": ObjectId("4fc3b8162ec6d0d77ab0d6d2"),
-  "data": "{\"lastAccess\":1338229361595,\"cookie\":{\"originalMaxAge\":14399995,\"expires\":\"2012-05-28T22:22:41.608Z\",\"httpOnly\":true,\"path\":\"\/\"},\"_csrf\":\"chzucfOhgputxNJCbeT2nMfF\",\"flash\":{},\"user\":{\"_id\":\"4f9c7141ddcebc7022000022\",\"email\":\"stankovic.zarko@gmail.com\",\"password\":\"5101d9d94c8cae583027f9279171d83d\",\"createdAt\":\"2012-04-28T22:37:53.460Z\",\"salt\":\"95d3e293492509d083c7a027b0195ef5\",\"bio\":{\"about\":\"Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst...\",\"company\":\"Max My Play, LLC\",\"github\":\"http:\/\/github.com\/ManInTheBox\",\"location\":\"Beograd, Srbija\",\"twitter\":\"http:\/\/twitter.com\/zarkostankovic\",\"website\":\"http:\/\/www.zarkostankovic.com\"},\"photo\":\"4fbeb6524757f93d2d000f8b\",\"name\":{\"first\":\"Žarko\",\"last\":\"Stanković\",\"username\":\"ManInTheBox\"}}}",
-  "expires": ISODate("2012-05-28T22:22:41.608Z"),
-  "sid": "T7Ix7RDLzhVu60e2xQdgu5Xv.y9hUANdV8cW1J9L9k8x\/AhYWIl5goaJKgfMoVXvP2pM"
+  "_id": ObjectId("4fc40a018f5da9bb3d517fad"),
+  "data": "{\"lastAccess\":1338254404391,\"cookie\":{\"originalMaxAge\":14399996,\"expires\":\"2012-05-29T05:20:04.388Z\",\"httpOnly\":true,\"path\":\"\/\"},\"_csrf\":\"FKyqQZ3WUSYhONtXa8j8RjFc\",\"flash\":{},\"user\":{\"_id\":\"4f9c7141ddcebc7022000022\",\"email\":\"stankovic.zarko@gmail.com\",\"password\":\"5101d9d94c8cae583027f9279171d83d\",\"createdAt\":\"2012-04-28T22:37:53.460Z\",\"salt\":\"95d3e293492509d083c7a027b0195ef5\",\"bio\":{\"about\":\"Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst...\",\"company\":\"Max My Play, LLC\",\"github\":\"http:\/\/github.com\/ManInTheBox\",\"location\":\"Beograd, Srbija\",\"twitter\":\"http:\/\/twitter.com\/zarkostankovic\",\"website\":\"http:\/\/www.zarkostankovic.com\"},\"photo\":\"4fbeb6524757f93d2d000f8b\",\"name\":{\"first\":\"Žarko\",\"last\":\"Stanković\",\"username\":\"ManInTheBox\"}}}",
+  "expires": ISODate("2012-05-29T05:20:04.388Z"),
+  "sid": "9ChLstQemWMSUXKEjPl8Fo5Q.VBHrhuvRZVVLOeaHtkcCxM8dKu9vJVVfQV4Cyu+fnwM"
+});
+db.getCollection("sessions").insert({
+  "_id": ObjectId("4fc41f148f5da9bb3d517fae"),
+  "data": "{\"lastAccess\":1338253211333,\"cookie\":{\"originalMaxAge\":14399999,\"expires\":\"2012-05-29T05:00:11.332Z\",\"httpOnly\":true,\"path\":\"\/\"},\"_csrf\":\"3L1d25UieImedan0Pwbn5Lgf\",\"flash\":{},\"user\":{\"_id\":\"4f9c7141ddcebc7022000022\",\"email\":\"stankovic.zarko@gmail.com\",\"password\":\"5101d9d94c8cae583027f9279171d83d\",\"createdAt\":\"2012-04-28T22:37:53.460Z\",\"salt\":\"95d3e293492509d083c7a027b0195ef5\",\"bio\":{\"about\":\"Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst...\",\"company\":\"Max My Play, LLC\",\"github\":\"http:\/\/github.com\/ManInTheBox\",\"location\":\"Beograd, Srbija\",\"twitter\":\"http:\/\/twitter.com\/zarkostankovic\",\"website\":\"http:\/\/www.zarkostankovic.com\"},\"photo\":\"4fbeb6524757f93d2d000f8b\",\"name\":{\"first\":\"Žarko\",\"last\":\"Stanković\",\"username\":\"ManInTheBox\"}}}",
+  "expires": ISODate("2012-05-29T05:00:11.332Z"),
+  "sid": "qOqgp4QHhrMrHWocPMaXxRGu.L9aj\/Mz4fqzsS4uxI8fNkLi80GqeErmVVS+wVZkqKhY"
 });
 
 /** system.indexes records **/
+db.getCollection("system.indexes").insert({
+  "v": 1,
+  "key": {
+    "_id": 1
+  },
+  "ns": "nodejsrs.users",
+  "name": "_id_"
+});
+db.getCollection("system.indexes").insert({
+  "v": 1,
+  "key": {
+    "name.username": 1
+  },
+  "unique": true,
+  "ns": "nodejsrs.users",
+  "name": "name.username_1"
+});
+db.getCollection("system.indexes").insert({
+  "v": 1,
+  "key": {
+    "_id": 1
+  },
+  "ns": "nodejsrs.sessions",
+  "name": "_id_"
+});
+db.getCollection("system.indexes").insert({
+  "v": 1,
+  "key": {
+    "sid": 1
+  },
+  "unique": true,
+  "ns": "nodejsrs.sessions",
+  "name": "sid_1"
+});
+db.getCollection("system.indexes").insert({
+  "v": 1,
+  "key": {
+    "expires": 1
+  },
+  "ns": "nodejsrs.sessions",
+  "name": "expires_1"
+});
+db.getCollection("system.indexes").insert({
+  "v": 1,
+  "key": {
+    "email": 1
+  },
+  "unique": true,
+  "ns": "nodejsrs.users",
+  "name": "email_1"
+});
+db.getCollection("system.indexes").insert({
+  "v": 1,
+  "key": {
+    "_id": 1
+  },
+  "ns": "nodejsrs.posts",
+  "name": "_id_"
+});
+db.getCollection("system.indexes").insert({
+  "v": 1,
+  "key": {
+    "titleUrl": 1
+  },
+  "unique": true,
+  "ns": "nodejsrs.posts",
+  "name": "titleUrl_1"
+});
 db.getCollection("system.indexes").insert({
   "v": 1,
   "key": {
@@ -336,78 +410,10 @@ db.getCollection("system.indexes").insert({
 db.getCollection("system.indexes").insert({
   "v": 1,
   "key": {
-    "_id": 1
-  },
-  "ns": "nodejsrs.posts",
-  "name": "_id_"
-});
-db.getCollection("system.indexes").insert({
-  "v": 1,
-  "key": {
-    "titleUrl": 1
-  },
-  "unique": true,
-  "ns": "nodejsrs.posts",
-  "name": "titleUrl_1"
-});
-db.getCollection("system.indexes").insert({
-  "v": 1,
-  "key": {
     "_owner": 1
   },
   "ns": "nodejsrs.posts",
   "name": "_owner_1"
-});
-db.getCollection("system.indexes").insert({
-  "v": 1,
-  "key": {
-    "_id": 1
-  },
-  "ns": "nodejsrs.sessions",
-  "name": "_id_"
-});
-db.getCollection("system.indexes").insert({
-  "v": 1,
-  "key": {
-    "sid": 1
-  },
-  "unique": true,
-  "ns": "nodejsrs.sessions",
-  "name": "sid_1"
-});
-db.getCollection("system.indexes").insert({
-  "v": 1,
-  "key": {
-    "expires": 1
-  },
-  "ns": "nodejsrs.sessions",
-  "name": "expires_1"
-});
-db.getCollection("system.indexes").insert({
-  "v": 1,
-  "key": {
-    "_id": 1
-  },
-  "ns": "nodejsrs.users",
-  "name": "_id_"
-});
-db.getCollection("system.indexes").insert({
-  "v": 1,
-  "key": {
-    "name.username": 1
-  },
-  "unique": true,
-  "ns": "nodejsrs.users",
-  "name": "name.username_1"
-});
-db.getCollection("system.indexes").insert({
-  "v": 1,
-  "key": {
-    "email": 1
-  },
-  "unique": true,
-  "ns": "nodejsrs.users",
-  "name": "email_1"
 });
 
 /** users records **/

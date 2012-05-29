@@ -201,63 +201,63 @@ exports.download = function (req, res, next) {
 
   function generateHtml(post, cb) {
     var path = contentPath + '/' + post.titleUrl + '.md';
+    var author = post._owner.name.full || post._owner.name.username;
 
     // TODO: read minimized assets
-    var jquery = contentPath + '/../javascripts/jquery-1.7.2.min.js';
-    var script = contentPath + '/../javascripts/script.js';
     var hl = contentPath + '/../javascripts/highlight/highlight.pack.js';
     var gh = contentPath + '/../javascripts/highlight/styles/github.css';
     var css = contentPath + '/../stylesheets/coolblue.css';
 
     fs.readFile(path, 'utf8', function (err, file) {
       if (err) return cb(err);
-      fs.readFile(jquery, 'utf8', function (err, jquery) {
+      fs.readFile(hl, 'utf8', function (err, hl) {
         if (err) return cb(err);
-        fs.readFile(script, 'utf8', function (err, script) {
+        fs.readFile(gh, 'utf8', function (err, gh) {
           if (err) return cb(err);
-          fs.readFile(hl, 'utf8', function (err, hl) {
+          fs.readFile(css, 'utf8', function (err, css) {
             if (err) return cb(err);
-            fs.readFile(gh, 'utf8', function (err, gh) {
-              if (err) return cb(err);
-              fs.readFile(css, 'utf8', function (err, css) {
-                if (err) return cb(err);
 
-                file = helpers.markdown(file);
-                var html = [
-                  '<html>',
-                  '  <head>',
-                  '    <script type="text/javascript">',
-                  '      ' + jquery,
-                  '    </script>',
-                  '    <script type="text/javascript">',
-                  '      ' + script,
-                  '    </script>',
-                  '    <script type="text/javascript">',
-                  '      ' + hl,
-                  '    </script>',
-                  '    <script type="text/javascript">',
-                  '      hljs.initHighlightingOnLoad();',
-                  '    </script>',
-                  '    <style type="text/css">',
-                  '      ' + gh,
-                  '    </style>',
-                  '    <style type="text/css">',
-                  '      ' + css,
-                  '    </style>',
-                  '  </head>',
-                  '  <body style="margin: 0 auto; width: 978px;">',
-                  '    ' + file,
-                  '    <div style="text-align: center; font-size: 0.8em;">',
-                  '      Preuzeto sa Node Srbija - <a href="http://nodejs.rs">http://nodejs.rs</a>',
-                  '    </div>',
-                  // '<script>(function(m){var s=new Date().getTime();while(new Date().getTime()<s+m);})(60000);</script>',
-                  '  </body>',
-                  '</html>'
-                ].join('\n');
+            file = helpers.markdown(file);
+            // trasform relative to absolute urls
+            file = file.replace(
+              /\<a class="raw-file" href="#([\w-_. ]+)"\>/g, 
+              '<a class="raw-file" href="http://nodejs.rs/post/' + post.titleUrl + '/raw/$1">');
 
-                cb(null, html);
-              });
-            });
+            var html = [
+              '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">',
+              '<html>',
+              '  <head>',
+              '    <title>' + post.title + ' - Node Srbija</title>',
+              '    <meta charset="utf-8">',
+              '    <script type="text/javascript">',
+              '      ' + hl,
+              '    </script>',
+              '    <script type="text/javascript">',
+              '      hljs.initHighlightingOnLoad();',
+              '    </script>',
+              '    <style type="text/css">',
+              '      ' + gh,
+              '    </style>',
+              '    <style type="text/css">',
+              '      ' + css,
+              '    </style>',
+              '  </head>',
+              '  <body style="margin: 0 auto; width: 978px;">',
+              '    <h3>',
+              '      <a href="http://nodejs.rs/post/' + post.titleUrl + '">' + post.title + '</a>',
+              '    </h3>',
+              '    <div style="margin: 0 0 70px 3px; font-size: 14px;">',
+              '      Napisao <a href="http://nodejs.rs/user/' + post._owner.name.username + '">' + author + '</a>, dana ' + helpers.formatDateFine(post.createdAt),
+              '    </div>',
+              '    ' + file,
+              '    <div style="text-align: center; font-size: 0.8em;">',
+              '      Preuzeto sa Node Srbija - <a href="http://nodejs.rs">http://nodejs.rs</a>',
+              '    </div>',
+              '  </body>',
+              '</html>'
+            ].join('\n');
+
+            cb(null, html);
           });
         });
       });
@@ -271,15 +271,15 @@ exports.download = function (req, res, next) {
 
     var fileName = checkPostSecurity(post, function (err) {
       if (err) return next(err);
-      var author = post._owner.name.full || post._owner.name.username;      
+      var author = post._owner.name.full || post._owner.name.username;
       switch (req.params.format) {
         case 'md':
           fs.readFile(fileName, 'utf8', function (err, file) {
             if (err) return err.code === 'ENOENT' ? next() : next(err); // 404 or 500
 
             file = [
-              '# Autor: ' + author,
-              '## Datum: ' + helpers.formatDateFine(post.createdAt),
+              '### [' + post.title + '](http://nodejs.rs/post/' + post.titleUrl + ')',
+              'Napisao _[' + author + '](http://nodejs.rs/user/' + post._owner.name.username + ')_, dana ' + helpers.formatDateFine(post.createdAt),
               '\n\n'
             ].join('\n') + file;
 
@@ -325,48 +325,8 @@ exports.download = function (req, res, next) {
           });
         break;
       }
-
     });
-
   });
-
-  // var fileName = path.join(contentPath, req.params.postTitle + '.md');
-
-  // if (fileName.indexOf(contentPath) === 0 && !~fileName.indexOf('\0')) {
-  //   fs.readFile(fileName, function (err, file) {
-  //     if (err) return err.code === 'ENOENT' ? next() : next(err); // 404 or 500
-  //     var content = '';
-  //     var contentType = '';
-  //     fileName = req.params.postTitle;
-
-  //     switch (req.params.format) {
-  //       case 'md':
-  //         content = file.toString();
-  //         fileName += '.md';
-  //         contentType = 'text/plain';
-  //       break;
-  //       case 'pdf':
-  //         content = file.toString(); // one day...
-  //         fileName += '.pdf';
-  //         contentType = 'application/pdf';
-  //       break;
-  //       default: // html
-  //         content = helpers.markdown(file.toString());
-  //         fileName += '.html';
-  //         contentType = 'text/html'
-  //       break;
-  //     }
-
-  //     res.writeHead(200, {
-  //       'Content-Type': contentType,
-  //       'Content-Disposition': 'attachment; filename=' + fileName,
-  //       'Content-Length': content.length
-  //     });
-  //     res.end(content);
-  //   });
-  // } else {
-  //   return next(new HttpError(400));
-  // }
 };
 
 /**
@@ -432,7 +392,7 @@ exports.edit = function (req, res, next) {
             if (err) return next(err);
             fs.writeFile(filePath, p.content.trim(), function (err) {
               if (err) return next(err);
-              req.flash('success', 'Uspešno izmenjen članak "' + post.title + '"');
+              req.flash('success', 'Uspešno izmenjen članak "' + helpers.encode(post.title) + '"');
               res.redirect('/post/' + post.titleUrl);
             });
           });
@@ -641,98 +601,3 @@ function handleSidebar(req, res, next, post, cb) {
     });
   }
 }
-
-// TEST: PDF
-exports.test = function (req, res, next) {
-
-  var post = contentPath + '/zarkov-post.md';
-
-  var filename = 'zarkov-post';
-
-  var jquery = contentPath + '/../javascripts/jquery-1.7.2.min.js';
-  var script = contentPath + '/../javascripts/script.js';
-  var hl = contentPath + '/../javascripts/highlight/highlight.pack.js';
-  var gh = contentPath + '/../javascripts/highlight/styles/github.css';
-  var css = contentPath + '/../stylesheets/coolblue.css';
-
-  fs.readFile(post, 'utf8', function (err, file) {
-    if (err) return next(err);
-    fs.readFile(jquery, 'utf8', function (err, jquery) {
-      if (err) return next(err);
-      fs.readFile(script, 'utf8', function (err, script) {
-        if (err) return next(err);
-        fs.readFile(hl, 'utf8', function (err, hl) {
-          if (err) return next(err);
-          fs.readFile(gh, 'utf8', function (err, gh) {
-            if (err) return next(err);
-            fs.readFile(css, 'utf8', function (err, css) {
-              if (err) return next(err);
-
-              file = helpers.markdown(file);
-              var html = [
-                '<html>',
-                '  <head>',
-                '    <script type="text/javascript">',
-                '      ' + jquery,
-                '    </script>',
-                '    <script type="text/javascript">',
-                '      ' + script,
-                '    </script>',
-                '    <script type="text/javascript">',
-                '      ' + hl,
-                '    </script>',
-                '    <script type="text/javascript">',
-                '      hljs.initHighlightingOnLoad();',
-                '    </script>',
-                '    <style type="text/css">',
-                '      ' + gh,
-                '    </style>',
-                '    <style type="text/css">',
-                '      ' + css,
-                '    </style>',
-                '  </head>',
-                '  <body style="margin: 0 auto; width: 978px;">',
-                '    ' + file,
-                '    <div style="text-align: center; font-size: 0.8em;">',
-                '      Preuzeto sa Node Srbija - <a href="http://nodejs.rs">http://nodejs.rs</a>',
-                '    </div>',
-                // '<script>(function(m){var s=new Date().getTime();while(new Date().getTime()<s+m);})(60000);</script>',
-                '  </body>',
-                '</html>'
-              ].join('\n');
-
-              var pdf = require('pdfcrowd');
-              var client = new pdf.Pdfcrowd('mika', '1b6ee48398ef301cd90c86a962365a03');
-              client.convertHtml(
-                html, {
-                  pdf: function (rstream) {
-                    res.setHeader('Content-Type', 'application/pdf');
-                    res.setHeader('Cache-Control', 'no-cache');
-                    res.setHeader('Accept-Ranges', 'none');
-                    res.setHeader('Content-Disposition', 'attachment; filename="' + filename + '.pdf"');
-                    rstream.pipe(res);
-                    // on read end rstrim.pipe(res) will automatically call res.end()!
-                  },
-                  error: function (message, status) {
-                    // forward as 500 to error handler
-                    return next(new HttpError(status, message));
-                  },
-                  end: function () {
-                    // opened for download count implementation
-                  }
-                }, {
-                author: 'Zarko Stankovic' + ' - Node Srbija (http://nodejs.rs)',
-                page_layout: 2,
-                page_mode: 2
-              });
-
-
-              // res.send(html);
-
-            });
-          });
-        });
-      });
-    });
-  });
-};

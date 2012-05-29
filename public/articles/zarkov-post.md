@@ -2,6 +2,18 @@ U ovom tutorijalu cu vam pokazati `cool` kod :)
 
 *kod*
 
+```html
+<html>
+  <head>
+    <title>Hello Node</title>
+  </head>
+  <body>
+    <h3>Hello Node Srbija</h3>
+  </body>
+</html>
+[raw=hello_node_srbija.html]
+```
+
 ```javascript
 [raw=comments.js]
 /**

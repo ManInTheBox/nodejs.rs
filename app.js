@@ -195,7 +195,6 @@ app.get('/about', routes.site.about);
 
 /**
  * Error site route.
- * // TODO: only admins!
  */
 
  app.get('/error', loginRequired, grantAccess(), routes.site.error);
