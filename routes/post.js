@@ -247,7 +247,7 @@ exports.download = function (req, res, next) {
               '      <a href="http://nodejs.rs/post/' + post.titleUrl + '">' + post.title + '</a>',
               '    </h3>',
               '    <div style="margin: 0 0 70px 3px; font-size: 14px;">',
-              '      Napisao <a href="http://nodejs.rs/user/' + post._owner.name.username + '">' + author + '</a>, dana ' + helpers.formatDateFine(post.createdAt),
+              '      Napisao <a href="http://nodejs.rs/user/'+post._owner.name.username+'">'+author+'</a>, dana '+helpers.formatDateFine(post.createdAt),
               '    </div>',
               '    ' + file,
               '    <div style="text-align: center; font-size: 0.8em;">',
@@ -272,6 +272,8 @@ exports.download = function (req, res, next) {
     var fileName = checkPostSecurity(post, function (err) {
       if (err) return next(err);
       var author = post._owner.name.full || post._owner.name.username;
+      // TODO: make ReadStream and pipe it to ServerResponse
+      // instead of read whole file and then respond with that file 
       switch (req.params.format) {
         case 'md':
           fs.readFile(fileName, 'utf8', function (err, file) {
@@ -279,7 +281,7 @@ exports.download = function (req, res, next) {
 
             file = [
               '### [' + post.title + '](http://nodejs.rs/post/' + post.titleUrl + ')',
-              'Napisao _[' + author + '](http://nodejs.rs/user/' + post._owner.name.username + ')_, dana ' + helpers.formatDateFine(post.createdAt),
+              'Napisao _['+author+'](http://nodejs.rs/user/'+post._owner.name.username+')_, dana '+helpers.formatDateFine(post.createdAt),
               '\n\n'
             ].join('\n') + file;
 
@@ -290,38 +292,79 @@ exports.download = function (req, res, next) {
           });
         break;
         case 'pdf':
-          generateHtml(post, function (err, html) {
-            var client = new pdf.Pdfcrowd(credentials.pdf.username, credentials.pdf.password);
-            client.convertHtml(
-              html, {
-                pdf: function (rstream) {
-                  res.setHeader('Content-Type', 'application/pdf');
-                  res.setHeader('Cache-Control', 'no-cache');
-                  res.setHeader('Accept-Ranges', 'none');
-                  res.setHeader('Content-Disposition', 'attachment; filename="' + post.titleUrl + '.pdf"');
-                  rstream.pipe(res);
-                  // on read end rstrim.pipe(res) will automatically call res.end()!
-                },
-                error: function (message, status) {
-                  // forward as 500 to error handler
-                  return next(new HttpError(status, message));
-                },
-                end: function () {
-                  // opened for download count implementation
-                }
-              }, {
-              author: author + ' - Node Srbija (http://nodejs.rs)',
-              page_layout: 2,
-              page_mode: 2
-            });
+          var pos = fileName.lastIndexOf('.md');
+          fileName = fileName.substring(0, pos) + '.pdf';
+          // check if we already have generated PDF content to serve it immediately
+          path.exists(fileName, function (exists) {
+            if (exists) {
+              fs.readFile(fileName, function (err, pdf) {
+                if (err) return next(err);
+                res.send(pdf, {
+                  'Content-Type': 'application/pdf',
+                  'Cache-Control': 'no-cache',
+                  'Accept-Ranges': 'none',
+                  'Content-Disposition': 'attachment; filename="' + post.titleUrl + '.pdf"'
+                });
+              });
+            } else { // need to generate PDF content
+              generateHtml(post, function (err, html) {
+                var client = new pdf.Pdfcrowd(credentials.pdf.username, credentials.pdf.password);
+                client.convertHtml(
+                  html, {
+                    pdf: function (rstream) {
+                      var wstream = fs.createWriteStream(fileName);
+                      rstream.pipe(wstream); // save PDF for future use
+                      // on read end rstream.pipe(wstream) will automatically call wstream.end()!
+                    },
+                    error: function (message, status) {
+                      // forward as 5xx to error handler
+                      return next(new HttpError(status, message));
+                    },
+                    end: function () {
+                      // newly generated PDF is now saved so respond with it
+                      fs.readFile(fileName, function (err, pdf) {
+                        if (err) return next(err);
+                        res.send(pdf, {
+                          'Content-Type': 'application/pdf',
+                          'Cache-Control': 'no-cache',
+                          'Accept-Ranges': 'none',
+                          'Content-Disposition': 'attachment; filename="' + post.titleUrl + '.pdf"'
+                        });
+                      });
+                    }
+                  }, {
+                  author: author + ' - Node Srbija (http://nodejs.rs)',
+                  page_layout: 2,
+                  page_mode: 2
+                });
+              });
+            }
           });
+
+
         break;
         default: // html
-          generateHtml(post, function (err, html) {
-            if (err) return next(err);
-            res.send(html, {
-              'Content-Disposition': 'attachment; filename="' + post.titleUrl + '.html"'
-            });
+          var pos = fileName.lastIndexOf('.md');
+          fileName = fileName.substring(0, pos) + '.html';
+          // check if we already have generated HTML content to serve it immediately
+          path.exists(fileName, function (exists) {
+            if (exists) {
+              fs.readFile(fileName, 'utf8', function (err, html) {
+                res.send(html, {
+                  'Content-Disposition': 'attachment; filename="' + post.titleUrl + '.html"'
+                });
+              });
+            } else { // need to generate HTML content
+              generateHtml(post, function (err, html) {
+                if (err) return next(err);
+                fs.writeFile(fileName, html, 'utf8', function (err) { // save HTML for future use
+                  if (err) return next(err);
+                  res.send(html, {
+                    'Content-Disposition': 'attachment; filename="' + post.titleUrl + '.html"'
+                  });
+                });
+              });
+            }
           });
         break;
       }
@@ -351,16 +394,57 @@ exports.delete = function (req, res, next) {
       });
     }
 
+    var postPath = contentPath + post.titleUrl;
+
+    // remove markdown file
     res.on('comments removed', function () {
       post.remove(function (err) {
         if (err) return next(err);
-        fs.unlink(contentPath + post.titleUrl + '.md', function (err) {
+        fs.unlink(postPath + '.md', function (err) {
           if (err) return next(err);
-          req.flash('success', 'Uspešno obrisan članak.');
-          res.end();
+          res.emit('markdown removed');
         });
       });
     });
+
+    // remove html file
+    res.on('markdown removed', function () {
+      path.exists(postPath + '.html', function (exists) {
+        if (exists) {
+          fs.unlink(postPath + '.html', function (err) {
+            if (err) return next(err);
+            res.emit('html removed');
+          });
+        } else {
+          process.nextTick(function () {
+            res.emit('html removed');
+          });
+        }
+      });
+    });
+
+    // remove pdf file
+    res.on('html removed', function () {
+      path.exists(postPath + '.pdf', function (exists) {
+        if (exists) {
+          fs.unlink(postPath + '.pdf', function (err) {
+            if (err) return next(err);
+            res.emit('pdf removed');
+          });
+        } else {
+          process.nextTick(function () {
+            res.emit('pdf removed');
+          });
+        }
+      });
+    });
+
+    // removal complete
+    res.on('pdf removed', function () {
+      req.flash('success', 'Uspešno obrisan članak.');
+      res.end();
+    });
+
   });
 };
 
