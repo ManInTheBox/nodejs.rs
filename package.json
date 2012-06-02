@@ -14,6 +14,10 @@
     "marked": ">= 0.2.4",
     "pdfcrowd": "1.0.x"
   },
+  "bundledDependencies": [
+        "mongoose"
+      , "marked"
+  , ]
   "devDependencies": {
     "should": "*",
     "mocha": "latest"
