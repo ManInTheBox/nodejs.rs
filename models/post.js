@@ -19,7 +19,9 @@ var Post = new db.Schema({
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
   comments: [{ type: db.ObjectId, ref: 'Comment' }],
-  tags: [ String ]
+  tags: [ String ],
+  shouldGenerateHtml: { type: Boolean, default: true },
+  shouldGeneratePdf: { type: Boolean, default: true }
 });
 
 Post.path('tags').set(function (v) {

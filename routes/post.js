@@ -198,72 +198,6 @@ exports.view = function (req, res, next) {
  */
 
 exports.download = function (req, res, next) {
-
-  function generateHtml(post, cb) {
-    var path = contentPath + '/' + post.titleUrl + '.md';
-    var author = post._owner.name.full || post._owner.name.username;
-
-    // TODO: read minimized assets
-    var hl = contentPath + '/../javascripts/highlight/highlight.pack.js';
-    var gh = contentPath + '/../javascripts/highlight/styles/github.css';
-    var css = contentPath + '/../stylesheets/coolblue.css';
-
-    fs.readFile(path, 'utf8', function (err, file) {
-      if (err) return cb(err);
-      fs.readFile(hl, 'utf8', function (err, hl) {
-        if (err) return cb(err);
-        fs.readFile(gh, 'utf8', function (err, gh) {
-          if (err) return cb(err);
-          fs.readFile(css, 'utf8', function (err, css) {
-            if (err) return cb(err);
-
-            file = helpers.markdown(file);
-            // trasform relative to absolute urls
-            file = file.replace(
-              /\<a class="raw-file" href="#([\w-_. ]+)"\>/g, 
-              '<a class="raw-file" href="http://nodejs.rs/post/' + post.titleUrl + '/raw/$1">');
-
-            var html = [
-              '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">',
-              '<html>',
-              '  <head>',
-              '    <title>' + post.title + ' - Node Srbija</title>',
-              '    <meta charset="utf-8">',
-              '    <script type="text/javascript">',
-              '      ' + hl,
-              '    </script>',
-              '    <script type="text/javascript">',
-              '      hljs.initHighlightingOnLoad();',
-              '    </script>',
-              '    <style type="text/css">',
-              '      ' + gh,
-              '    </style>',
-              '    <style type="text/css">',
-              '      ' + css,
-              '    </style>',
-              '  </head>',
-              '  <body style="margin: 0 auto; width: 978px;">',
-              '    <h3>',
-              '      <a href="http://nodejs.rs/post/' + post.titleUrl + '">' + post.title + '</a>',
-              '    </h3>',
-              '    <div style="margin: 0 0 70px 3px; font-size: 14px;">',
-              '      Napisao <a href="http://nodejs.rs/user/'+post._owner.name.username+'">'+author+'</a>, dana '+helpers.formatDateFine(post.createdAt),
-              '    </div>',
-              '    ' + file,
-              '    <div style="text-align: center; font-size: 0.8em;">',
-              '      Preuzeto sa Node Srbija - <a href="http://nodejs.rs">http://nodejs.rs</a>',
-              '    </div>',
-              '  </body>',
-              '</html>'
-            ].join('\n');
-
-            cb(null, html);
-          });
-        });
-      });
-    });
-  }
-
   var conditions = { titleUrl: req.params.postTitle };
   Post.findOne(conditions).populate('_owner').run(function (err, post) {
     if (err) return next(err);
@@ -271,6 +205,81 @@ exports.download = function (req, res, next) {
 
     var fileName = checkPostSecurity(post, function (err) {
       if (err) return next(err);
+
+      // Used for generating HTML content.
+      // It will save new content on file system and pass
+      // new HTML to cb function
+      function generateHtml(post, cb) {
+        var path = contentPath + '/' + post.titleUrl + '.md';
+        var author = post._owner.name.full || post._owner.name.username;
+
+        // TODO: read minimized assets
+        var hl = contentPath + '/../javascripts/highlight/highlight.pack.js';
+        var gh = contentPath + '/../javascripts/highlight/styles/github.css';
+        var css = contentPath + '/../stylesheets/coolblue.css';
+
+        fs.readFile(path, 'utf8', function (err, file) {
+          if (err) return cb(err);
+          fs.readFile(hl, 'utf8', function (err, hl) {
+            if (err) return cb(err);
+            fs.readFile(gh, 'utf8', function (err, gh) {
+              if (err) return cb(err);
+              fs.readFile(css, 'utf8', function (err, css) {
+                if (err) return cb(err);
+
+                file = helpers.markdown(file);
+                // trasform relative to absolute urls
+                file = file.replace(
+                  /\<a class="raw-file" href="#([\w-_. ]+)"\>/g, 
+                  '<a class="raw-file" href="http://nodejs.rs/post/' + post.titleUrl + '/raw/$1">');
+
+                var html = [
+                  '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">',
+                  '<html>',
+                  '  <head>',
+                  '    <title>' + post.title + ' - Node Srbija</title>',
+                  '    <meta charset="utf-8">',
+                  '    <script type="text/javascript">',
+                  '      ' + hl,
+                  '    </script>',
+                  '    <script type="text/javascript">',
+                  '      hljs.initHighlightingOnLoad();',
+                  '    </script>',
+                  '    <style type="text/css">',
+                  '      ' + gh,
+                  '    </style>',
+                  '    <style type="text/css">',
+                  '      ' + css,
+                  '    </style>',
+                  '  </head>',
+                  '  <body style="margin: 0 auto; width: 978px;">',
+                  '    <h3>',
+                  '      <a href="http://nodejs.rs/post/' + post.titleUrl + '">' + post.title + '</a>',
+                  '    </h3>',
+                  '    <div style="margin: 0 0 70px 3px; font-size: 14px;">',
+                  '      Napisao <a href="http://nodejs.rs/user/'+post._owner.name.username+'">'+author+'</a>, dana '+helpers.formatDateFine(post.createdAt),
+                  '    </div>',
+                  '    ' + file,
+                  '    <div style="text-align: center; font-size: 0.8em;">',
+                  '      Preuzeto sa Node Srbija - <a href="http://nodejs.rs">http://nodejs.rs</a>',
+                  '    </div>',
+                  '  </body>',
+                  '</html>'
+                ].join('\n');
+
+                var pos = fileName.lastIndexOf('.md');
+                var htmlFileName = fileName.substring(0, pos) + '.html';
+                // save HTML for future use
+                fs.writeFile(htmlFileName, html, 'utf8', function (err) {
+                  if (err) return cb(err);
+                  cb(null, html);
+                });
+              });
+            });
+          });
+        });
+      }
+
       var author = post._owner.name.full || post._owner.name.username;
       // TODO: make ReadStream and pipe it to ServerResponse
       // instead of read whole file and then respond with that file 
@@ -293,11 +302,11 @@ exports.download = function (req, res, next) {
         break;
         case 'pdf':
           var pos = fileName.lastIndexOf('.md');
-          fileName = fileName.substring(0, pos) + '.pdf';
+          var pdfFileName = fileName.substring(0, pos) + '.pdf';
           // check if we already have generated PDF content to serve it immediately
-          path.exists(fileName, function (exists) {
-            if (exists) {
-              fs.readFile(fileName, function (err, pdf) {
+          path.exists(pdfFileName, function (exists) {
+            if (exists && !post.shouldGeneratePdf) {
+              fs.readFile(pdfFileName, function (err, pdf) {
                 if (err) return next(err);
                 res.send(pdf, {
                   'Content-Type': 'application/pdf',
@@ -308,64 +317,65 @@ exports.download = function (req, res, next) {
               });
             } else { // need to generate PDF content
               generateHtml(post, function (err, html) {
-                var client = new pdf.Pdfcrowd(credentials.pdf.username, credentials.pdf.password);
-                client.convertHtml(
-                  html, {
-                    pdf: function (rstream) {
-                      var wstream = fs.createWriteStream(fileName);
-                      rstream.pipe(wstream); // save PDF for future use
-                      // on read end rstream.pipe(wstream) will automatically call wstream.end()!
-                    },
-                    error: function (message, status) {
-                      // forward as 5xx to error handler
-                      return next(new HttpError(status, message));
-                    },
-                    end: function () {
-                      // newly generated PDF is now saved so respond with it
-                      fs.readFile(fileName, function (err, pdf) {
-                        if (err) return next(err);
-                        res.send(pdf, {
-                          'Content-Type': 'application/pdf',
-                          'Cache-Control': 'no-cache',
-                          'Accept-Ranges': 'none',
-                          'Content-Disposition': 'attachment; filename="' + post.titleUrl + '.pdf"'
-                        });
-                      });
-                    }
-                  }, {
-                  author: author + ' - Node Srbija (http://nodejs.rs)',
-                  page_layout: 2,
-                  page_mode: 2
-                });
-              });
-            }
-          });
-
-
-        break;
-        default: // html
-          var pos = fileName.lastIndexOf('.md');
-          fileName = fileName.substring(0, pos) + '.html';
-          // check if we already have generated HTML content to serve it immediately
-          path.exists(fileName, function (exists) {
-            if (exists) {
-              fs.readFile(fileName, 'utf8', function (err, html) {
-                res.send(html, {
-                  'Content-Disposition': 'attachment; filename="' + post.titleUrl + '.html"'
-                });
-              });
-            } else { // need to generate HTML content
-              generateHtml(post, function (err, html) {
                 if (err) return next(err);
-                fs.writeFile(fileName, html, 'utf8', function (err) { // save HTML for future use
+                Post.update({ _id: post._id }, { shouldGeneratePdf: false }, function (err) {
                   if (err) return next(err);
-                  res.send(html, {
-                    'Content-Disposition': 'attachment; filename="' + post.titleUrl + '.html"'
+                  var client = new pdf.Pdfcrowd(credentials.pdf.username, credentials.pdf.password);
+                  client.convertHtml(
+                    html, {
+                      pdf: function (rstream) {
+                        var wstream = fs.createWriteStream(pdfFileName);
+                        rstream.pipe(wstream); // save PDF for future use
+                        // on read end rstream.pipe(wstream) will automatically call wstream.end()!
+                      },
+                      error: function (message, status) {
+                        // forward as 5xx to error handler
+                        return next(new HttpError(status, message));
+                      },
+                      end: function () {
+                        // newly generated PDF is now saved so respond with it
+                        fs.readFile(pdfFileName, function (err, pdf) {
+                          if (err) return next(err);
+                          res.send(pdf, {
+                            'Content-Type': 'application/pdf',
+                            'Cache-Control': 'no-cache',
+                            'Accept-Ranges': 'none',
+                            'Content-Disposition': 'attachment; filename="' + post.titleUrl + '.pdf"'
+                          });
+                        });
+                      }
+                    }, {
+                    author: author + ' - Node Srbija (http://nodejs.rs)',
+                    page_layout: 2,
+                    page_mode: 2
                   });
                 });
               });
             }
           });
+        break;
+        default: // html
+          var pos = fileName.lastIndexOf('.md');
+          var htmlFileName = fileName.substring(0, pos) + '.html';
+          // check if we already have valid HTML content to serve it immediately
+          if (!post.shouldGenerateHtml) {
+            fs.readFile(htmlFileName, 'utf8', function (err, html) {
+              if (err) return next(err);
+              res.send(html, {
+                'Content-Disposition': 'attachment; filename="' + post.titleUrl + '.html"'
+              });
+            });
+          } else { // need to generate HTML content
+            generateHtml(post, function (err, html) {
+              if (err) return next(err);
+              Post.update({ _id: post._id }, { shouldGenerateHtml: false }, function (err) {
+                if (err) return next(err);
+                res.send(html, {
+                  'Content-Disposition': 'attachment; filename="' + post.titleUrl + '.html"'
+                });
+              });
+            });
+          }
         break;
       }
     });
@@ -463,6 +473,8 @@ exports.edit = function (req, res, next) {
       post.title = p.title;
       post.tags = p.tags;
       post.updatedAt = Date.now();
+      post.shouldGenerateHtml = true; // used for generating new HTML (download action)
+      post.shouldGeneratePdf = true; // used for generating new PDF (download action)
 
       if (!p.content.length) {
         post.errors = [ 'Sadržaj je obavezno polje.' ];
