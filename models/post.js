@@ -21,7 +21,9 @@ var Post = new db.Schema({
   comments: [{ type: db.ObjectId, ref: 'Comment' }],
   tags: [ String ],
   shouldGenerateHtml: { type: Boolean, default: true },
-  shouldGeneratePdf: { type: Boolean, default: true }
+  shouldGeneratePdf: { type: Boolean, default: true },
+  downloadCount: { type: Number, default: 0 },
+  viewCount: { type: Number, default: 0 }
 });
 
 Post.path('tags').set(function (v) {
