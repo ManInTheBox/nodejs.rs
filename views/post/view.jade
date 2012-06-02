@@ -31,7 +31,7 @@ article.post.single
           - if (i < post.tags.length - 1)
             | , 
 
-    div!= post.content
+    .markdown-content!= post.content
     a(href='#top', class='back-to-top') vrh
 
 - if (session.user)

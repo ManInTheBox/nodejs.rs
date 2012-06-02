@@ -48,7 +48,8 @@ exports.list = function (req, res, next) {
             var path = contentPath + post.titleUrl + '.md';
             fs.readFile(path, 'utf8', function (err, content) {
               if (err) return next(err);
-              post.content = helpers.markdown(content.substring(0, 400));
+              var cutHere = content.indexOf('[cutHere]');
+              post.content = helpers.markdown(content.substring(0, cutHere));
               post.createdAtFormatted = helpers.formatDate(post.createdAt);
               if (--length === 0) res.emit('posts');
             });
@@ -678,6 +679,9 @@ exports.comment = {
   }
 };
 
+/**
+ *
+ */
 
 function checkPostSecurity(post, cb) {
   var normalizedTitle = post.normalizeTitle(post.title),
@@ -691,6 +695,10 @@ function checkPostSecurity(post, cb) {
 
   return fileName;
 }
+
+/**
+ *
+ */
 
 function handleSidebar(req, res, next, post, cb) {
   if (post._owner.length) {

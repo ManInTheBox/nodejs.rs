@@ -78,9 +78,10 @@ exports.formatDateFine = function (date) {
 };
 
 exports.markdown = function (content, shouldDecode) {
+  content = postProcessMarkdown(marked(content));
   return !shouldDecode
-    ? marked(content)
-    : decode(marked(content));
+    ? content
+    : decode(content);
 };
 
 exports.substring = function (string, length) {
@@ -127,3 +128,11 @@ exports.decode = decode = function (html) {
     .replace(/&quot;/g, '"')
     .replace(/&#039;/g, "'");
 };
+
+function postProcessMarkdown(markdown) {
+  var cutHere = /\[cutHere\]/.exec(markdown);
+  if (cutHere) {
+    markdown = markdown.replace(cutHere[0], '<input type="hidden" value="cutHere" />').trim();
+  }
+  return markdown;
+}

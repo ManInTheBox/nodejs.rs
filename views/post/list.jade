@@ -12,7 +12,7 @@
           - if (i < post.tags.length - 1)
             | , 
 
-      p!= post.content
+      .markdown-content!= post.content
       p
         a(href='/post/#{post.titleUrl}', class='more') Ceo tekst
       p
@@ -30,6 +30,14 @@
           - if (session.user && session.user._id == post._owner._id || isAdmin)
             li.pencil
               a(href='/post/#{post.titleUrl}/edit') Izmeni članak
+
+script(type='text/javascript')
+  $('.raw-file').live('click', function (e) {
+    e.preventDefault();
+    var file = $(this).attr('href').replace('#', '');
+    var target = $(this).parents('.primary').find('h3').find('a').attr('href');
+    window.open(target + '/raw/' + file, '_blank');
+  });
 
 .navigation.clearfix(style='padding-left: 300px;')
   div
