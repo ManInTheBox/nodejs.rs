@@ -32,5 +32,6 @@
   "scripts": {
     "start": "app.js"
   },
-  "name": "nodejsrs"
+  "name": "nodejsrs",
+  "analyze": false
 }
