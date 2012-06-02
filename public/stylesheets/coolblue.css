@@ -524,7 +524,7 @@ header hgroup h3  {
 header nav {
   position: fixed;
   background-color: #282b2d;
-  padding: 0 150px 0 150px;
+  /*padding: 0 150px 0 150px;*/
   width: 100%;
   left: 0;
   top: 0;
@@ -532,24 +532,33 @@ header nav {
   z-index: 5;
 }
 
-header nav ul {
+header nav #nav-wrap {
+  margin: 0 auto;
+  width: 978px;
+}
+
+header nav #nav-wrap ul {
   list-style: none;
   margin: 0;
     padding: 0;
   height: 60px;
+  display: block;
+  float: left;
+  clear: none;
 }
 
-header nav ul li {
+header nav #nav-wrap ul li {
     position: relative;
   float: left;
 }
 
-header nav ul li:hover {
+header nav #nav-wrap ul li:hover {
   background: #444444;
 }
 
 
-header nav ul a:link, header nav ul a:visited {
+header nav #nav-wrap ul a:link,
+header nav #nav-wrap ul a:visited {
     font-family: Arial, Helvetica, Sans-Serif;
     font-size: 12px;
     font-weight: bold;
@@ -561,18 +570,18 @@ header nav ul a:link, header nav ul a:visited {
     text-shadow: 0 -1px 0 rgba(10, 10, 10, 1);
     line-height: 68px;
 }
-header nav ul li a:hover,
-header nav ul li a:active {
+header nav #nav-wrap ul li a:hover,
+header nav #nav-wrap ul li a:active {
   border: none;
   color: #D67630;
 }
-header nav ul li#current {
+header nav #nav-wrap ul li#current {
   background: #444444;
 }
-header nav ul li#current a {
+header nav #nav-wrap ul li#current a {
   color: #D67630;
 }
-header nav ul li#current span {
+header nav #nav-wrap ul li#current span {
     position: absolute;
     display: block;
     background: url(../images/selected.png) no-repeat 50% 0;
@@ -582,21 +591,25 @@ header nav ul li#current span {
 }
 
 /* Subscribe */
-header div.subscribe {
-    position: fixed;
+header nav #nav-wrap div.subscribe {
+    /*position: fixed;*/
     font-family: Arial, Helvetica, Sans-Serif;
     font-size: 12px;
     font-weight: bold;
     line-height: 30px;
-    width: 150px;
+    /*width: 150px;*/
     height: 30px;
     color: #BEBEBE;
     text-shadow: 0 -1px 0 rgba(10, 10, 10, 1);
     /*background: url(../images/rss32.png) no-repeat 0 center;*/
     /*padding-left: 28px;*/
-   right: 150px;
-   top: 18px;
-   z-index: 6;
+   /*right: 150px;*/
+   /*top: 18px;*/
+   /*z-index: 6;*/
+   display: block;
+   float: right;
+   clear: none;
+   margin-top: 18px;
 }
 
 /*header div.subscribe a {
@@ -605,7 +618,7 @@ header div.subscribe {
     color: #fff;
 }*/
 
-header div.subscribe a:hover {
+header nav #nav-wrap div.subscribe a:hover {
   opacity: 0.9;
   -moz-opacity: 0.9;
   filter:alpha(opacity=9);
