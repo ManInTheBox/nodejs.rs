@@ -6,12 +6,10 @@
   "dependencies": {
     "express": "2.5.x",
     "jade": ">= 0.0.1",
-    "mongoose": "2.5.10",
     "express-messages": ">= 0.0.2",
     "mail": ">= 0.2.3",
     "imagemagick": "0.1.2",
     "session-mongoose": "0.0.x",
-    "marked": ">= 0.2.4",
     "pdfcrowd": "1.0.x"
   },
   "bundledDependencies": [
