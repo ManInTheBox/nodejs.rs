@@ -222,11 +222,10 @@ exports.download = function (req, res, next) {
           var path = contentPath + '/' + post.titleUrl + '.md';
           var author = post._owner.name.full || post._owner.name.username;
 
-          // TODO: read minimized assets
           var hl = contentPath + '/../javascripts/highlight/highlight.pack.js';
-          var gh = contentPath + '/../javascripts/highlight/styles/github.css';
-          var css = contentPath + '/../stylesheets/coolblue.css';
-
+          var gh = contentPath + '/../javascripts/highlight/styles/github.min.css';
+          var css = contentPath + '/../stylesheets/coolblue.min.css';
+          
           fs.readFile(path, 'utf8', function (err, file) {
             if (err) return cb(err);
             fs.readFile(hl, 'utf8', function (err, hl) {

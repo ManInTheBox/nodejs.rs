@@ -1271,10 +1271,13 @@ a.back-to-top {
 #errorPage {
   margin: 30px 50px;
   padding: 0;
-}
-#errorPage img {
-  /*border: none;*/
-  /*padding: 0;*/
+  border: 0;
+  -moz-border-radius: 0;
+  -webkit-border-radius: 0;
+  border-radius: 0;
+  box-shadow: 0 0 0 rgba(0,0,0,0);
+  -moz-box-shadow: 0 0 0 rgba(0,0,0,0);
+  -webkit-box-shadow: 0 0 0 rgba(0,0,0,0);
 }
 
 .small {

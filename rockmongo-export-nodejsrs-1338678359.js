@@ -93,38 +93,6 @@ db.getCollection("users").ensureIndex({
 /** comments records **/
 
 /** emails records **/
-db.getCollection("emails").insert({
-  "_id": ObjectId("4fbeba84617d7f80390000ac"),
-  "body": "Dobrodosli na Node.js Srbija\nKliknite ovde za aktivaciju:<br \/>\nOva poruka je poslata na pera@pera.com",
-  "sendingCounter": 0,
-  "priority": 1,
-  "type": 1,
-  "createdAt": ISODate("2012-05-24T22:47:31.730Z"),
-  "sent": false,
-  "message": {
-    "subject": "Registracija na nodejs.rs",
-    "to": [
-      "pera@pera.com"
-    ],
-    "from": "register@nodejs.rs"
-  }
-});
-db.getCollection("emails").insert({
-  "_id": ObjectId("4fbebbb5617d7f803900056b"),
-  "body": "Dobrodosli na Node.js Srbija\nKliknite ovde za aktivaciju:<br \/>\nOva poruka je poslata na mika@mika.com",
-  "sendingCounter": 0,
-  "priority": 1,
-  "type": 1,
-  "createdAt": ISODate("2012-05-24T22:52:37.389Z"),
-  "sent": false,
-  "message": {
-    "subject": "Registracija na nodejs.rs",
-    "to": [
-      "mika@mika.com"
-    ],
-    "from": "register@nodejs.rs"
-  }
-});
 
 /** internalerrors records **/
 db.getCollection("internalerrors").insert({
@@ -164,6 +132,19 @@ db.getCollection("internalerrors").insert({
   "viewed": true,
   "createdAt": ISODate("2012-05-28T17:55:22.758Z")
 });
+db.getCollection("internalerrors").insert({
+  "_user": ObjectId("4f9c7141ddcebc7022000022"),
+  "name": "Error",
+  "message": "ENOENT, no such file or directory '\/home\/zarko\/Development\/node\/nodejs.rs\/public\/articles\/aaaa.html'",
+  "stack": "Error: ENOENT, no such file or directory '\/home\/zarko\/Development\/node\/nodejs.rs\/public\/articles\/aaaa.html'",
+  "url": "\/post\/aaaa\/download",
+  "referrer": "http:\/\/localhost:3000\/post\/aaaa",
+  "browser": "Mozilla\/5.0 (X11; Linux i686) AppleWebKit\/535.19 (KHTML, like Gecko) Chrome\/18.0.1025.151 Safari\/535.19",
+  "method": "GET",
+  "_id": ObjectId("4fc95236ab895b5e1600000c"),
+  "viewed": true,
+  "createdAt": ISODate("2012-06-01T23:37:26.812Z")
+});
 
 /** pictures records **/
 db.getCollection("pictures").insert({
@@ -180,19 +161,15 @@ db.getCollection("pictures").insert({
   "type": "image\/jpeg",
   "ext": "jpg"
 });
-db.getCollection("pictures").insert({
-  "_id": ObjectId("4fbfb0a8d1efdc1b390001f7"),
-  "name": "mika",
-  "size": 1896383,
-  "type": "image\/jpeg",
-  "ext": "jpg"
-});
 
 /** posts records **/
 db.getCollection("posts").insert({
   "_id": ObjectId("4faef290118a08be140007d7"),
   "_owner": ObjectId("4f9c7141ddcebc7022000022"),
   "createdAt": ISODate("2012-05-12T23:30:24.769Z"),
+  "downloadCount": 9,
+  "shouldGenerateHtml": true,
+  "shouldGeneratePdf": true,
   "tags": [
     "markdown",
     "text",
@@ -200,54 +177,87 @@ db.getCollection("posts").insert({
   ],
   "title": "Generalni priručnik za Markdown sintaksu",
   "titleUrl": "generalni-prirucnik-za-markdown-sintaksu",
-  "updatedAt": ISODate("2012-05-26T01:25:19.557Z")
-});
-db.getCollection("posts").insert({
-  "_id": ObjectId("4fbee17bdd1f0fa712001582"),
-  "_owner": ObjectId("4fbebbb4617d7f8039000569"),
-  "createdAt": ISODate("2012-05-25T01:33:47.999Z"),
-  "tags": [
-    
-  ],
-  "title": "Mikin clanak",
-  "titleUrl": "mikin-clanak",
-  "updatedAt": ISODate("2012-05-26T01:25:34.424Z")
-});
-db.getCollection("posts").insert({
-  "_id": ObjectId("4fbee314dd1f0fa7120028e8"),
-  "_owner": ObjectId("4fbeba84617d7f80390000ab"),
-  "createdAt": ISODate("2012-05-25T01:40:36.370Z"),
-  "tags": [
-    
-  ],
-  "title": "Perin post",
-  "titleUrl": "perin-post",
-  "updatedAt": ISODate("2012-05-27T03:45:28.480Z")
-});
-db.getCollection("posts").insert({
-  "titleUrl": "zarkov-post",
-  "_owner": ObjectId("4f9c7141ddcebc7022000022"),
-  "title": "Zarkov post",
-  "_id": ObjectId("4fc656ff4d72bae6090001db"),
-  "tags": [
-    
-  ],
-  "comments": [
-    
-  ],
-  "updatedAt": ISODate("2012-05-30T17:21:03.160Z"),
-  "createdAt": ISODate("2012-05-30T17:21:03.160Z")
+  "updatedAt": ISODate("2012-06-02T22:48:07.178Z"),
+  "viewCount": 21
 });
 
 /** sessions records **/
 db.getCollection("sessions").insert({
-  "_id": ObjectId("4fc62232377b3e220a850579"),
-  "data": "{\"lastAccess\":1338398472858,\"cookie\":{\"originalMaxAge\":14399987,\"expires\":\"2012-05-30T21:21:12.846Z\",\"httpOnly\":true,\"path\":\"\/\"},\"_csrf\":\"zx8yw2lN5H97egY6Z49Tkv8a\",\"flash\":{},\"user\":{\"_id\":\"4f9c7141ddcebc7022000022\",\"email\":\"stankovic.zarko@gmail.com\",\"password\":\"5101d9d94c8cae583027f9279171d83d\",\"createdAt\":\"2012-04-28T22:37:53.460Z\",\"salt\":\"95d3e293492509d083c7a027b0195ef5\",\"bio\":{\"about\":\"Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst... uskoro...Ovo je o meni tekst...\",\"company\":\"Max My Play, LLC\",\"github\":\"http:\/\/github.com\/ManInTheBox\",\"location\":\"Beograd, Srbija\",\"twitter\":\"http:\/\/twitter.com\/zarkostankovic\",\"website\":\"http:\/\/www.zarkostankovic.com\"},\"photo\":\"4fbeb6524757f93d2d000f8b\",\"name\":{\"first\":\"Žarko\",\"last\":\"Stanković\",\"username\":\"ManInTheBox\"}}}",
-  "expires": ISODate("2012-05-30T21:21:12.846Z"),
-  "sid": "WrinDLwXYM9kiV6TOoMRYBWX.m6jcl8DLG3ib9eDCAZDA4lrFG7TDDwmDMInzpkGXzsA"
+  "_id": ObjectId("4fca9c297c88412e94542b86"),
+  "data": "{\"lastAccess\":1338678316291,\"cookie\":{\"originalMaxAge\":14400000,\"expires\":\"2012-06-03T03:05:16.291Z\",\"httpOnly\":true,\"path\":\"\/\"},\"_csrf\":\"swDvUaN751uAbiW1DtkhsL6U\",\"flash\":{}}",
+  "expires": ISODate("2012-06-03T03:05:16.291Z"),
+  "sid": "cAdOz6n2TYk8SeeFTtWV1Nd0.d81wgcT7vLayPtmogBCAzqqxgDOjm2+TuZmoejnc6Y8"
 });
 
 /** system.indexes records **/
+db.getCollection("system.indexes").insert({
+  "v": 1,
+  "key": {
+    "_id": 1
+  },
+  "ns": "nodejsrs.users",
+  "name": "_id_"
+});
+db.getCollection("system.indexes").insert({
+  "v": 1,
+  "key": {
+    "name.username": 1
+  },
+  "unique": true,
+  "ns": "nodejsrs.users",
+  "name": "name.username_1"
+});
+db.getCollection("system.indexes").insert({
+  "v": 1,
+  "key": {
+    "_id": 1
+  },
+  "ns": "nodejsrs.sessions",
+  "name": "_id_"
+});
+db.getCollection("system.indexes").insert({
+  "v": 1,
+  "key": {
+    "sid": 1
+  },
+  "unique": true,
+  "ns": "nodejsrs.sessions",
+  "name": "sid_1"
+});
+db.getCollection("system.indexes").insert({
+  "v": 1,
+  "key": {
+    "email": 1
+  },
+  "unique": true,
+  "ns": "nodejsrs.users",
+  "name": "email_1"
+});
+db.getCollection("system.indexes").insert({
+  "v": 1,
+  "key": {
+    "expires": 1
+  },
+  "ns": "nodejsrs.sessions",
+  "name": "expires_1"
+});
+db.getCollection("system.indexes").insert({
+  "v": 1,
+  "key": {
+    "_id": 1
+  },
+  "ns": "nodejsrs.posts",
+  "name": "_id_"
+});
+db.getCollection("system.indexes").insert({
+  "v": 1,
+  "key": {
+    "titleUrl": 1
+  },
+  "unique": true,
+  "ns": "nodejsrs.posts",
+  "name": "titleUrl_1"
+});
 db.getCollection("system.indexes").insert({
   "v": 1,
   "key": {
@@ -283,106 +293,13 @@ db.getCollection("system.indexes").insert({
 db.getCollection("system.indexes").insert({
   "v": 1,
   "key": {
-    "_id": 1
-  },
-  "ns": "nodejsrs.posts",
-  "name": "_id_"
-});
-db.getCollection("system.indexes").insert({
-  "v": 1,
-  "key": {
-    "titleUrl": 1
-  },
-  "unique": true,
-  "ns": "nodejsrs.posts",
-  "name": "titleUrl_1"
-});
-db.getCollection("system.indexes").insert({
-  "v": 1,
-  "key": {
     "_owner": 1
   },
   "ns": "nodejsrs.posts",
   "name": "_owner_1"
 });
-db.getCollection("system.indexes").insert({
-  "v": 1,
-  "key": {
-    "_id": 1
-  },
-  "ns": "nodejsrs.sessions",
-  "name": "_id_"
-});
-db.getCollection("system.indexes").insert({
-  "v": 1,
-  "key": {
-    "sid": 1
-  },
-  "unique": true,
-  "ns": "nodejsrs.sessions",
-  "name": "sid_1"
-});
-db.getCollection("system.indexes").insert({
-  "v": 1,
-  "key": {
-    "expires": 1
-  },
-  "ns": "nodejsrs.sessions",
-  "name": "expires_1"
-});
-db.getCollection("system.indexes").insert({
-  "v": 1,
-  "key": {
-    "_id": 1
-  },
-  "ns": "nodejsrs.users",
-  "name": "_id_"
-});
-db.getCollection("system.indexes").insert({
-  "v": 1,
-  "key": {
-    "name.username": 1
-  },
-  "unique": true,
-  "ns": "nodejsrs.users",
-  "name": "name.username_1"
-});
-db.getCollection("system.indexes").insert({
-  "v": 1,
-  "key": {
-    "email": 1
-  },
-  "unique": true,
-  "ns": "nodejsrs.users",
-  "name": "email_1"
-});
 
 /** users records **/
-db.getCollection("users").insert({
-  "_id": ObjectId("4fbebbb4617d7f8039000569"),
-  "password": "8e902c1c04f5f07a0c3ddeba16a0dea8",
-  "email": "mika@mika.com",
-  "createdAt": ISODate("2012-05-24T22:52:36.328Z"),
-  "salt": "5d0d9ff91068ce00eb9f0fb4aad20742",
-  "photo": ObjectId("4fbfb0a8d1efdc1b390001f7"),
-  "name": {
-    "username": "mika"
-  }
-});
-db.getCollection("users").insert({
-  "_id": ObjectId("4fbeba84617d7f80390000ab"),
-  "bio": {
-    "about": "Ovo je admin izmenio"
-  },
-  "createdAt": ISODate("2012-05-24T22:47:32.726Z"),
-  "email": "pera@pera.com",
-  "name": {
-    "username": "pera"
-  },
-  "password": "d381915869faaba9f089acf9a3d4bc6d",
-  "photo": ObjectId("4fbeb036b65eb1c21f0003e3"),
-  "salt": "d75f5c509a53eedddb1f9f36db22f508"
-});
 db.getCollection("users").insert({
   "_id": ObjectId("4f9c7141ddcebc7022000022"),
   "bio": {

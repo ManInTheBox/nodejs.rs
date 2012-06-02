@@ -106,19 +106,20 @@ exports.register = function (req, res, next) {
       }
 
       res.on('user ready', function () {
+        // TODO: uncomment when we get email server
         // everything is cool, send email and redirect to login
-        var email = new Email({
-          message: {
-            to: [ user.email ]
-          },
-          type: Email.types['register']
-        });
+        // var email = new Email({
+        //   message: {
+        //     to: [ user.email ]
+        //   },
+        //   type: Email.types['register']
+        // });
 
-        email.save(function (err) {
-          if (err) return next(err);
+        // email.save(function (err) {
+        //   if (err) return next(err);
           req.flash('success', 'Uspešno ste kreirali nalog. Sada se možete ulogovati.');
           res.redirect('/login');
-        });
+        // });
       });
     });
   } else {
@@ -343,5 +344,4 @@ function handleSidebar(req, res, next, user, cb) {
     };
     cb();
   });
-
 }

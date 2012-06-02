@@ -317,3 +317,17 @@ app.listen(app.settings.env = 'development' ? 3000 : 80);
 //     console.log('error sacuvan');
 //   });
 // });
+
+app.get('/email', function (req, res, next) {
+  var mail = require('mail').Mail({ host: 'localhost' });
+  mail.message({
+    from: 'noreply@nodejs.rs',
+    to: [ 'stankovic.zarko@gmail.com' ],
+    subject: 'Test mail from Nodejitsu - Node Srbija'
+  })
+  .body('Hello World from Nodejitsu - Node Srbija')
+  .send(function (err) {
+    if (err) next(err);
+    res.send('mail sent successfully :D');
+  });
+});
