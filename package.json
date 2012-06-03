@@ -28,10 +28,10 @@
     "type": "git",
     "url": "git@github.com:ManInTheBox/nodejs.rs.git"
   },
-  "subdomain": "nodejsrs",
+  "analyze": false,
+  "subdomain": "nodesrbija",
   "scripts": {
     "start": "app.js"
   },
-  "name": "nodejsrs",
-  "analyze": false
+  "name": "node-srbija"
 }
