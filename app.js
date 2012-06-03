@@ -9,7 +9,6 @@ var express = require('express'),
   Post = require('./models/post'),
   User = require('./models/user'),
   Comment = require('./models/comment'),
-  InternalError = require('./models/internalerror'),
   credentials = require('./credentials');
 
 /**
@@ -307,27 +306,6 @@ app.listen(app.settings.env = 'development' ? 3000 : 80);
  * Catches all exceptions that were not handled by application.
  */
 
-// process.on('uncaughtException', function (err) {
-//   console.log('uhvacen error');
-//   var internalError = new InternalError({
-//     err: err
-//   });
-//   internalError.save(function (err) {
-//     if (err) console.log('ne mogu da sacuvam', err);
-//     console.log('error sacuvan');
-//   });
-// });
-
-app.get('/email', function (req, res, next) {
-  var mail = require('mail').Mail({ host: 'localhost' });
-  mail.message({
-    from: 'noreply@nodejs.rs',
-    to: [ 'stankovic.zarko@gmail.com' ],
-    subject: 'Test mail from Nodejitsu - Node Srbija'
-  })
-  .body('Hello World from Nodejitsu - Node Srbija')
-  .send(function (err) {
-    if (err) next(err);
-    res.send('mail sent successfully :D');
-  });
+process.on('uncaughtException', function (err) {
+  // just keep server running
 });
