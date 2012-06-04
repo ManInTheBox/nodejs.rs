@@ -35,5 +35,9 @@
   "scripts": {
     "start": "app.js"
   },
-  "name": "node-srbija"
+  "name": "node-srbija",
+  "domains": [
+    "nodejs.rs",
+    "www.nodejs.rs"
+  ]
 }
