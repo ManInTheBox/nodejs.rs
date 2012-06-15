@@ -16,6 +16,14 @@ var Post = new db.Schema({
     set: normalizeTitle,
     unique: true
   },
+  content: {
+    type: String,
+    set: helpers.toUpperCaseFirst,
+    trim: true,
+    required: [ true, 'Sadržaj je obavezno polje.' ],
+    min: [ 10, 'Sadržaj je prekratak (minimum je {min} karaktera).' ],
+    max: [ 100000, 'Sadržaj je predugačak (maksimum je {max} karaktera).' ]
+  },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
   comments: [{ type: db.ObjectId, ref: 'Comment' }],
@@ -40,6 +48,12 @@ Post.path('tags').set(function (v) {
     : tags;
 });
 
+// TODO:
+// situacija: Uvod u "Jade": Node template engine
+// proizvodi
+// uvod-u-jadenode-template-engine
+// treba ostaviti jedan - izmedju minimum.
+// uvod-u-jade-node-template-engine
 function normalizeTitle(v) {
   return v
           .toLowerCase()

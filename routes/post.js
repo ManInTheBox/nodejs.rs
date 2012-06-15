@@ -43,20 +43,18 @@ exports.list = function (req, res, next) {
         if (err) return next(err);
 
         var length = posts.length;
-        if (length) {
-          posts.forEach(function (post) {
-            var path = contentPath + post.titleUrl + '.md';
-            fs.readFile(path, 'utf8', function (err, content) {
-              if (err) return next(err);
-              var cutHere = content.indexOf('[cutHere]');
-              post.content = helpers.markdown(content.substring(0, cutHere));
-              post.createdAtFormatted = helpers.formatDate(post.createdAt);
-              if (--length === 0) res.emit('posts');
+        posts.forEach(function (post) {
+          var cutHere = post.content.indexOf('[cutHere]');
+          post.content = helpers.markdown(post.content.substring(0, cutHere));
+          post.createdAtFormatted = helpers.formatDate(post.createdAt);
+
+          if (--length === 0) {
+            process.nextTick(function () {
+              res.emit('posts');
             });
-          });
-        } else {
-          res.emit('posts');
-        }
+          }
+        });
+
         res.on('posts', function () {
           res.render('post/list', {
             posts: posts,
@@ -78,13 +76,9 @@ exports.new = function (req, res, next) {
   if (req.body.post) {
     var p = req.body.post;
     post.title = p.title;
+    post.content = p.content;
     post._owner = req.session.user._id;
     post.tags = p.tags;
-
-    if (!p.content.length) {
-      post.errors = ['Sadržaj je obavezno polje.'];
-      return res.render('post/new', { post: post });
-    }
 
     var fileName = checkPostSecurity(post, function (err) {
       if (err) return next(err);
@@ -93,10 +87,9 @@ exports.new = function (req, res, next) {
           if (~err.toString().indexOf('duplicate key'))
             post.errors = ['Naslov je već zauzet.'];
 
-          post.content = p.content;
           res.render('post/new', { post: post });
         } else {
-          fs.writeFile(fileName, p.content.trim(), function (err) {
+          fs.writeFile(fileName, post.content, function (err) {
             if (err) return next(err);
             req.flash('success', 'Novi članak uspešno kreiran.');
             res.redirect('/post');
