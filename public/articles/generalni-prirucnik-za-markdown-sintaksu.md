@@ -1,54 +1,53 @@
-Ovde će biti opisana Markdown sintaksa...
+Ojhaaaaaaaa
 
-Ovo je h1
-===
 
 [cutHere]
+bbbb
 
-## Ovo je h2
-
-### Ovo je h3
+aaaaa
 
 ```javascript
-[raw=newPostAction.js]
-/**
- * New action
- */
+[raw=test.js]
+exports.raw = function (req, res, next) {
+  Post.findOne({ titleUrl: req.params.postTitle }).populate('comments').run(function (err, post) {
+    if (err) return next(err);
+    if (!post) return next(); // 404
 
-exports.new = function (req, res, next) {
-  var post = new Post();
+    var name = req.params.name;
+    // var fileName = checkPostSecurity(post, function (err) {
+    //   if (err) return next(err);
+      // fs.readFile(fileName, 'utf8', function (err, file) {
+        if (err) return next(err);
+        post.content = helpers.markdown(post.content, true);
+        var startSearch = '<input type="hidden" value="[raw=' + name + ']" />',
+          endSearch = '<input type="hidden" value="[/raw=' + name + ']" />',
+          start = post.content.indexOf(startSearch),
+          end = post.content.indexOf(endSearch),
+          content = post.content.substring(start + startSearch.length, end);
 
-  if (req.body.post) {
-    var p = req.body.post;
-    post.title = p.title;
-    post._owner = req.session.user._id;
-    post.tags = p.tags;
+          // no raw files found in post, try to find some in comments
+          if (start === -1 || end === -1) {
+            var length = post.comments.length;
+            post.comments.forEach(function (comment) {
+              comment.text = helpers.markdown(comment.text, true);
+              start = comment.text.indexOf(startSearch);
+              end = comment.text.indexOf(endSearch);
+              content = comment.text.substring(start + startSearch.length, end);
 
-    if (!p.content.length) {
-      post.errors = ['Sadržaj je obavezno polje.'];
-      return res.render('post/new', { post: post });
-    }
+              // found raw file in comment - respond and exit
+              if (start !== -1 || end !== -1) {
+               // stop here
+               return res.send(content, { 'Content-Type': 'text/plain' });
+              } else if (--length === 0) { // no raw files found in comments
+                return next(); // 404
+              }
+            });
+          } else { // found raw file
+            res.send(content, { 'Content-Type': 'text/plain' });
+          }
+      // });
+    // });
 
-    var fileName = checkPostSecurity(post, function (err) {
-      if (err) return next(err);
-      post.save(function (err) {
-        if (err) {
-          if (~err.toString().indexOf('duplicate key'))
-            post.errors = ['Naslov je već zauzet.'];
-
-          post.content = p.content;
-          res.render('post/new', { post: post });
-        } else {
-          fs.writeFile(fileName, p.content.trim(), function (err) {
-            if (err) return next(err);
-            req.flash('success', 'Novi članak uspešno kreiran.');
-            res.redirect('/post');
-          });
-        }
-      });
-    });
-  } else {
-    res.render('post/new', { post: post });
-  }
+  });
 };
 ```

@@ -138,55 +138,51 @@ exports.view = function (req, res, next) {
 
       var fileName = checkPostSecurity(post, function (err) {
         if (err) return next(err);
-        fs.readFile(fileName, 'utf8', function (err, file) {
-          if (err) return next(err);
 
-          post.content = helpers.markdown(file);
+        post.content = helpers.markdown(post.content);
+        post.createdAtFormatted = helpers.formatDateFine(post.createdAt);
+        post.updatedAtFormatted = helpers.formatDateFine(post.updatedAt);
 
-          post.createdAtFormatted = helpers.formatDateFine(post.createdAt);
-          post.updatedAtFormatted = helpers.formatDateFine(post.updatedAt);
+        var length = post.comments.length;
 
-          var length = post.comments.length;
+        if (length) {
+          post.comments.forEach(function (comment) {
+            User
+              .findById(comment._owner, [ 'name.first', 'name.last', 'name.username', 'photo' ])
+              .populate('photo', ['name', 'ext'])
+              .run(function (err, user) {
 
-          if (length) {
-            post.comments.forEach(function (comment) {
-              User
-                .findById(comment._owner, [ 'name.first', 'name.last', 'name.username', 'photo' ])
-                .populate('photo', ['name', 'ext'])
-                .run(function (err, user) {
+              if (err) return next(err);
 
-                if (err) return next(err);
+              comment._ownerUsername = user.name.username;
+              comment._ownerFullName = user.name.full;
+              comment.createdAtFormatted = helpers.formatDateFine(comment.createdAt);
+              comment.cssClass = (isLoggedIn() && isCommentOwner(comment)) ? ['thread-alt', 'depth-1'] : 'depth-1';
+              comment._ownerPhoto = user.photo.small;
+              comment._ownerPhotoName = user.photo.name;
 
-                comment._ownerUsername = user.name.username;
-                comment._ownerFullName = user.name.full;
-                comment.createdAtFormatted = helpers.formatDateFine(comment.createdAt);
-                comment.cssClass = (isLoggedIn() && isCommentOwner(comment)) ? ['thread-alt', 'depth-1'] : 'depth-1';
-                comment._ownerPhoto = user.photo.small;
-                comment._ownerPhotoName = user.photo.name;
+              comment.text = helpers.markdown(comment.text);
 
-                comment.text = helpers.markdown(comment.text);
-
-                if (--length === 0)
-                  res.emit('comments loaded');
-              });
+              if (--length === 0)
+                res.emit('comments loaded');
             });
-            res.on('comments loaded', function () {
-              handleSidebar(req, res, next, post, function () {
-                res.render('post/view', {
-                  post: post,
-                  canEditPost: isLoggedIn() && (isPostOwner(post) || isAdmin())
-                });
-              });
-            });
-          } else {
+          });
+          res.on('comments loaded', function () {
             handleSidebar(req, res, next, post, function () {
-              res.render('post/view', { 
+              res.render('post/view', {
                 post: post,
                 canEditPost: isLoggedIn() && (isPostOwner(post) || isAdmin())
               });
             });
-          }
-        });
+          });
+        } else {
+          handleSidebar(req, res, next, post, function () {
+            res.render('post/view', { 
+              post: post,
+              canEditPost: isLoggedIn() && (isPostOwner(post) || isAdmin())
+            });
+          });
+        }
       });
     });
   });
@@ -219,62 +215,59 @@ exports.download = function (req, res, next) {
           var gh = contentPath + '/../javascripts/highlight/styles/github.min.css';
           var css = contentPath + '/../stylesheets/coolblue.min.css';
           
-          fs.readFile(path, 'utf8', function (err, file) {
+          fs.readFile(hl, 'utf8', function (err, hl) {
             if (err) return cb(err);
-            fs.readFile(hl, 'utf8', function (err, hl) {
+            fs.readFile(gh, 'utf8', function (err, gh) {
               if (err) return cb(err);
-              fs.readFile(gh, 'utf8', function (err, gh) {
+              fs.readFile(css, 'utf8', function (err, css) {
                 if (err) return cb(err);
-                fs.readFile(css, 'utf8', function (err, css) {
+
+                post.content = helpers.markdown(post.content);
+                // transform relative to absolute urls
+                post.content = post.content.replace(
+                  /\<a class="raw-file" href="#([\w-_. ]+)"\>/g, 
+                  '<a class="raw-file" href="http://nodejs.rs/post/' + post.titleUrl + '/raw/$1">');
+
+                var html = [
+                  '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">',
+                  '<html>',
+                  '  <head>',
+                  '    <title>' + post.title + ' - Node Srbija</title>',
+                  '    <meta charset="utf-8">',
+                  '    <script type="text/javascript">',
+                  '      ' + hl,
+                  '    </script>',
+                  '    <script type="text/javascript">',
+                  '      hljs.initHighlightingOnLoad();',
+                  '    </script>',
+                  '    <style type="text/css">',
+                  '      ' + gh,
+                  '    </style>',
+                  '    <style type="text/css">',
+                  '      ' + css,
+                  '    </style>',
+                  '  </head>',
+                  '  <body style="margin: 0 auto; width: 978px;">',
+                  '    <h3>',
+                  '      <a href="http://nodejs.rs/post/' + post.titleUrl + '">' + post.title + '</a>',
+                  '    </h3>',
+                  '    <div style="margin: 0 0 70px 3px; font-size: 14px;">',
+                  '      Napisao <a href="http://nodejs.rs/user/'+post._owner.name.username+'">'+author+'</a>, dana '+helpers.formatDateFine(post.createdAt),
+                  '    </div>',
+                  '    ' + post.content,
+                  '    <div style="text-align: center; font-size: 0.8em;">',
+                  '      Preuzeto sa Node Srbija - <a href="http://nodejs.rs">http://nodejs.rs</a>',
+                  '    </div>',
+                  '  </body>',
+                  '</html>'
+                ].join('\n');
+
+                var pos = fileName.lastIndexOf('.md');
+                var htmlFileName = fileName.substring(0, pos) + '.html';
+                // save HTML for future use
+                fs.writeFile(htmlFileName, html, 'utf8', function (err) {
                   if (err) return cb(err);
-
-                  file = helpers.markdown(file);
-                  // trasform relative to absolute urls
-                  file = file.replace(
-                    /\<a class="raw-file" href="#([\w-_. ]+)"\>/g, 
-                    '<a class="raw-file" href="http://nodejs.rs/post/' + post.titleUrl + '/raw/$1">');
-
-                  var html = [
-                    '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">',
-                    '<html>',
-                    '  <head>',
-                    '    <title>' + post.title + ' - Node Srbija</title>',
-                    '    <meta charset="utf-8">',
-                    '    <script type="text/javascript">',
-                    '      ' + hl,
-                    '    </script>',
-                    '    <script type="text/javascript">',
-                    '      hljs.initHighlightingOnLoad();',
-                    '    </script>',
-                    '    <style type="text/css">',
-                    '      ' + gh,
-                    '    </style>',
-                    '    <style type="text/css">',
-                    '      ' + css,
-                    '    </style>',
-                    '  </head>',
-                    '  <body style="margin: 0 auto; width: 978px;">',
-                    '    <h3>',
-                    '      <a href="http://nodejs.rs/post/' + post.titleUrl + '">' + post.title + '</a>',
-                    '    </h3>',
-                    '    <div style="margin: 0 0 70px 3px; font-size: 14px;">',
-                    '      Napisao <a href="http://nodejs.rs/user/'+post._owner.name.username+'">'+author+'</a>, dana '+helpers.formatDateFine(post.createdAt),
-                    '    </div>',
-                    '    ' + file,
-                    '    <div style="text-align: center; font-size: 0.8em;">',
-                    '      Preuzeto sa Node Srbija - <a href="http://nodejs.rs">http://nodejs.rs</a>',
-                    '    </div>',
-                    '  </body>',
-                    '</html>'
-                  ].join('\n');
-
-                  var pos = fileName.lastIndexOf('.md');
-                  var htmlFileName = fileName.substring(0, pos) + '.html';
-                  // save HTML for future use
-                  fs.writeFile(htmlFileName, html, 'utf8', function (err) {
-                    if (err) return cb(err);
-                    cb(null, html);
-                  });
+                  cb(null, html);
                 });
               });
             });
@@ -286,19 +279,15 @@ exports.download = function (req, res, next) {
         // instead of read whole file and then respond with that file 
         switch (req.params.format) {
           case 'md':
-            fs.readFile(fileName, 'utf8', function (err, file) {
-              if (err) return err.code === 'ENOENT' ? next() : next(err); // 404 or 500
+            post.content = [
+              '### [' + post.title + '](http://nodejs.rs/post/' + post.titleUrl + ')',
+              'Napisao _['+author+'](http://nodejs.rs/user/'+post._owner.name.username+')_, dana '+helpers.formatDateFine(post.createdAt),
+              '\n\n'
+            ].join('\n') + post.content;
 
-              file = [
-                '### [' + post.title + '](http://nodejs.rs/post/' + post.titleUrl + ')',
-                'Napisao _['+author+'](http://nodejs.rs/user/'+post._owner.name.username+')_, dana '+helpers.formatDateFine(post.createdAt),
-                '\n\n'
-              ].join('\n') + file;
-
-              res.send(file, {
-                'Content-Type': 'text/plain',
-                'Content-Disposition': 'attachment; filename="' + post.titleUrl + '.md"'
-              });
+            res.send(post.content, {
+              'Content-Type': 'text/plain',
+              'Content-Disposition': 'attachment; filename="' + post.titleUrl + '.md"'
             });
           break;
           case 'pdf':
@@ -470,24 +459,18 @@ exports.edit = function (req, res, next) {
 
     if (req.body.post) {
       var p = req.body.post;
-
       var originalTitleUrl = post.titleUrl;
+
       post.title = p.title;
+      post.content = p.content;
       post.tags = p.tags;
       post.updatedAt = Date.now();
       post.shouldGenerateHtml = true; // used for generating new HTML (download action)
       post.shouldGeneratePdf = true; // used for generating new PDF (download action)
 
-      if (!p.content.length) {
-        post.errors = [ 'Sadržaj je obavezno polje.' ];
-        handleSidebar(req, res, next, post, function () {
-          res.render('post/edit', { post: post });
-        });
-        return;
-      }
-
       var filePath = checkPostSecurity(post, function (err) {
         if (err) return next(err);
+
         post.save(function (err) {
           if (err) {
             if (~err.toString().indexOf('duplicate key')) {
@@ -495,7 +478,6 @@ exports.edit = function (req, res, next) {
               post.titleUrl = originalTitleUrl;
             }
 
-            post.content = p.content;
             handleSidebar(req, res, next, post, function () {
               res.render('post/edit', { post: post });
             });
@@ -504,7 +486,7 @@ exports.edit = function (req, res, next) {
 
           fs.rename(contentPath + originalTitleUrl + '.md', filePath, function (err) {
             if (err) return next(err);
-            fs.writeFile(filePath, p.content.trim(), function (err) {
+            fs.writeFile(filePath, post.content, function (err) {
               if (err) return next(err);
               req.flash('success', 'Uspešno izmenjen članak "' + helpers.encode(post.title) + '"');
               res.redirect('/post/' + post.titleUrl);
@@ -515,12 +497,8 @@ exports.edit = function (req, res, next) {
     } else {
       var filePath = checkPostSecurity(post, function (err) {
         if (err) return next(err);
-        fs.readFile(filePath, 'utf8', function (err, file) {
-          if (err) return next(err);
-          post.content = file;
-          handleSidebar(req, res, next, post, function () {
-            res.render('post/edit', { post: post });
-          });
+        handleSidebar(req, res, next, post, function () {
+          res.render('post/edit', { post: post });
         });
       });
     }
@@ -536,41 +514,34 @@ exports.raw = function (req, res, next) {
     if (err) return next(err);
     if (!post) return next(); // 404
 
-    var name = req.params.name;
-    var fileName = checkPostSecurity(post, function (err) {
-      if (err) return next(err);
-      fs.readFile(fileName, 'utf8', function (err, file) {
-        if (err) return next(err);
-        file = helpers.markdown(file, true);
-        var startSearch = '<input type="hidden" value="[raw=' + name + ']" />',
-          endSearch = '<input type="hidden" value="[/raw=' + name + ']" />',
-          start = file.indexOf(startSearch),
-          end = file.indexOf(endSearch),
-          content = file.substring(start + startSearch.length, end);
+    post.content = helpers.markdown(post.content, true);
+    var name = req.params.name,
+      startSearch = '<input type="hidden" value="[raw=' + name + ']" />',
+      endSearch = '<input type="hidden" value="[/raw=' + name + ']" />',
+      start = post.content.indexOf(startSearch),
+      end = post.content.indexOf(endSearch),
+      content = post.content.substring(start + startSearch.length, end);
 
-          // no raw files found in post, try to find some in comments
-          if (start === -1 || end === -1) {
-            var length = post.comments.length;
-            post.comments.forEach(function (comment) {
-              comment.text = helpers.markdown(comment.text, true);
-              start = comment.text.indexOf(startSearch);
-              end = comment.text.indexOf(endSearch);
-              content = comment.text.substring(start + startSearch.length, end);
+      // no raw files found in post, try to find some in comments
+      if (start === -1 || end === -1) {
+        var length = post.comments.length;
+        post.comments.forEach(function (comment) {
+          comment.text = helpers.markdown(comment.text, true);
+          start = comment.text.indexOf(startSearch);
+          end = comment.text.indexOf(endSearch);
+          content = comment.text.substring(start + startSearch.length, end);
 
-              // found raw file in comment - respond and exit
-              if (start !== -1 || end !== -1) {
-               // stop here
-               return res.send(content, { 'Content-Type': 'text/plain' });
-              } else if (--length === 0) { // no raw files found in comments
-                return next(); // 404
-              }
-            });
-          } else { // found raw file
-            res.send(content, { 'Content-Type': 'text/plain' });
+          // found raw file in comment - respond and exit
+          if (start !== -1 || end !== -1) {
+           // stop here
+           return res.send(content, { 'Content-Type': 'text/plain' });
+          } else if (--length === 0) { // no raw files found in comments
+            return next(); // 404
           }
-      });
-    });
-
+        });
+      } else { // found raw file
+        res.send(content, { 'Content-Type': 'text/plain' });
+      }
   });
 };
 
