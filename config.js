@@ -29,9 +29,13 @@ module.exports = function () {
    * Use logger middleware
    */
 
-  app.use(express.logger({
-    stream: fs.createWriteStream('./logs/app.log', { flags: 'r+' })
-  }));
+  // This is useless, because Nodejitsu doesn't
+  // provide interface to collect logs.
+  // Uncomment when custom server is available.
+  //
+  // app.use(express.logger({
+  //   stream: fs.createWriteStream('./logs/app.log', { flags: 'r+' })
+  // }));
 
   /**
    * Sets views path.
