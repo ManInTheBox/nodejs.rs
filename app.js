@@ -293,8 +293,17 @@ app.put('/post/:postId/comment/:commentId/edit', loginRequired, grantAccess(comm
 
 app.del('/post/:postId/comment/:commentId/delete', loginRequired, grantAccess(commentOwner), routes.post.comment.delete);
 
+/**
+ * Sets a `Belgrade` time zone.
+ *
+ * NOTE:
+ * There's a known bug with `process.env.TZ`:
+ * https://github.com/joyent/node/issues/3286
+ *
+ * Please report if you find any issues.
+ */
 
-app.get('/test', routes.post.test); // PDF
+process.env.TZ = 'Europe/Belgrade';
 
 /**
  * Starts the server.
