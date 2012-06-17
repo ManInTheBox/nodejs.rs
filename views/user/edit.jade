@@ -19,13 +19,16 @@
         span.required *
         label(style='color: #666; font-size: 0.6em; font-weight: normal;', for='userPublicEmail')
           | Objavi javno (biće vidljiv na Vašoj profil strani): 
-          input(style='width: auto; margin: 0 0 0 20px;', type='checkbox', id='userPublicEmail', name='user[publicEmail]', checked= user.publicEmail ? 'checked' : null)
+          input(style='width: auto; margin: 0 0 0 10px;', type='checkbox', id='userPublicEmail', name='user[publicEmail]', checked= user.publicEmail ? 'checked' : null)
       input(type='text', id='userEmail', name='user[email]', value=user.email, disabled='disabled')
+    div
+      label(for='userOldPassword') Stara lozinka: 
+      input(type='password', id='userOldPassword', name='user[oldPassword]', value=user.oldPassword)
     div
       label(for='userPassword') Nova lozinka: 
       input(type='password', id='userPassword', name='user[password]', value=user.password)
     div
-      label(for='userPasswordRepeat') Ponovite lozinku: 
+      label(for='userPasswordRepeat') Ponovite novu lozinku: 
       input(type='password', id='userPasswordRepeat', name='user[passwordRepeat]', value=user.passwordRepeat)
     div
       label(for='userNameFirst') Ime: 

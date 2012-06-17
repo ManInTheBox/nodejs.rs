@@ -198,8 +198,18 @@ exports.edit = function (req, res, next) {
       u.photo = req.files.user.photo.size ? req.files.user.photo : null;
 
       if (u.password) {
+        var originalPassword = user.password;
+        user.oldPassword = u.oldPassword;
         user.password = u.password;
         user.passwordRepeat = u.passwordRepeat;
+
+        if (user.encryptPassword(user.oldPassword) !== originalPassword) {
+          user.errors = [ 'Neispravna stara lozinka.' ];
+          handleSidebar(req, res, next, user, function () {
+            res.render('user/edit', { user: user });
+          });
+          return;
+        }
 
         if (!u.passwordRepeat) {
           user.errors = [ 'Morate uneti potvrdu lozinke.' ];
@@ -232,7 +242,7 @@ exports.edit = function (req, res, next) {
       user.save(function (err) {
         if (err) {
           user.name.username = originalUsername;
-          user.password = null; // don't display anything
+          user.password = u.password;
           
           if (~err.toString().indexOf('duplicate key')) {
             user.errors = [ 'Korisničko ime je već zauzeto.' ];
