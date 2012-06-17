@@ -1,6 +1,6 @@
 {
   "description": "http://www.nodejs.rs website",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "author": "Zarko Stankovic <stankovic.zarko@gmail.com>",
   "private": true,
   "dependencies": {

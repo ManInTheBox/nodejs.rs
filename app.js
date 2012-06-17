@@ -303,7 +303,9 @@ app.del('/post/:postId/comment/:commentId/delete', loginRequired, grantAccess(co
  * Please report if you find any issues.
  */
 
-process.env.TZ = 'Europe/Belgrade';
+// we need to use `jitsu env set TZ 'Europe/Belgrade'` for Nodejitsu platform.
+// Uncomment when custom server is available.
+// process.env.TZ = 'Europe/Belgrade';
 
 /**
  * Starts the server.
