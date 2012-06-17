@@ -193,10 +193,10 @@ app.get('/search/:tag?', routes.site.search);
 app.get('/about', routes.site.about);
 
 /**
- * Error site route.
+ * Admin site route.
  */
 
- app.get('/error', loginRequired, grantAccess(), routes.site.error);
+ app.get('/admin', loginRequired, grantAccess(), routes.site.admin);
 
 /**
  * Register user route.

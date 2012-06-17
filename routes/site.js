@@ -111,12 +111,13 @@ exports.about = function (req, res, next) {
 };
 
 /**
- * Error action.
- * Displays list of internal errors.
+ * Admin action.
  * Available only to admin users.
+ *
+ * - Displays list of internal errors.
  */
 
-exports.error = function (req, res, next) {
+exports.admin = function (req, res, next) {
   var page = +qs.parse(url.parse(req.url).query).page || 1;
   var itemCount = 10;
 
@@ -147,7 +148,7 @@ exports.error = function (req, res, next) {
           });
           InternalError.update({ _id: { $in: _errors }}, { viewed: true }, { multi: true }, function (err, n) {
             if (err) return next(err);
-            res.render('site/error', {
+            res.render('site/admin', {
               errors: errors,
               previousPage: previousPage,
               nextPage: nextPage,

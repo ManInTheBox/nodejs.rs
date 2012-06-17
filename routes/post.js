@@ -19,7 +19,7 @@ var Post = require('../models/post'),
 
 exports.list = function (req, res, next) {
   var page = +qs.parse(url.parse(req.url).query).page || 1;
-  var itemCount = 5;
+  var itemCount = 10;
 
   Post.count(function (err, postCount) {
     if (err) return next(err);
