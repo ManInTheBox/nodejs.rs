@@ -64,7 +64,7 @@ function normalizeTitle(v) {
           .replace(/ž/g, 'z')
           .replace(/(\s)+/g, '-')
           .replace(/[^a-zA-Z0-9-]/g, '')
-          .replace(/-{2,}/g, '')
+          .replace(/-{2,}/g, '-')
           .replace(/^-/, '')
           .replace(/-$/, '');
 };
