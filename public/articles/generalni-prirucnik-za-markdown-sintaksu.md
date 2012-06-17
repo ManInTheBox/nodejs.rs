@@ -1,10 +1,7 @@
-Ojhaaaaaaaa
+Testiranje...
 
 
 [cutHere]
-bbbb
-
-aaaaa
 
 ```javascript
 [raw=test.js]
