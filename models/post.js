@@ -48,12 +48,6 @@ Post.path('tags').set(function (v) {
     : tags;
 });
 
-// TODO:
-// situacija: Uvod u "Jade": Node template engine
-// proizvodi
-// uvod-u-jadenode-template-engine
-// treba ostaviti jedan - izmedju minimum.
-// uvod-u-jade-node-template-engine
 function normalizeTitle(v) {
   return v
           .toLowerCase()

@@ -36,6 +36,10 @@ var User = new db.Schema({
     validate: [ helpers.EmailValidator, 'email', 'E-mail nije ispravna e-mail adresa.' ],
     unique: true
   },
+  publicEmail: {
+    type: Boolean,
+    default: false
+  },
   password: {
     type: String, 
     required: [ true, 'Lozinka je obavezno polje.' ],

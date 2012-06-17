@@ -221,6 +221,7 @@ exports.edit = function (req, res, next) {
       user.name.first = u.name.first.length ? u.name.first : undefined;
       user.name.last = u.name.last.length ? u.name.last : undefined;
       user.name.username = u.name.username;
+      user.publicEmail = u.publicEmail;
       user.bio.about = u.bio.about.length ? u.bio.about : undefined;
       user.bio.company = u.bio.company.length ? u.bio.company : undefined;
       user.bio.website = u.bio.website.length ? u.bio.website : undefined;

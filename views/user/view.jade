@@ -27,9 +27,10 @@
   .desc
     label Kompanija: 
     = user.bio.company
-  .desc
-    label E-mail: 
-      a(href='mailto:#{user.email}')= user.email
+  - if (user.publicEmail)
+    .desc
+      label E-mail: 
+        a(href='mailto:#{user.email}')= user.email
 
   .clearfix
 

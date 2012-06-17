@@ -17,6 +17,9 @@
     div
       label(for='userEmail') E-mail: 
         span.required *
+        label(style='color: #666; font-size: 0.6em; font-weight: normal;', for='userPublicEmail')
+          | Objavi javno (biće vidljiv na Vašoj profil strani): 
+          input(style='width: auto; margin: 0 0 0 20px;', type='checkbox', id='userPublicEmail', name='user[publicEmail]', checked= user.publicEmail ? 'checked' : null)
       input(type='text', id='userEmail', name='user[email]', value=user.email, disabled='disabled')
     div
       label(for='userPassword') Nova lozinka: 
