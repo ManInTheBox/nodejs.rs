@@ -28,3 +28,73 @@
     input(type='submit', value='Kreiraj', class='submit')
     a(href='/post')
       input(type='button', value='Odustani', class='submit')
+
+#preview.main-content
+
+script(type='text/javascript')
+  var marked = require('marked').setOptions({
+    gfm: true,
+    pedantic: false,
+    sanitize: true,
+    highlight: function (code, lang) {
+      var raw = /\[raw=.*\]/.exec(code);
+      if (raw) {
+        console.log(raw)
+        code = code.replace(raw[0], '').trim();
+        // need to encode b/c marked will just skip encoding
+        code = encode(code);
+        raw = raw[0]
+                .replace('[raw=', '')
+                .replace(']', '')
+                .trim();
+        raw = encode(raw);
+
+        return !!raw.length
+          ? [
+              '<a class="raw-file" href="#@{raw}">@{raw}</a>',
+              '<input type="hidden" value="[raw=@{raw}]" />',
+              code,
+              '<input type="hidden" value="[/raw=@{raw}]" />'
+            ].join('').replace(/@{raw}/g, raw)
+          : code;
+      }
+    }
+  });
+
+  var markdown = function (content, shouldDecode) {
+    content = postProcessMarkdown(marked(content));
+    return !shouldDecode
+      ? content
+      : decode(content);
+  };
+
+  var encode = function (html) {
+    return html
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  };
+
+  var decode = function (html) {
+    return html
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"')
+      .replace(/&#039;/g, "'");
+  };
+
+  function postProcessMarkdown(markdown) {
+    var cutHere = /\[cutHere\]/.exec(markdown);
+    if (cutHere) {
+      markdown = markdown.replace(cutHere[0], '<input type="hidden" value="cutHere" />').trim();
+    }
+    return markdown;
+  }
+
+  $('#postContent').on('keyup', function () {
+    var html = $(this).val();
+    $('#preview').html(markdown(html));
+  });

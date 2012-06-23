@@ -11,6 +11,7 @@ var fs = require('fs'),
   HttpError = require('./httperror'),
   InternalError = require('./models/internalerror'),
   util = require('util'),
+  browserify = require('browserify'),
   credentials = require('./credentials');
 
 /**
@@ -138,6 +139,16 @@ module.exports = function () {
    */
 
   app.use(express.static(__dirname + '/public'));
+
+  /**
+   *
+   */
+
+  app.use(browserify({
+    require: [
+      'marked'
+    ]
+  }));
     
   /**
    * Sets handler for `404` pages.
