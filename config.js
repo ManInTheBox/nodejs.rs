@@ -12,6 +12,8 @@ var fs = require('fs'),
   InternalError = require('./models/internalerror'),
   util = require('util'),
   browserify = require('browserify'),
+  User = require('./models/user'),
+  Post = require('./models/post'),
   credentials = require('./credentials');
 
 /**
@@ -161,7 +163,13 @@ module.exports = function () {
 
   app.use(function (req, res, next) {
     var message = 'Tražena stranica nije pronađena.';
-    res.render('error/404', { status: 404, message: message });
+    if (typeof req.sidebar === 'undefined') {
+      handleSidebar(req, res, next, function () {
+        res.render('error/404', { status: 404, message: message });
+      });
+    } else {
+      res.render('error/404', { status: 404, message: message });
+    }
   });
 
   /**
@@ -202,7 +210,7 @@ module.exports = function () {
 
         // user doesn't need to wait while saving error
         // this is for internal purposes, so display
-        // 500 error page to user and do it in background 
+        // 500 error page to user and do it in background
         internalError.save();
       }
 
@@ -233,5 +241,32 @@ module.exports = function () {
 
     app.use(express.errorHandler());
   });
+
+  /**
+   * Provides sidebar data needed for view layout.
+   * This is used only if `typeof req.sidebar === 'undefined'`
+   */
+
+  function handleSidebar(req, res, next, fn) {
+    User.findByUsername('ManInTheBox', function (err, user) {
+      if (err) return next(err);
+      Post.findByAuthor(user._id, function (err, authorPosts) {
+        if (err) return next(err);
+        Post.findNewest(function (err, newestPosts) {
+          if (err) return next(err);
+          req.sidebar = {
+            data: {
+              user: user,
+              posts: {
+                author: authorPosts,
+                newest: newestPosts
+              }
+            }
+          };
+          fn();
+        });
+      });
+    });
+  }
 
 };
