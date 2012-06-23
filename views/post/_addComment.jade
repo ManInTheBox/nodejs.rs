@@ -14,3 +14,20 @@ div(class='post-bottom-section', id='add-comment')
         textarea(id='postComment', name='post[comment]')
       
       input(type='submit', value='Pošalji', class='submit')
+
+  #preview.primary
+
+script(type='text/javascript')
+  browserify(function () {
+    var helpers = require('helpers');
+    $('#preview').html(helpers.markdown($('#postComment').val()));
+    $('#preview').find('pre code').each(function (i, e) {
+      hljs.highlightBlock(e);
+    });
+    $('#postComment').on('keyup', function () {
+      $('#preview').html(helpers.markdown($(this).val()));
+      $('#preview').find('pre code').each(function (i, e) {
+        hljs.highlightBlock(e);
+      });
+    });
+  });

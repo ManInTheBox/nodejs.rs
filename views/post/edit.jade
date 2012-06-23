@@ -29,3 +29,20 @@
     input(type='submit', value='Sačuvaj', class='submit')
     a(href='/post/#{post.titleUrl}')
       input(type='button', value='Odustani', class='submit')
+
+#preview.main-content
+
+script(type='text/javascript')
+  browserify(function () {
+    var helpers = require('helpers');
+    $('#preview').html(helpers.markdown($('#postContent').val()));
+    $('#preview').find('pre code').each(function (i, e) {
+      hljs.highlightBlock(e);
+    });
+    $('#postContent').on('keyup', function () {
+      $('#preview').html(helpers.markdown($(this).val()));
+      $('#preview').find('pre code').each(function (i, e) {
+        hljs.highlightBlock(e);
+      });
+    });
+  });

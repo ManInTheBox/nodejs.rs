@@ -141,13 +141,18 @@ module.exports = function () {
   app.use(express.static(__dirname + '/public'));
 
   /**
-   *
+   * Use `browserify` to expose modules to the browser
    */
 
   app.use(browserify({
-    require: [
-      'marked'
-    ]
+    require: {
+      helpers: './helpers',
+      'crypto-browserify': './node_modules/browserify/node_modules/crypto-browserify'
+    },
+    filter: function (src) {
+      // ready to use js minifier (uglify)
+      return src;
+    }
   }));
     
   /**
