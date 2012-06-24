@@ -1,0 +1,126 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+
+var http = require('http'),
+  colors = require('colors'),
+  program = require('commander'),
+  fs = require('fs'),
+  credentials = require('../credentials'),
+  db = require('../models/db'),
+  User = require('../models/user'),
+  Post = require('../models/post');
+
+colors.setTheme({
+  silly: 'rainbow',
+  input: 'grey',
+  verbose: 'cyan',
+  prompt: 'grey',
+  info: 'green',
+  data: 'grey',
+  help: 'cyan',
+  warn: 'yellow',
+  debug: 'blue',
+  error: 'red',
+  intro: 'blue'
+});
+
+var intro = [
+  '',
+  '',
+  '    ===================================================================='.intro,
+  '   |      _____   _____   _______   _____   _    _   _____   _____      |'.intro,
+  '   |     |  ___| |  ___| |__   __| |  ___| | |  | | |  ___| |  _  |     |'.intro,
+  '   |     | |__   | |__      | |    | |     | |__| | | |__   | |_| |     |'.intro,
+  '   |     |  __|  |  __|     | |    | |     |  __  | |  __|  |    _|     |'.intro,
+  '   |     | |     | |___     | |    | |___  | |  | | | |___  | |\\ \\      |'.intro,
+  '   |     |_|     |_____|    |_|    |_____| |_|  |_| |_____| |_| \\_\\     |'.intro,
+  '   |'.intro + '                                                by: '.green + 'Zarko Stankovic'.grey.underline + ' |'.intro,
+  '    ===================================================================='.intro,
+  '',
+  ''
+].join('\n');
+console.log(intro);
+
+program
+  .version('0.0.1')
+  .usage('Fetch all static data from Nodejitsu platform')
+  .option('-c, --connection-string [string]', 'connection string to log into mongodb ['+credentials.db+']', credentials.db)
+  .option('-h, --host [string]', 'host to connect [nodejs.rs]', 'nodejs.rs')
+  .parse(process.argv);
+
+
+User.find({}).populate('photo').run(function (err, users) {
+  if (err) err(err.message);
+  
+  users.forEach(function (user) {
+    var largePhoto = '/images/users/' + user.photo.large;
+    log('http'.data, 'GET'.magenta, '    ' + program.host + largePhoto);
+
+    var options = {
+      host: program.host,
+      path: largePhoto
+    }
+
+    var callback = function (res) {
+      var file = res
+                  .client
+                  ._handle
+                  .socket
+                  ._httpMessage
+                  .path
+
+      var statusCode = res.statusCode.toString();
+      log('http'.data, statusCode == 200 ? statusCode.cyan : statusCode.red, '    ' + program.host + file);
+
+      var path = '/home/zarko/Desktop' + file;
+      var wstream = fs.createWriteStream(path);
+      res.pipe(wstream);
+
+      res.on('end', function () {
+        log('http'.data, 'OK!'.blue, '    file saved in:', path);
+      });
+    };
+
+    var req = http.get(options, callback);
+    req.on('error', function (err) {
+      log('ERROR!'.red, err);
+    });
+
+    var smallPhoto = '/images/users/' + user.photo.small;
+    log('http'.data, 'GET'.magenta, '    ' + program.host + smallPhoto);
+
+    var options = {
+      host: program.host,
+      path: smallPhoto
+    }
+    var req = http.get(options, callback);
+
+  });
+});
+
+// Post.find({}, function (err, posts) {
+//   if (err) err(err.message);
+//   posts.forEach(function (post) {
+//     var url = program.source + '/' + post.titleUrl;
+//     log('http'.data, 'GET'.magenta, url)
+//   });
+// });
+
+function err(msg) {
+  log(msg.error);
+  process.exit(1);
+}
+
+function log(msg) {
+  var args = Array.prototype.slice.call(arguments);
+  var msgs = '';
+  for (var i = 0; i < args.length; i++) {
+    msgs += args[i] + ' ';
+  }
+  msgs = msgs.trim();
+
+  console.log('fetcher:'.white, msgs)
+}
