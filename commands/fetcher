@@ -8,11 +8,14 @@ var http = require('http'),
   colors = require('colors'),
   program = require('commander'),
   fs = require('fs'),
+  path = require('path'),
   credentials = require('../credentials'),
   db = require('../models/db'),
   User = require('../models/user'),
+  Picture = require('../models/picture'),
   Post = require('../models/post');
 
+// color theme
 colors.setTheme({
   silly: 'rainbow',
   input: 'grey',
@@ -24,10 +27,23 @@ colors.setTheme({
   warn: 'yellow',
   debug: 'blue',
   error: 'red',
-  intro: 'blue'
+  intro: 'blue',
+  success: 'blue'
 });
 
-var intro = [
+// version
+var version = '0.0.1';
+
+// program definition
+program
+  .version(version)
+  .usage('Fetch all static data from Nodejitsu located in ' + '/public'.yellow + ' directory.')
+  .option('-c, --connection-string [string]', 'connection string to log into mongodb ['+credentials.db+']', credentials.db)
+  .option('-H, --host [string]', 'host to connect [nodejs.rs]', 'nodejs.rs')
+  .option('-p, --port [integer]', 'port to connect [80]', '80')
+  .parse(process.argv);
+
+console.log([
   '',
   '',
   '    ===================================================================='.intro,
@@ -41,86 +57,196 @@ var intro = [
   '    ===================================================================='.intro,
   '',
   ''
-].join('\n');
-console.log(intro);
+].join('\n'));
 
-program
-  .version('0.0.1')
-  .usage('Fetch all static data from Nodejitsu platform')
-  .option('-c, --connection-string [string]', 'connection string to log into mongodb ['+credentials.db+']', credentials.db)
-  .option('-h, --host [string]', 'host to connect [nodejs.rs]', 'nodejs.rs')
-  .parse(process.argv);
+console.log([
+  'You will use the following settings:',
+  '    - host:              ' + program.host.cyan,
+  '    - port:              ' + program.port.cyan,
+  '    - connection-string: ' + program.connectionString.cyan,
+  ''
+].join('\n'));
 
-
-User.find({}).populate('photo').run(function (err, users) {
-  if (err) err(err.message);
-  
-  users.forEach(function (user) {
-    var largePhoto = '/images/users/' + user.photo.large;
-    log('http'.data, 'GET'.magenta, '    ' + program.host + largePhoto);
-
-    var options = {
+// start the program
+program.confirm('Is this ok? ', function (ok) {
+  process.stdin.destroy();
+  if (ok) {
+    // default http options
+    var httpOpts = {
       host: program.host,
-      path: largePhoto
-    }
-
-    var callback = function (res) {
-      var file = res
-                  .client
-                  ._handle
-                  .socket
-                  ._httpMessage
-                  .path
-
-      var statusCode = res.statusCode.toString();
-      log('http'.data, statusCode == 200 ? statusCode.cyan : statusCode.red, '    ' + program.host + file);
-
-      var path = '/home/zarko/Desktop' + file;
-      var wstream = fs.createWriteStream(path);
-      res.pipe(wstream);
-
-      res.on('end', function () {
-        log('http'.data, 'OK!'.blue, '    file saved in:', path);
-      });
+      port: program.port,
+      headers: {
+        'User-Agent': 'Fetcher v' + version
+      }
     };
 
-    var req = http.get(options, callback);
-    req.on('error', function (err) {
-      log('ERROR!'.red, err);
+    // list of files to be fetched
+    var queue = [];
+
+    // response handler
+    var callback = function (file) {
+      return function (res) {
+        statusLog(res.statusCode, 'http://' + program.host + ':' + program.port + file);
+        // only save if we got file
+        if (res.statusCode == 200) {
+          // path will handle multiple slashes
+          var filePath = path.normalize(__dirname + '/../public/' + file);
+          var wstream = fs.createWriteStream(filePath);
+          res.pipe(wstream); // save file
+          res.on('end', function () {
+            okLog(filePath.underline);
+          });
+        }
+        res.on('end', function () {
+          // remove file from queue
+          queue.splice(queue.indexOf(file), 1);
+          if (queue.length === 0) program.emit('all jobs done');
+        });
+      };
+    };
+
+    // fetch user photos
+    User.find({}).populate('photo').run(function (err, users) {
+      if (err) errLog(err.message);
+      
+      users.forEach(function (user) {
+        // we are interested only for`real` photos, not default
+        if (user.photo._id != Picture.DEFAULT) {
+          // large photo
+          var largePhotoPath = '/images/users/' + user.photo.large;
+          getLog('http://' + program.host + ':' + program.port + largePhotoPath);
+          httpOpts.path = largePhotoPath;
+          queue.push(largePhotoPath);
+          http
+            .get(httpOpts, callback(largePhotoPath))
+            .on('error', function (err) {
+              errLog(err.message);
+            });
+
+          // small photo
+          var smallPhotoPath = '/images/users/' + user.photo.small;
+          getLog('http://' + program.host + ':' + program.port + smallPhotoPath);
+          httpOpts.path = smallPhotoPath;
+          queue.push(smallPhotoPath);
+          http
+            .get(httpOpts, callback(smallPhotoPath))
+            .on('error', function (err) {
+              errLog(err.message);
+            });
+        }
+      });
     });
 
-    var smallPhoto = '/images/users/' + user.photo.small;
-    log('http'.data, 'GET'.magenta, '    ' + program.host + smallPhoto);
+    // fetch articles
+    Post.find({}, function (err, posts) {
+      if (err) errLog(err.message);
 
-    var options = {
-      host: program.host,
-      path: smallPhoto
-    }
-    var req = http.get(options, callback);
+      posts.forEach(function (post) {
+        // markdown format
+        var md = '/articles/' + post.titleUrl + '.md';
+        getLog('http://' + program.host + ':' + program.port + md);
+        httpOpts.path = md;
+        queue.push(md);
+        http
+          .get(httpOpts, callback(md))
+          .on('error', function (err) {
+            errLog(err.message);
+          });
 
-  });
+        // html format
+        var html = '/articles/' + post.titleUrl + '.html';
+        getLog('http://' + program.host + ':' + program.port + html);
+        httpOpts.path = html;
+        queue.push(html);
+        http
+          .get(httpOpts, callback(html))
+          .on('error', function (err) {
+            errLog(err.message);
+          });
+
+        // pdf format
+        var pdf = '/articles/' + post.titleUrl + '.pdf';
+        getLog('http://' + program.host + ':' + program.port + pdf);
+        httpOpts.path = pdf;
+        queue.push(pdf);
+        http
+          .get(httpOpts, callback(pdf))
+          .on('error', function (err) {
+            errLog(err.message);
+          });
+      });
+    });
+
+    program.on('all jobs done', function () {
+      console.log('Fetcher finished successfully!'.success);
+      process.exit(0);
+    });
+  } else {
+    process.exit(0);
+  }
 });
 
-// Post.find({}, function (err, posts) {
-//   if (err) err(err.message);
-//   posts.forEach(function (post) {
-//     var url = program.source + '/' + post.titleUrl;
-//     log('http'.data, 'GET'.magenta, url)
-//   });
-// });
+/**
+ * Prints `statusCode` message
+ */
 
-function err(msg) {
-  log(msg.error);
-  process.exit(1);
+function statusLog(statusCode, msg) {
+  statusCode = statusCode.toString();
+  statusCode = statusCode == 200
+    ? statusCode.cyan
+    : statusCode.red;
+  httpLog(statusCode, msg);
 }
 
-function log(msg) {
-  var args = Array.prototype.slice.call(arguments);
+/**
+ * Prints `OK!` message
+ */
+
+function okLog(msg) {
+  log('fs'.data + '  ', 'OK!'.blue, '    ', msg);
+}
+
+/**
+ * Prints `GET` message
+ */
+
+function getLog(msg) {
+  httpLog('GET'.magenta, msg);
+}
+
+/**
+ * Prints `ERR` message
+ */
+
+function errLog(msg) {
+  httpLog('ERR'.error, msg);
+}
+
+/**
+ * Prints `http` message
+ */
+
+function httpLog(pre, msg) {
+  log('http'.data, pre, '    ', msg);
+}
+
+/**
+ * Prints `fetcher:` message
+ */
+
+function log() {
+  console.log('fetcher:'.white, args(arguments));
+}
+
+/**
+ * Parses `arguments` into string
+ */
+
+function args(a) {
+  var args = Array.prototype.slice.call(a || arguments);
   var msgs = '';
   for (var i = 0; i < args.length; i++) {
     msgs += args[i] + ' ';
   }
-  msgs = msgs.trim();
-
-  console.log('fetcher:'.white, msgs)
+  return msgs.trimRight();
 }
