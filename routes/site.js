@@ -69,7 +69,8 @@ exports.search = function (req, res, next) {
       $or: [
         { title: new RegExp(q, 'i') },
         { titleUrl: new RegExp(q, 'i') },
-        { tags: { $in: [new RegExp(q, 'i')] } }
+        { tags: { $in: [new RegExp(q, 'i')] } },
+        { content: new RegExp(q, 'i') }
       ]
     };
 
