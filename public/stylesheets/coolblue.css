@@ -287,7 +287,7 @@ form label span {
 form input,
 form select,
 form textarea {
-  width: 585px;
+  width: 586px;
     margin-bottom: 24px;
   padding: 9px 10px;
     color: #999;
@@ -1335,4 +1335,24 @@ em {
   background: #FFFFFF;
   border: 1px solid #E4E6E9;
   padding: 0 5px;
+}
+
+#add-comment .primary {
+  float: left;
+  padding-left: 5px;
+  width: 696px;
+}
+
+#add-comment .primary textarea {
+  width: 591px;
+}
+
+#add-comment .primary form {
+  width: 613px;
+}
+
+#comments .primary {
+  float: left;
+  padding-left: 5px;
+  width: 696px;
 }
