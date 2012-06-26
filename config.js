@@ -148,8 +148,7 @@ module.exports = function () {
 
   app.use(browserify({
     require: {
-      helpers: './helpers',
-      'crypto-browserify': './node_modules/browserify/node_modules/crypto-browserify'
+      helpers: './helpers'
     },
     filter: function (src) {
       // ready to use js minifier (uglify)

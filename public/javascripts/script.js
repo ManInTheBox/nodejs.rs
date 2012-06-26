@@ -47,14 +47,21 @@ $(function() {
 });
 
 function browserify(fn) {
-  $.getScript('/browserify.js', function (script) {
-    var browserify = document.createElement('script');
-    browserify.type = 'text/javascript';
-    browserify.id = 'browserify';
-    browserify.innerHTML = script;
-    if (!$('#browserify').length) {
-      document.getElementsByTagName('head')[0].appendChild(browserify);
+  $.ajax({
+    url: '/browserify.js',
+    dataType: 'text',
+    success: function (res) {
+      var browserify = document.createElement('script');
+      browserify.type = 'text/javascript';
+      browserify.id = 'browserify';
+      browserify.innerHTML = res;
+      if (!$('#browserify').length) {
+        document.getElementsByTagName('head')[0].appendChild(browserify);
+      }
+      fn();
+    },
+    error: function (xhr) {
+      console.log('error', xhr.responseText);
     }
-    fn();
   });
 }
