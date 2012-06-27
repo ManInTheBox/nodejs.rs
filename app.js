@@ -196,7 +196,7 @@ app.get('/about', routes.site.about);
  * Admin site route.
  */
 
- app.get('/admin', loginRequired, grantAccess(), routes.site.admin);
+app.get('/admin', loginRequired, grantAccess(), routes.site.admin);
 
 /**
  * Register user route.
@@ -317,6 +317,22 @@ app.listen(app.settings.env = 'development' ? 3000 : 80);
  * Catches all exceptions that were not handled by application.
  */
 
-process.on('uncaughtException', function (err) {
-  // just keep server running
+// process.on('uncaughtException', function (err) {
+//   // just keep server running
+// });
+
+app.get('/mail', function (req, res, next) {
+  var Email = require('./models/email');
+
+  var email = new Email();
+
+  Email.opts['to'] = 'Zarko stankovic.zarko@gmail.com';
+  Email.opts['subject'] = 'Ojha ovo radi';
+  Email.opts['data'] = {
+    fullName: 'Zarko The Great Stankovic'
+  }
+
+  email.send(function () {
+    res.send('ok');
+  });
 });

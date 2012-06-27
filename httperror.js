@@ -7,6 +7,7 @@
  * @param {Number} status HTTP status code
  * @param {String} message error message
  */
+
 function HttpError (status, message) {
   Error.call(this);
   Error.captureStackTrace(this, arguments.callee);
@@ -24,5 +25,5 @@ HttpError.prototype.__proto__ = Error.prototype;
 /**
  * Module exports.
  */
- 
+
 exports = module.exports = HttpError;

@@ -1,5 +1,8 @@
 var db = require('./db'),
-  mail = require('mail').Mail({ host: 'localhost' }),
+  nodemailer = require('nodemailer'),
+  credentials = require('../credentials'),
+  jade = require('jade'),
+  fs = require('fs'),
   EventEmitter = require('events').EventEmitter;
 
 const PRIORITY_HIGHEST = 1;
@@ -11,6 +14,20 @@ const PRIORITY_LOWEST = 5;
 var types = {
   'register': 1,
 };
+
+var transport = nodemailer.createTransport('SMTP', {
+  service: 'Gmail',
+  auth: {
+    user: credentials.gmail.username,
+    pass: credentials.gmail.password
+  }
+});
+
+var mailOptions = {
+  from: 'Node Srbija <noreply@nodejs.rs>',
+  generateTextFromHTML: true
+};
+
 
 var Email = new db.Schema({
   message: {
@@ -31,26 +48,25 @@ Email.methods.send = function (cb) {
   var self = this;
   this.sendingCounter++;
 
-  this.save(function (err) {
-    if (err) cb(err);
+  var f = __dirname + '/../views/emails/register.jade';
+  console.log(f);
+  fs.readFile(f, 'utf8', function (err, html) {
+    if (err) throw err;
+      
+    var x = jade.compile(html)(mailOptions['data']);
 
-    mail.message({
-      from: self.message.from,
-      to: self.message.to,
-      subject: self.message.subject
-    })
-    .body(self.body)
-    .send(function (err) {
-      if (err) cb(err);
+    mailOptions['html'] = x;
 
-      self.sent = true;
-      self.sentAt = Date.now();
-      self.save(function (err) {
-        if (err) cb(err);
-        cb(null);
-      });
+    transport.sendMail(mailOptions, function (err, res) {
+      if (err) throw err;
+      console.log(res);
     });
   });
+
+  // this.save(function (err) {
+  //   if (err) cb(err);
+
+  // });
 };
 
 Email.pre('save', function (next) {
@@ -83,7 +99,7 @@ Email.statics.types = types;
 //   bodyData = data;
 // });
 
-
-// Email.prototype.__proto__ = EventEmitter.prototype;
+Email.statics.opts = mailOptions;
 
 module.exports = db.mongoose.model('Email', Email);
+
