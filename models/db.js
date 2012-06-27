@@ -34,13 +34,13 @@ var mongoose = require('mongoose'),
 /**
  * Sets mongoose debug mode.
  *
- * To set debug mode pass `--debug` as third `argv` argument.
+ * To set debug mode pass `--mongoose-debug` as third `argv` argument.
  *
  * Example:
- * `node app.js --debug`
+ * `node app.js --mongoose-debug`
  */
 
-mongoose.set('debug', (process.argv[2] && process.argv[2] === '--debug') || false);
+mongoose.set('debug', (process.argv[2] && process.argv[2] === '--mongoose-debug') || false);
 
 /**
  * Expose mongoose.

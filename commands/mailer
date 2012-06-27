@@ -1,0 +1,24 @@
+#!/usr/bin/env node
+
+/**
+ * EmailCommand
+ */
+
+var Email = require('../models/email');
+
+var conditions = {
+  sent: false,
+  sendingCounter: {
+    $lt: 5
+  }
+};
+
+Email.find(conditions).asc('priority').run(function (err, emails) {
+  if (err) throw err;
+  emails.forEach(function (email) {
+    email.send(function (err) {
+      if (err) throw err;
+      console.log('poslat mail');
+    });
+  });
+});

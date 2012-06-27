@@ -320,19 +320,3 @@ app.listen(app.settings.env = 'development' ? 3000 : 80);
 // process.on('uncaughtException', function (err) {
 //   // just keep server running
 // });
-
-app.get('/mail', function (req, res, next) {
-  var Email = require('./models/email');
-
-  var email = new Email();
-
-  Email.opts['to'] = 'Zarko stankovic.zarko@gmail.com';
-  Email.opts['subject'] = 'Ojha ovo radi';
-  Email.opts['data'] = {
-    fullName: 'Zarko The Great Stankovic'
-  }
-
-  email.send(function () {
-    res.send('ok');
-  });
-});
