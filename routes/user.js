@@ -114,12 +114,11 @@ exports.register = function (req, res, next) {
           },
           type: Email.types['register']
         });
-        
-        email.save(function (err) {
-          if (err) return next(err);
-          req.flash('success', 'Uspešno ste kreirali nalog. Sada se možete ulogovati.');
-          res.redirect('/login');
-        });
+        // we can't wait for mail to be sent
+        email.send(); // ignoring callback
+
+        req.flash('success', 'Uspešno ste kreirali nalog. Sada se možete ulogovati.');
+        res.redirect('/login');
       });
     });
   } else {

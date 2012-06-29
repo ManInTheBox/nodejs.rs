@@ -25,7 +25,7 @@ const PRIORITY_LOWEST = 5;
 
 var types = {
   'register': 1,
-  'postComment': 2
+  'newPostComment': 2
 };
 
 /**
@@ -48,6 +48,10 @@ var mailOptions = {
   from: 'Node Srbija <noreply@nodejs.rs>',
   generateTextFromHTML: true
 };
+
+var templatePath = __dirname + '/../views/email/';
+
+var locked = false;
 
 /**
  * Defines `Email` schema.
@@ -72,49 +76,71 @@ var Email = new db.Schema({
  */
 
 Email.methods.send = function (cb) {
-  var self = this;
-  mailOptions['to'] = self.to;
-  mailOptions['subject'] = self.subject;
-  mailOptions['html'] = self.html;
-  transport.sendMail(mailOptions, function (err, res) {
-    if (err) return cb(err);
-    self.sendingCounter++;
-    self.save(function (err) {
-      if (err) return cb(err);
-      self.sent = true;
-      self.sentAt = Date.now();
+  console.log('hocu kljuc', locked);
+  if (!locked) {
+    locked = true;
+    console.log('uzeo kljuc', locked);
+    cb = cb || function () {};
+    var self = this;
+    self.configure(function () {
+      mailOptions['to'] = self.to;
+      mailOptions['subject'] = self.subject;
+      mailOptions['html'] = self.html;
+      self.sendingCounter++;
       self.save(function (err) {
-        if (err) return cb(err);
-        cb(null);
-      })
+        if (err) {
+          locked = false;
+          return cb(err)
+        };
+        transport.sendMail(mailOptions, function (err, res) {
+          if (err) {
+            locked = false;
+            return cb(err);
+          }
+          self.sent = true;
+          self.sentAt = Date.now();
+          self.save(function (err) {
+            if (err) {
+              locked = false;
+              return cb(err);
+            }
+            locked = false;
+            console.log('vracam kljuc', locked)
+            cb(null);
+          })
+        });
+      });
     });
-  });
+  }
 };
 
 /**
  *
  */
 
-Email.pre('save', function (next) {
-  if (+this.type !== 0 && this.isNew) {
-    var templatePath = __dirname + '/../views/email/';
-    var self = this;
-    switch (+this.type) {
+Email.methods.configure = function configure(next) {
+  var self = this;
+  if (self.isNew) {
+    switch (+self.type) {
       case types['register']:
-        fs.readFile(templatePath + 'register.jade', 'utf8', function (err, html) {
+        fs.readFile(templatePath + 'register.jade', 'utf8', function (err, file) {
           if (err) return next(err);
           self.subject = 'Registracija na Node Srbija';
-          self.html = jade.compile(html)(self.data);
+          self.html = jade.compile(file)(self.data);
           self.data = undefined; // we don't need this to be saved
           self.priority = PRIORITY_HIGHEST;
-          next();
+          self.save(function (err) {
+            if (err) return next(err);
+            next();
+          });
         });
       break;
     }
   } else {
     next();
   }
-});
+}
+
 
 /**
  *

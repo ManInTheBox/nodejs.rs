@@ -13,12 +13,17 @@ var conditions = {
   }
 };
 
-Email.find(conditions).asc('priority').run(function (err, emails) {
-  if (err) throw err;
-  emails.forEach(function (email) {
-    email.send(function (err) {
-      if (err) throw err;
-      console.log('poslat mail');
+var i = 0;
+
+setInterval(function () {
+  console.log('zovem mejler', ++i)
+  Email.find(conditions).asc('priority').run(function (err, emails) {
+    if (err) throw err;
+    emails.forEach(function (email) {
+      email.send(function (err) {
+        if (err) throw err;
+        console.log('poslat mail');
+      });
     });
   });
-});
+}, 200);

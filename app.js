@@ -9,6 +9,7 @@ var express = require('express'),
   Post = require('./models/post'),
   User = require('./models/user'),
   Comment = require('./models/comment'),
+  child_process = require('child_process'),
   credentials = require('./credentials');
 
 /**
@@ -319,4 +320,9 @@ app.listen(app.settings.env = 'development' ? 3000 : 80);
 
 // process.on('uncaughtException', function (err) {
 //   // just keep server running
+// });
+
+// child_process.exec('./commands/mailer', function (err, stdout, stderr) {
+//   if (err) throw err;
+//   console.log(stdout)
 // });

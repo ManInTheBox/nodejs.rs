@@ -6,6 +6,7 @@ var Post = require('../models/post'),
   contentPath = path.normalize(__dirname + '/../public/articles/'),
   HttpError = require('../httperror'),
   User = require('../models/user'),
+  Email = require('../models/email'),
   helpers = require('../helpers'),
   url = require('url');
   qs = require('querystring'),
@@ -576,6 +577,16 @@ exports.comment = {
       req.post.comments.push(comment);
       req.post.save(function (err) {
         if (err) return next(err);
+        
+        var email = new Email({
+          to: req.session.user.email,
+          data: {
+            fullName: req.session.user.name.username
+          },
+          type: Email.types['register']
+        });
+        email.send();
+
         req.flash('success', 'Novi komentar uspešno dodat.');
         res.redirect('/post/' + req.post.titleUrl);
       });
