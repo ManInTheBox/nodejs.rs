@@ -322,11 +322,10 @@ app.listen(app.settings.env = 'development' ? 3000 : 80);
 //   // just keep server running
 // });
 
-var child = child_process.execFile('./commands/mailer', function (err, stdout, stderr) {
-  if (err) throw err;
-  console.log('gotov proces', stdout);
-});
+/**
+ * Starts `mailer` command
+ */
 
-child.stdout.on('data', function (data) {
-  console.log('yeah, stiglo:', data)
+child_process.execFile('./commands/mailer', function (err, stdout, stderr) {
+  // don't handle if command failed
 });

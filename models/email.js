@@ -19,9 +19,6 @@ const PRIORITY_NORMAL = 3;
 const PRIORITY_LOW = 4;
 const PRIORITY_LOWEST = 5;
 
-
-GLOBAL.mailerLocked = false;
-
 /**
  *
  */
@@ -78,39 +75,32 @@ var Email = new db.Schema({
  */
 
 Email.methods.send = function (cb) {
+
+  // var s = new Date().getTime();
+  // console.log('cekam 5 sekundi', new Date())
+  // while(new Date().getTime() < s + 5000);
+  // console.log('proslo 5 sekundi', new Date())
+
   cb = cb || function () {};
   var self = this;
 
-  if (!mailerLocked) {
-    mailerLocked = true;
-    self.configure(function () {
-      mailOptions['to'] = self.to;
-      mailOptions['subject'] = self.subject;
-      mailOptions['html'] = self.html;
-      self.sendingCounter++;
+  mailOptions['to'] = self.to;
+  mailOptions['subject'] = self.subject;
+  mailOptions['html'] = self.html;
+  self.sendingCounter++;
+  self.save(function (err) {
+    if (err) return cb(err);
+    console.log('about to send', self.sent)
+    transport.sendMail(mailOptions, function (err, res) {
+      if (err) return cb(err);
+      self.sent = true;
+      self.sentAt = Date.now();
       self.save(function (err) {
-        if (err) {
-          mailerLocked = false;
-          return cb(err);
-        }
-        transport.sendMail(mailOptions, function (err, res) {
-          if (err) {
-            mailerLocked = false;
-            return cb(err);
-          }
-          self.sent = true;
-          self.sentAt = Date.now();
-          self.save(function (err) {
-            mailerLocked = false;
-            if (err) return cb(err);
-            cb(null);
-          })
-        });
-      });
+        if (err) return cb(err);
+        cb(null);
+      })
     });
-  } else {
-    cb(null);
-  }
+  });
 };
 
 /**
@@ -119,38 +109,45 @@ Email.methods.send = function (cb) {
 
 Email.methods.configure = function configure(next) {
   var self = this;
-  if (self.isNew) {
-    switch (+self.type) {
-      case types['register']:
-        fs.readFile(templatePath + 'register.jade', 'utf8', function (err, file) {
+  switch (+self.type) {
+    case types['register']:
+      fs.readFile(templatePath + 'register.jade', 'utf8', function (err, file) {
+        if (err) return next(err);
+        self.subject = 'Registracija na Node Srbija';
+        self.html = jade.compile(file)(self.data);
+        self.data = undefined; // we don't need this to be saved
+        self.priority = PRIORITY_HIGHEST;
+        self.save(function (err) {
           if (err) return next(err);
-          self.subject = 'Registracija na Node Srbija';
-          self.html = jade.compile(file)(self.data);
-          self.data = undefined; // we don't need this to be saved
-          self.priority = PRIORITY_HIGHEST;
-          self.save(function (err) {
-            if (err) return next(err);
-            next();
-          });
+          next();
         });
-      break;
-      case types['newPostComment']:
-        fs.readFile(templatePath + 'newpostcomment.jade', 'utf8', function (err, file) {
+      });
+    break;
+    case types['newPostComment']:
+      fs.readFile(templatePath + 'newpostcomment.jade', 'utf8', function (err, file) {
+        if (err) return next(err);
+        self.subject = 'Novi komentar na Node Srbija';
+        self.html = jade.compile(file)(self.data);
+        self.data = undefined; // we don't need this to be saved
+        self.save(function (err) {
           if (err) return next(err);
-          self.subject = 'Novi komentar na Node Srbija';
-          self.html = jade.compile(file)(self.data);
-          self.data = undefined; // we don't need this to be saved
-          self.save(function (err) {
-            if (err) return next(err);
-            next();
-          });
+          next();
         });
-      break;
-    }
+      });
+    break;
+  }
+}
+
+Email.pre('save', function (next) {
+  if (this.isNew) {
+    this.configure(function (err) {
+      if (err) return next(err);
+      next();
+    });
   } else {
     next();
   }
-}
+});
 
 
 /**

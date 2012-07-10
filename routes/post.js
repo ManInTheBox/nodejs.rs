@@ -586,10 +586,12 @@ exports.comment = {
           },
           type: Email.types['newPostComment']
         });
-        email.send();
-
-        req.flash('success', 'Novi komentar uspešno dodat.');
-        res.redirect('/post/' + req.post.titleUrl);
+        
+        email.save(function (err) {
+          if (err) return next(err);
+          req.flash('success', 'Novi komentar uspešno dodat.');
+          res.redirect('/post/' + req.post.titleUrl);
+        });
       });
     });
   },

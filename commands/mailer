@@ -4,30 +4,34 @@
  * EmailCommand
  */
 
-var Email = require('../models/email');
+var Email = require('../models/email'),
+  cycleTime = 1000,
+  conditions = {
+    sent: false,
+    sendingCounter: {
+      $lt: 5
+    }
+  };
 
-var conditions = {
-  sent: false,
-  sendingCounter: {
-    $lt: 5
-  }
-};
-
-var i = 0;
-
+// TODO: error handling (now we just skip errors b/c that will stop command)
 var mailer = function () {
-  console.log('zovem %d', ++i)
   Email.find(conditions).asc('priority').run(function (err, emails) {
-    if (err) throw err;
-    emails.forEach(function (email) {
-      email.send(function (err) {
-        if (err) throw err;
-        console.log('poslat mail');
+    // if (err) throw err;
+    var len = emails.length;
+    if (len) {
+      emails.forEach(function (email) {
+        email.send(function (err) {
+          // if (err) throw err;
+          if (--len === 0) { // next iteration
+            setTimeout(mailer, cycleTime);
+          }
+        });
       });
-    });
+    } else {
+      setTimeout(mailer, cycleTime); //next iteration
+    }
   });
-
-  setTimeout(mailer, 100);
 };
 
+// start command
 mailer();
