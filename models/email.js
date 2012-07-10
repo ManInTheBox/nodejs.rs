@@ -19,6 +19,9 @@ const PRIORITY_NORMAL = 3;
 const PRIORITY_LOW = 4;
 const PRIORITY_LOWEST = 5;
 
+
+GLOBAL.mailerLocked = false;
+
 /**
  *
  */
@@ -51,7 +54,6 @@ var mailOptions = {
 
 var templatePath = __dirname + '/../views/email/';
 
-var locked = false;
 
 /**
  * Defines `Email` schema.
@@ -76,12 +78,11 @@ var Email = new db.Schema({
  */
 
 Email.methods.send = function (cb) {
-  console.log('hocu kljuc', locked);
-  if (!locked) {
-    locked = true;
-    console.log('uzeo kljuc', locked);
-    cb = cb || function () {};
-    var self = this;
+  cb = cb || function () {};
+  var self = this;
+
+  if (!mailerLocked) {
+    mailerLocked = true;
     self.configure(function () {
       mailOptions['to'] = self.to;
       mailOptions['subject'] = self.subject;
@@ -89,28 +90,26 @@ Email.methods.send = function (cb) {
       self.sendingCounter++;
       self.save(function (err) {
         if (err) {
-          locked = false;
-          return cb(err)
-        };
+          mailerLocked = false;
+          return cb(err);
+        }
         transport.sendMail(mailOptions, function (err, res) {
           if (err) {
-            locked = false;
+            mailerLocked = false;
             return cb(err);
           }
           self.sent = true;
           self.sentAt = Date.now();
           self.save(function (err) {
-            if (err) {
-              locked = false;
-              return cb(err);
-            }
-            locked = false;
-            console.log('vracam kljuc', locked)
+            mailerLocked = false;
+            if (err) return cb(err);
             cb(null);
           })
         });
       });
     });
+  } else {
+    cb(null);
   }
 };
 
@@ -129,6 +128,18 @@ Email.methods.configure = function configure(next) {
           self.html = jade.compile(file)(self.data);
           self.data = undefined; // we don't need this to be saved
           self.priority = PRIORITY_HIGHEST;
+          self.save(function (err) {
+            if (err) return next(err);
+            next();
+          });
+        });
+      break;
+      case types['newPostComment']:
+        fs.readFile(templatePath + 'newpostcomment.jade', 'utf8', function (err, file) {
+          if (err) return next(err);
+          self.subject = 'Novi komentar na Node Srbija';
+          self.html = jade.compile(file)(self.data);
+          self.data = undefined; // we don't need this to be saved
           self.save(function (err) {
             if (err) return next(err);
             next();

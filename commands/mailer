@@ -15,8 +15,8 @@ var conditions = {
 
 var i = 0;
 
-setInterval(function () {
-  console.log('zovem mejler', ++i)
+var mailer = function () {
+  console.log('zovem %d', ++i)
   Email.find(conditions).asc('priority').run(function (err, emails) {
     if (err) throw err;
     emails.forEach(function (email) {
@@ -26,4 +26,8 @@ setInterval(function () {
       });
     });
   });
-}, 200);
+
+  setTimeout(mailer, 100);
+};
+
+mailer();

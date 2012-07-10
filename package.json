@@ -19,7 +19,8 @@
   },
   "bundledDependencies": [
     "mongoose",
-    "marked"
+    "marked",
+    "imagemagick"
   ],
   "devDependencies": {
     "should": "*",

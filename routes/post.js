@@ -581,9 +581,10 @@ exports.comment = {
         var email = new Email({
           to: req.session.user.email,
           data: {
-            fullName: req.session.user.name.username
+            author: req.session.user.name.username,
+            comment: comment.text
           },
-          type: Email.types['register']
+          type: Email.types['newPostComment']
         });
         email.send();
 
