@@ -3,7 +3,7 @@
 /**
  * EmailCommand
  */
-
+ 
 var Email = require('../models/email'),
   cycleTime = 1000,
   conditions = {
@@ -20,7 +20,8 @@ var mailer = function () {
     var len = emails.length;
     if (len) {
       emails.forEach(function (email) {
-        email.send(function (err) {
+        email.doSend(function (err) {
+          console.log('poslo')
           // if (err) throw err;
           if (--len === 0) { // next iteration
             setTimeout(mailer, cycleTime);

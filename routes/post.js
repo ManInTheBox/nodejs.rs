@@ -587,7 +587,7 @@ exports.comment = {
           type: Email.types['newPostComment']
         });
         
-        email.save(function (err) {
+        email.send(function (err) {
           if (err) return next(err);
           req.flash('success', 'Novi komentar uspešno dodat.');
           res.redirect('/post/' + req.post.titleUrl);

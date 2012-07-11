@@ -326,6 +326,10 @@ app.listen(app.settings.env = 'development' ? 3000 : 80);
  * Starts `mailer` command
  */
 
-child_process.execFile('./commands/mailer', function (err, stdout, stderr) {
+var c = child_process.execFile('./commands/mailer', function (err, stdout, stderr) {
   // don't handle if command failed
 });
+
+c.stdout.on('data', function (d) {
+  console.log(d);
+})

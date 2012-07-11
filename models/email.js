@@ -74,7 +74,7 @@ var Email = new db.Schema({
  *
  */
 
-Email.methods.send = function (cb) {
+Email.methods.doSend = function (cb) {
 
   // var s = new Date().getTime();
   // console.log('cekam 5 sekundi', new Date())
@@ -90,7 +90,6 @@ Email.methods.send = function (cb) {
   self.sendingCounter++;
   self.save(function (err) {
     if (err) return cb(err);
-    console.log('about to send', self.sent)
     transport.sendMail(mailOptions, function (err, res) {
       if (err) return cb(err);
       self.sent = true;
@@ -138,20 +137,22 @@ Email.methods.configure = function configure(next) {
   }
 }
 
-Email.pre('save', function (next) {
-  if (this.isNew) {
-    this.configure(function (err) {
-      if (err) return next(err);
-      next();
-    });
-  } else {
-    next();
-  }
-});
+/**
+ * Please use this method in your application code.
+ * It will properly configure email and save it into database.
+ * @param {Function} callback
+ * @api public
+ */
 
+Email.methods.send = function (cb) {
+  this.configure(function (err) {
+    if (err) return cb(err);
+    cb(null);
+  });
+};
 
 /**
- *
+ * Expose `Email` types.
  */
 
 Email.statics.types = types;
