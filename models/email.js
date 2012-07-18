@@ -128,6 +128,7 @@ Email.methods.configure = function configure(next) {
         self.subject = 'Novi komentar na Node Srbija';
         self.html = jade.compile(file)(self.data);
         self.data = undefined; // we don't need this to be saved
+        self.priority = PRIORITY_HIGH;
         self.save(function (err) {
           if (err) return next(err);
           next();

@@ -1,2 +1,8 @@
-h3= author
-p= comment
+p
+  a(href='http://nodejs.rs/user/#{username}')= author
+  |  je ostavio komentar u članku 
+  a(href='http://nodejs.rs/post/#{titleUrl}')= title
+
+!= commentText
+hr
+a(href='http://nodejs.rs/#{commentUrl}')= commentUrl

@@ -164,8 +164,13 @@ exports.view = function (req, res, next) {
 
               comment.text = helpers.markdown(comment.text);
 
-              if (--length === 0)
+              if (--length === 0) {
+                // sort comments - newer first
+                post.comments.sort(function (a, b) {
+                  return b.createdAt - a.createdAt;
+                });
                 res.emit('comments loaded');
+              }
             });
           });
           res.on('comments loaded', function () {
@@ -578,11 +583,18 @@ exports.comment = {
       req.post.save(function (err) {
         if (err) return next(err);
         
+        var commentUrl = 'http://nodejs.rs/' + req.post.titleUrl + '#comment-' + comment._id;
+
         var email = new Email({
           to: req.session.user.email,
           data: {
-            author: req.session.user.name.username,
-            comment: comment.text
+            title: req.post.title,
+            titleUrl: req.post.titleUrl,
+            date: comment.createdAt,
+            author: req.session.user.name.full || req.session.user.name.username,
+            username: req.session.user.name.username,
+            commentText: comment.text,
+            commentUrl: commentUrl
           },
           type: Email.types['newPostComment']
         });

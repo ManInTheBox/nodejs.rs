@@ -71,7 +71,11 @@ Post.pre('save', function (next) {
 Post.methods.normalizeTitle = normalizeTitle;
 
 Post.statics.findWithFullDetails = function (postTitle, cb) {
-  return this.findOne({ titleUrl: postTitle }).populate('_owner').populate('comments').run(cb);
+  return this
+          .findOne({ titleUrl: postTitle })
+          .populate('_owner')
+          .populate('comments')
+          .run(cb);
 };
 
 Post.statics.findByAuthor = function (author, cb) {
