@@ -1,8 +1,20 @@
 p
+  label Vreme: 
+  a(href=commentUrl)= date
+  br
+  label Autor: 
   a(href='http://nodejs.rs/user/#{username}')= author
-  |  je ostavio komentar u članku 
+  br
+  label Članak: 
   a(href='http://nodejs.rs/post/#{titleUrl}')= title
-
-!= commentText
-hr
-a(href='http://nodejs.rs/#{commentUrl}')= commentUrl
+  br
+  label Link: 
+  a(href=commentUrl)= commentUrl
+br
+br
+div(style='background: #eaeaea; padding: 5px;')!= commentText
+br
+br
+i
+  | Node Srbija - 
+  a(href='http://nodejs.rs') http://nodejs.rs

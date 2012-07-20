@@ -107,15 +107,15 @@ exports.register = function (req, res, next) {
 
       res.on('user ready', function () {
         // everything is cool, send email and redirect to login
-        var email = new Email({
-          to: user.email,
-          data: {
-            fullName: user.name.full || user.name.username
-          },
-          type: Email.types['register']
-        });
-        // we can't wait for mail to be sent
-        email.send(); // ignoring callback
+        // var email = new Email({
+        //   to: user.email,
+        //   data: {
+        //     fullName: user.name.full || user.name.username
+        //   },
+        //   type: Email.types['register']
+        // });
+        // // we can't wait for mail to be sent
+        // email.send(); // ignoring callback
 
         req.flash('success', 'Uspešno ste kreirali nalog. Sada se možete ulogovati.');
         res.redirect('/login');

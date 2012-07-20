@@ -583,27 +583,54 @@ exports.comment = {
       req.post.save(function (err) {
         if (err) return next(err);
         
-        var commentUrl = 'http://nodejs.rs/' + req.post.titleUrl + '#comment-' + comment._id;
+        // var commentUrl = 'http://nodejs.rs/post/' + req.post.titleUrl + '#comment-' + comment._id,
+        //   author = req.session.user.name.full || req.session.user.name.username,
+        //   date = helpers.formatDateFine(comment.createdAt),
+        //   username = req.session.user.name.username,
+        //   title = req.post.title,
+        //   titleUrl = req.post.titleUrl,
+        //   commentText = helpers.markdown(comment.text);
 
-        var email = new Email({
-          to: req.session.user.email,
-          data: {
-            title: req.post.title,
-            titleUrl: req.post.titleUrl,
-            date: comment.createdAt,
-            author: req.session.user.name.full || req.session.user.name.username,
-            username: req.session.user.name.username,
-            commentText: comment.text,
-            commentUrl: commentUrl
-          },
-          type: Email.types['newPostComment']
-        });
-        
-        email.send(function (err) {
-          if (err) return next(err);
-          req.flash('success', 'Novi komentar uspešno dodat.');
-          res.redirect('/post/' + req.post.titleUrl);
-        });
+        // var conditions = { _id: { $in: req.post.comments } };
+        // Comment.distinct('_owner', conditions, function (err, _owners) {
+        //   if (err) return next(err);
+
+        //   // add post owner to mail list
+        //   if (!~_owners.indexOf(req.post._owner)) {
+        //     _owners.push(req.post._owner);
+        //   }
+
+        //   var len = _owners.length;
+        //   _owners.forEach(function (_owner) {
+        //     User.findById(_owner, function (err, user) {
+        //       if (err) return next(err);
+
+        //         var email = new Email({
+        //           to: user.email,
+        //           data: {
+        //             title: title,
+        //             titleUrl: titleUrl,
+        //             date: date,
+        //             author: author,
+        //             username: username,
+        //             commentText: commentText,
+        //             commentUrl: commentUrl
+        //           },
+        //           type: Email.types['newPostComment']
+        //         });
+                
+        //         email.send(function (err) {
+        //           if (err) return next(err);
+
+        //           if (--len === 0) {
+                    req.flash('success', 'Novi komentar uspešno dodat.');
+                    res.redirect('/post/' + req.post.titleUrl);
+        //           }
+        //         });
+        //     });
+        //   });
+        // });
+
       });
     });
   },
