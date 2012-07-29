@@ -13,6 +13,8 @@ var Email = require('../models/email'),
     }
   };
 
+var i = 0;
+
 // TODO: error handling (now we just skip errors b/c that will stop command)
 var mailer = function () {
   Email.find(conditions).asc('priority').run(function (err, emails) {
@@ -21,14 +23,16 @@ var mailer = function () {
     if (len) {
       emails.forEach(function (email) {
         email.doSend(function (err) {
-          console.log('poslo')
+          console.log('poslao na:', email.to)
           // if (err) throw err;
           if (--len === 0) { // next iteration
+            console.log('next queue, cycle:', ++i);
             setTimeout(mailer, cycleTime);
           }
         });
       });
     } else {
+      console.log('prazan queue, cycle:', ++i);
       setTimeout(mailer, cycleTime); //next iteration
     }
   });

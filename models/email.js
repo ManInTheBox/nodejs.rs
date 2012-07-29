@@ -67,7 +67,8 @@ var Email = new db.Schema({
   sentAt: Date,
   type: { type: Number, default: 0 },
   priority: { type: Number, default: PRIORITY_NORMAL },
-  sendingCounter: { type: Number, default: 0 }
+  sendingCounter: { type: Number, default: 0 },
+  error: String
 });
 
 /**
@@ -91,7 +92,13 @@ Email.methods.doSend = function (cb) {
   self.save(function (err) {
     if (err) return cb(err);
     transport.sendMail(mailOptions, function (err, res) {
-      if (err) return cb(err);
+      if (err) {
+        self.error = err;
+        self.save(function (err) {
+          if (err) return cb(err);
+          return cb(err);
+        });
+      }
       self.sent = true;
       self.sentAt = Date.now();
       self.save(function (err) {
