@@ -22,6 +22,7 @@ var mailer = function () {
     var len = emails.length;
     if (len) {
       emails.forEach(function (email) {
+        console.log('saljem na:', email.to)
         email.doSend(function (err) {
           console.log('poslao na:', email.to)
           // if (err) throw err;

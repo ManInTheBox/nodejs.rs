@@ -44,10 +44,6 @@ var transport = nodemailer.createTransport('SMTP', {
  *
  */
 
-var mailOptions = {
-  from: 'Node Srbija <noreply@nodejs.rs>',
-  generateTextFromHTML: true
-};
 
 var templatePath = __dirname + '/../views/email/';
 
@@ -85,12 +81,18 @@ Email.methods.doSend = function (cb) {
   cb = cb || function () {};
   var self = this;
 
-  mailOptions['to'] = self.to;
-  mailOptions['subject'] = self.subject;
-  mailOptions['html'] = self.html;
+  var mailOptions = {
+    from: 'Node Srbija <noreply@nodejs.rs>',
+    generateTextFromHTML: true,
+    to: self.to,
+    subject: self.subject,
+    html: self.html
+  };
+
   self.sendingCounter++;
   self.save(function (err) {
     if (err) return cb(err);
+    console.log('mailer salje na:', mailOptions['to']);
     transport.sendMail(mailOptions, function (err, res) {
       if (err) {
         self.error = err;
@@ -132,7 +134,7 @@ Email.methods.configure = function configure(next) {
     case types['newPostComment']:
       fs.readFile(templatePath + 'newpostcomment.jade', 'utf8', function (err, file) {
         if (err) return next(err);
-        self.subject = 'Novi komentar na Node Srbija';
+        self.subject = 'Novi komentar na Node Srbija: ' + self.data.title;
         self.html = jade.compile(file)(self.data);
         self.data = undefined; // we don't need this to be saved
         self.priority = PRIORITY_HIGH;

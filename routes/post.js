@@ -595,42 +595,67 @@ exports.comment = {
         Comment.distinct('_owner', conditions, function (err, _owners) {
           if (err) return next(err);
 
+          console.log('pre dodavanja:', _owners);
+
           // add post owner to mail list
           if (!~_owners.indexOf(req.post._owner)) {
             _owners.push(req.post._owner);
+            console.log('dodao ownera:', _owners);
           }
 
-          var len = _owners.length;
-          _owners.forEach(function (_owner) {
-            User.findById(_owner, function (err, user) {
+          // add admins to mail list
+          var len = credentials.admins.length;
+          credentials.admins.forEach(function (admin) {
+            User.findOne({ email: admin.email }, ['email'], function (err, a) {
               if (err) return next(err);
 
-                var email = new Email({
-                  to: user.email,
-                  data: {
-                    title: title,
-                    titleUrl: titleUrl,
-                    date: date,
-                    author: author,
-                    username: username,
-                    commentText: commentText,
-                    commentUrl: commentUrl
-                  },
-                  type: Email.types['newPostComment']
-                });
-                
-                email.send(function (err) {
-                  if (err) return next(err);
+              console.log('owneri pre admina', _owners);
+              console.log(~_owners.indexOf(a._id));
+              // BUG: ne pronalazi in array...
 
-                  if (--len === 0) {
-                    req.flash('success', 'Novi komentar uspešno dodat.');
-                    res.redirect('/post/' + req.post.titleUrl);
-                  }
-                });
+              if (!~_owners.indexOf(a._id.toString())) {
+                _owners.push(a._id);
+          console.log('dodao admina:', _owners);
+              }
+
+              if (--len === 0) {
+                res.emit('mail list ready');
+              }
+            });
+          });
+
+          res.on('mail list ready', function () {
+            var len = _owners.length;
+            _owners.forEach(function (_owner) {
+              User.findById(_owner, ['email'], function (err, user) {
+                if (err) return next(err);
+
+                  var email = new Email({
+                    to: user.email,
+                    data: {
+                      title: title,
+                      titleUrl: titleUrl,
+                      date: date,
+                      author: author,
+                      username: username,
+                      commentText: commentText,
+                      commentUrl: commentUrl
+                    },
+                    type: Email.types['newPostComment']
+                  });
+                  
+                  email.send(function (err) {
+                    if (err) return next(err);
+
+                    if (--len === 0) {
+                      req.flash('success', 'Novi komentar uspešno dodat.');
+                      res.redirect('/post/' + req.post.titleUrl);
+                    }
+                  });
+              });
             });
           });
         });
-
       });
     });
   },
