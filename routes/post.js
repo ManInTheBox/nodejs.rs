@@ -598,9 +598,18 @@ exports.comment = {
           console.log('pre dodavanja:', _owners);
 
           // add post owner to mail list
-          if (!~_owners.indexOf(req.post._owner)) {
+          // Array.indexOf() is not working... must do it this way
+          var shouldAdd = true;
+          _owners.filter(function (_owner) {
+            if (_owner.toString() === req.post._owner.toString()) {
+              shouldAdd = false;
+            }
+          });
+
+          if (shouldAdd) {
             _owners.push(req.post._owner);
             console.log('dodao ownera:', _owners);
+            shouldAdd = true;
           }
 
           // add admins to mail list
@@ -609,13 +618,19 @@ exports.comment = {
             User.findOne({ email: admin.email }, ['email'], function (err, a) {
               if (err) return next(err);
 
-              console.log('owneri pre admina', _owners);
-              console.log(~_owners.indexOf(a._id));
-              // BUG: ne pronalazi in array...
+              // Array.indexOf() is not working... must do it this way
+              var shouldAdd = true;
+              console.log('owneri pre admina', _owners, shouldAdd);
+              _owners.filter(function (_owner) {
+                if (_owner.toString() === a._id.toString()) {
+                  shouldAdd = false;
+                }
+              });
 
-              if (!~_owners.indexOf(a._id)) {
+              if (shouldAdd) {
                 _owners.push(a._id);
-          console.log('dodao admina:', _owners);
+                console.log('dodao admina:', _owners);
+                shouldAdd = true;
               }
 
               if (--len === 0) {

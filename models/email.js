@@ -83,7 +83,7 @@ Email.methods.doSend = function (cb) {
   var self = this;
 
   var mailOptions = {
-    from: 'Node Srbija <noreply@nodejs.rs>',
+    from: self.from || 'Node Srbija <noreply@nodejs.rs>',
     generateTextFromHTML: true,
     to: self.to,
     subject: self.subject,
@@ -148,7 +148,7 @@ Email.methods.configure = function configure(next) {
     case types['internalError']:
       fs.readFile(templatePath + 'internalerror.jade', 'utf8', function (err, file) {
         if (err) return next(err);
-        self.subject = 'Internal Error - Node Srbija';
+        self.subject = 'Internal Error - Node Srbija ('+self.data.createdAt+')';
         self.html = jade.compile(file)(self.data);
         self.data = undefined; // we don't need this to be saved
         self.priority = PRIORITY_HIGHEST;

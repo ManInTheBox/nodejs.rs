@@ -8,6 +8,8 @@ var express = require('express'),
   HttpError = require('./httperror'),
   Post = require('./models/post'),
   User = require('./models/user'),
+  InternalError = require('./models/internalerror'),
+  Email = require('./models/email'),
   Comment = require('./models/comment'),
   child_process = require('child_process'),
   credentials = require('./credentials');
@@ -315,21 +317,44 @@ app.del('/post/:postId/comment/:commentId/delete', loginRequired, grantAccess(co
 app.listen(app.settings.env = 'development' ? 3000 : 80);
 
 /**
- * Catches all exceptions that were not handled by application.
+ * Catches all exceptions that were not handled by application 
+ * and notifies admins about error happened.
  */
 
-// process.on('uncaughtException', function (err) {
-//   // just keep server running
-// });
+process.on('uncaughtException', function (err) {
+  var data = {
+    _user: undefined,
+    name: err.name,
+    message: err.message,
+    status: err.status,
+    stack: err.stack,
+    url: '',
+    referrer: undefined,
+    browser: '#process.uncaughtException',
+    method: undefined
+  }
+
+  var internalError = new InternalError(data);
+  internalError.save();
+
+  // notify admins about error happened
+  data.createdAt = internalError.createdAt;
+  data.username = undefined;
+  var email = new Email({
+    data: data,
+    type: Email.types['internalError']
+  });
+  email.send();
+});
 
 /**
  * Starts `mailer` command
  */
 
-var c = child_process.execFile('./commands/mailer', function (err, stdout, stderr) {
+var mailer = child_process.execFile('./commands/mailer', function (err, stdout, stderr) {
   // don't handle if command failed
 });
 
-c.stdout.on('data', function (d) {
+mailer.stdout.on('data', function (d) {
   console.log(d);
 })

@@ -215,6 +215,7 @@ module.exports = function () {
         // 500 error page to user and do it in background
         internalError.save();
 
+        // notify admins about error happened
         data.createdAt = internalError.createdAt;
         data.username = req.session.user ? req.session.user.name.username : undefined;
         var email = new Email({
