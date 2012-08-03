@@ -25,7 +25,8 @@ const PRIORITY_LOWEST = 5;
 
 var types = {
   'register': 1,
-  'newPostComment': 2
+  'newPostComment': 2,
+  'internalError': 3
 };
 
 /**
@@ -74,9 +75,9 @@ var Email = new db.Schema({
 Email.methods.doSend = function (cb) {
 
   // var s = new Date().getTime();
-  // console.log('cekam 5 sekundi', new Date())
-  // while(new Date().getTime() < s + 5000);
-  // console.log('proslo 5 sekundi', new Date())
+  // console.log('cekam 15 sekundi', new Date())
+  // while(new Date().getTime() < s + 15000);
+  // console.log('proslo 15 sekundi', new Date())
 
   cb = cb || function () {};
   var self = this;
@@ -144,6 +145,26 @@ Email.methods.configure = function configure(next) {
         });
       });
     break;
+    case types['internalError']:
+      fs.readFile(templatePath + 'internalerror.jade', 'utf8', function (err, file) {
+        if (err) return next(err);
+        self.subject = 'Internal Error - Node Srbija';
+        self.html = jade.compile(file)(self.data);
+        self.data = undefined; // we don't need this to be saved
+        self.priority = PRIORITY_HIGHEST;
+
+        self.to = '';
+        for (var i = 0; i < credentials.admins.length; i++) {
+          self.to += credentials.admins[i].email + ',';
+        }
+        self.to = self.to.substring(0, self.to.length-1);
+
+        self.save(function (err) {
+          if (err) return next(err);
+          next();
+        });
+      });
+    break;
   }
 }
 
@@ -155,6 +176,7 @@ Email.methods.configure = function configure(next) {
  */
 
 Email.methods.send = function (cb) {
+  cb = cb || function () {};
   this.configure(function (err) {
     if (err) return cb(err);
     cb(null);

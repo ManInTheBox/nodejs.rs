@@ -14,6 +14,7 @@ var fs = require('fs'),
   browserify = require('browserify'),
   User = require('./models/user'),
   Post = require('./models/post'),
+  Email = require('./models/email'),
   credentials = require('./credentials');
 
 /**
@@ -195,7 +196,7 @@ module.exports = function () {
         // if typeof err.status === 'undefined' that's ok for mongoose
         var status = err.status;
 
-        var internalError = new InternalError({
+        var data = {
           _user: _user,
           name: err.name,
           message: err.message,
@@ -205,12 +206,22 @@ module.exports = function () {
           referrer: req.header('referrer'),
           browser: req.header('user-agent'),
           method: req.method
-        });
+        }
+
+        var internalError = new InternalError(data);
 
         // user doesn't need to wait while saving error
         // this is for internal purposes, so display
         // 500 error page to user and do it in background
         internalError.save();
+
+        data.createdAt = internalError.createdAt;
+        data.username = req.session.user ? req.session.user.name.username : undefined;
+        var email = new Email({
+          data: data,
+          type: Email.types['internalError']
+        });
+        email.send();
       }
 
       if ('object' !== typeof err)

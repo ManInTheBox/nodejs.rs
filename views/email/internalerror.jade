@@ -1,0 +1,31 @@
+label Date: 
+= createdAt
+br
+label Name: 
+= name
+br
+label Message: 
+= message
+br
+label Status: 
+= status
+br
+label User: 
+-if (_user)
+  a(href='http://nodejs.rs/user/#{username}')= username
+br
+label URL: 
+a(href='http://nodejs.rs#{url}') http://nodejs.rs#{url}
+br
+label Refferer: 
+a(href=referrer)= referrer
+br
+label Method: 
+= method
+br
+label Browser: 
+= browser
+br
+label Stack trace:
+pre
+  code.nohighlight= stack
