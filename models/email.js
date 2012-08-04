@@ -62,7 +62,7 @@ var Email = new db.Schema({
   sent: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
   sentAt: Date,
-  type: { type: Number, default: 0 },
+  type: { type: Number, default: 0 }, 
   priority: { type: Number, default: PRIORITY_NORMAL },
   sendingCounter: { type: Number, default: 0 },
   error: String
@@ -73,12 +73,6 @@ var Email = new db.Schema({
  */
 
 Email.methods.doSend = function (cb) {
-
-  // var s = new Date().getTime();
-  // console.log('cekam 15 sekundi', new Date())
-  // while(new Date().getTime() < s + 15000);
-  // console.log('proslo 15 sekundi', new Date())
-
   cb = cb || function () {};
   var self = this;
 
@@ -93,7 +87,6 @@ Email.methods.doSend = function (cb) {
   self.sendingCounter++;
   self.save(function (err) {
     if (err) return cb(err);
-    console.log('mailer salje na:', mailOptions['to']);
     transport.sendMail(mailOptions, function (err, res) {
       if (err) {
         self.error = err;
@@ -122,10 +115,10 @@ Email.methods.configure = function configure(next) {
     case types['register']:
       fs.readFile(templatePath + 'register.jade', 'utf8', function (err, file) {
         if (err) return next(err);
-        self.subject = 'Registracija na Node Srbija';
+        self.subject = 'Dobrodošli na Node Srbija!';
         self.html = jade.compile(file)(self.data);
         self.data = undefined; // we don't need this to be saved
-        self.priority = PRIORITY_HIGHEST;
+        self.priority = PRIORITY_LOW;
         self.save(function (err) {
           if (err) return next(err);
           next();

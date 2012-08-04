@@ -4,7 +4,7 @@ div(class='post-bottom-section', id='add-comment')
     form(action='/post/#{post._id}/comment/new', method='POST')
       input(type='hidden', name='_csrf', value=csrfToken)
       div
-        label(for='postComment') Komentar 
+        label(for='postComment') Komentar: 
           span.required * 
           span.align-right(style='color: #666; font-size: 0.6em; font-weight: normal;')
             | Uputstvo za 

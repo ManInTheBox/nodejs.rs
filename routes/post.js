@@ -591,7 +591,20 @@ exports.comment = {
           titleUrl = req.post.titleUrl,
           commentText = helpers.markdown(comment.text);
 
-        var conditions = { _id: { $in: req.post.comments } };
+
+
+        var conditions = {
+          $and: [
+            {
+              _id: { $in: req.post.comments }
+            },
+            {
+              _id: { $ne: comment._owner }
+            }
+          ]
+        };
+
+        console.log('radim distinct')
         Comment.distinct('_owner', conditions, function (err, _owners) {
           if (err) return next(err);
 
