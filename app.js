@@ -354,7 +354,3 @@ process.on('uncaughtException', function (err) {
 var mailer = child_process.execFile('./commands/mailer', function (err, stdout, stderr) {
   // don't handle if command failed
 });
-
-mailer.stdout.on('data', function (d) {
-  console.log(d);
-})

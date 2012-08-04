@@ -5,7 +5,7 @@
  */
  
 var Email = require('../models/email'),
-  cycleTime = 1000,
+  cycleTime = 30000,
   conditions = {
     sent: false,
     sendingCounter: {

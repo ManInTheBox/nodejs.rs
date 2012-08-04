@@ -589,26 +589,14 @@ exports.comment = {
           username = req.session.user.name.username,
           title = req.post.title,
           titleUrl = req.post.titleUrl,
-          commentText = helpers.markdown(comment.text);
+          commentText = helpers.markdown(comment.text),
+          conditions = {
+            _id: { $in: req.post.comments },
+            _owner: { $ne: comment._owner } // exclude owner of this comment
+          };
 
-
-
-        var conditions = {
-          $and: [
-            {
-              _id: { $in: req.post.comments }
-            },
-            {
-              _id: { $ne: comment._owner }
-            }
-          ]
-        };
-
-        console.log('radim distinct')
         Comment.distinct('_owner', conditions, function (err, _owners) {
           if (err) return next(err);
-
-          console.log('pre dodavanja:', _owners);
 
           // add post owner to mail list
           // Array.indexOf() is not working... must do it this way
@@ -618,10 +606,8 @@ exports.comment = {
               shouldAdd = false;
             }
           });
-
           if (shouldAdd) {
             _owners.push(req.post._owner);
-            console.log('dodao ownera:', _owners);
             shouldAdd = true;
           }
 
@@ -631,20 +617,23 @@ exports.comment = {
             User.findOne({ email: admin.email }, ['email'], function (err, a) {
               if (err) return next(err);
 
+              // add admin to mail list
               // Array.indexOf() is not working... must do it this way
               var shouldAdd = true;
-              console.log('owneri pre admina', _owners, shouldAdd);
               _owners.filter(function (_owner) {
                 if (_owner.toString() === a._id.toString()) {
                   shouldAdd = false;
                 }
               });
-
               if (shouldAdd) {
                 _owners.push(a._id);
-                console.log('dodao admina:', _owners);
                 shouldAdd = true;
               }
+
+              // last filtering of this mail list
+              _owners = _owners.filter(function (_owner, idx, arr) {
+                return _owner.toString() !== comment._owner.toString();
+              });
 
               if (--len === 0) {
                 res.emit('mail list ready');
@@ -674,7 +663,6 @@ exports.comment = {
                 
                 email.send(function (err) {
                   if (err) return next(err);
-
                   if (--len === 0) {
                     req.flash('success', 'Novi komentar uspešno dodat.');
                     res.redirect('/post/' + req.post.titleUrl);
