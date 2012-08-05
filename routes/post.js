@@ -750,7 +750,7 @@ function checkPostSecurity(post, cb) {
 
   process.nextTick(function () {
     return (fileName.indexOf(contentPath) === 0 && !~fileName.indexOf('\0'))
-      && !~fileName.indexOf('new.md')
+      && !~fileName.indexOf('new.md') && !(new RegExp(contentPath + '.md')).test(fileName)
       ? cb(null) : cb(new HttpError(400));
   });
 

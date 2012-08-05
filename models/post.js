@@ -1,5 +1,14 @@
+
+/**
+ *
+ */
+
 var db = require('./db'),
   helpers = require('../helpers');
+
+/**
+ *
+ */
 
 var Post = new db.Schema({
   _owner: { type: db.ObjectId, ref: 'User' },
@@ -34,6 +43,10 @@ var Post = new db.Schema({
   viewCount: { type: Number, default: 0 }
 });
 
+/**
+ *
+ */
+
 Post.path('tags').set(function (v) {
   var tagsOrigin = v[0].replace(/\s/g, '').toLowerCase().split(',');
 
@@ -48,9 +61,43 @@ Post.path('tags').set(function (v) {
     : tags;
 });
 
+/**
+ *
+ */
+
 function normalizeTitle(v) {
   return v
           .toLowerCase()
+          .replace(/а/g, 'a')
+          .replace(/б/g, 'b')
+          .replace(/в/g, 'v')
+          .replace(/г/g, 'g')
+          .replace(/д/g, 'd')
+          .replace(/ђ/g, 'đ')
+          .replace(/е/g, 'e')
+          .replace(/ж/g, 'ž')
+          .replace(/з/g, 'z')
+          .replace(/и/g, 'i')
+          .replace(/ј/g, 'j')
+          .replace(/к/g, 'k')
+          .replace(/л/g, 'l')
+          .replace(/љ/g, 'lj')
+          .replace(/м/g, 'm')
+          .replace(/н/g, 'n')
+          .replace(/њ/g, 'nj')
+          .replace(/о/g, 'o')
+          .replace(/п/g, 'p')
+          .replace(/р/g, 'r')
+          .replace(/с/g, 's')
+          .replace(/т/g, 't')
+          .replace(/ћ/g, 'ć')
+          .replace(/у/g, 'u')
+          .replace(/ф/g, 'f')
+          .replace(/х/g, 'h')
+          .replace(/ц/g, 'c')
+          .replace(/ч/g, 'č')
+          .replace(/џ/g, 'dž')
+          .replace(/ш/g, 'š')
           .replace(/č/g, 'c')
           .replace(/ć/g, 'c')
           .replace(/š/g, 's')
@@ -63,12 +110,26 @@ function normalizeTitle(v) {
           .replace(/-$/, '');
 };
 
+/**
+ *
+ */
+
 Post.pre('save', function (next) {
   this.titleUrl = this.title;
+  if (!this.titleUrl)
+    this.titleUrl = this._id; // backup
   next();
 });
 
+/**
+ *
+ */
+
 Post.methods.normalizeTitle = normalizeTitle;
+
+/**
+ *
+ */
 
 Post.statics.findWithFullDetails = function (postTitle, cb) {
   return this
@@ -78,9 +139,17 @@ Post.statics.findWithFullDetails = function (postTitle, cb) {
           .run(cb);
 };
 
+/**
+ *
+ */
+
 Post.statics.findByAuthor = function (author, cb) {
   return this.find({ _owner: author }, cb);
 };
+
+/**
+ *
+ */
 
 Post.statics.findNewest = function (limit, cb) {
   var defultLimit = 10;
@@ -94,5 +163,9 @@ Post.statics.findNewest = function (limit, cb) {
 
   return this.find({}).limit(limit).desc('createdAt').run(cb);
 };
+
+/**
+ *
+ */
 
 module.exports = db.mongoose.model('Post', Post);

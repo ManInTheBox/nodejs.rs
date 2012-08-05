@@ -15,7 +15,7 @@ html
     meta(property='og:description', content='Sajt srpske Node.js zajednice.')
 
     script(type='text/javascript', src='/javascripts/jquery-1.7.2.min.js')
-    script(type='text/javascript', src='/javascripts/script.js')
+    script(type='text/javascript', src='/javascripts/script.min.js')
 
     script(type='text/javascript', src='/javascripts/highlight/highlight.pack.js')
     script(type='text/javascript')
@@ -37,6 +37,16 @@ html
       })();
 
   body(id='top')
+    //
+      #fb-root
+      script(type='text/javascript')
+        (function(d, s, id) {
+          var js, fjs = d.getElementsByTagName(s)[0];
+          if (d.getElementById(id)) return;
+          js = d.createElement(s); js.id = id;
+          js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=441849289192947";
+          fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
     #header-wrap
       header
         hgroup
