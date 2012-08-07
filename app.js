@@ -11,7 +11,7 @@ var express = require('express'),
   InternalError = require('./models/internalerror'),
   Email = require('./models/email'),
   Comment = require('./models/comment'),
-  child_process = require('child_process'),
+  mailer = require('./commands/mailer'),
   credentials = require('./credentials');
 
 /**
@@ -351,6 +351,4 @@ process.on('uncaughtException', function (err) {
  * Starts `mailer` command
  */
 
-var mailer = child_process.execFile('./commands/mailer', function (err, stdout, stderr) {
-  // don't handle if command failed
-});
+mailer();

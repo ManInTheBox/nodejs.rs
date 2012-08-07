@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 
 /**
  * EmailCommand
@@ -14,7 +13,7 @@ var Email = require('../models/email'),
   };
 
 // TODO: error handling (now we just skip errors b/c that will stop command)
-var mailer = function () {
+module.exports = function mailer() {
   Email.find(conditions).asc('priority').run(function (err, emails) {
     // if (err) throw err;
     var len = emails.length;
@@ -32,6 +31,3 @@ var mailer = function () {
     }
   });
 };
-
-// start command
-mailer();
