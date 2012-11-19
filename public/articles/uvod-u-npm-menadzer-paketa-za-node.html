@@ -29,9 +29,32 @@
 </p>
 <ol>
 <li>Built-in (node-core) - one koje dolaze uz samu instalaciju node-a (razvija ih node.js tim)</li>
-<li>Userland - one koje razvija node.js zajednica (bilo koji pojedinac ili grupa)
-<input type="hidden" value="cutHere" /></li>
+<li>Userland - one koje razvija node.js zajednica (bilo koji pojedinac ili grupa)</li>
 </ol>
+<p>Razvojni tim node-a je odlučio da u sam <code>core</code> uključi samo one biblioteke koje su neophodne za veoma nizak (low-level) pristup hardveru i izradu osnovnih aplikacija/servera, a da sve ostalo prepusti zajednici (userland).  
+
+</p>
+<p><strong><em>Šta sad ovo znači???</em></strong>
+<input type="hidden" value="cutHere" />
+
+</p>
+<p>Kada instalirate <code>node</code> primetićete da i nema baš mnogo biblioteka (modula/fajlova). Zapravo sam <code>core</code> je veoma mali i kompletna <a href="http://nodejs.org/api/">dokumentacija</a> se može pročitati za jedno popodne (ne morate to još uvek da radite, jer vam verovatno mnogo toga neće biti jasno :D ).<br>Kao što sam gore naveo, osnovni node <code>core</code> će vam omogućiti npr pristup hardveru i kreiranje servera ali dalje od toga neće ići:
+
+</p>
+<pre><code class="javascript"><a class="raw-file" href="http://nodejs.rs/post/uvod-u-npm-menadzer-paketa-za-node/raw/server.js">server.js</a><input type="hidden" value="[raw=server.js]" />var http = require(&#039;http&#039;);
+http.createServer(function (request, response) {
+  response.end(&#039;Ovaj web server je kreirao Node.js&#039;);
+}).listen(8888);<input type="hidden" value="[/raw=server.js]" /></code></pre>
+<p>Postavlja se pitanje:<br><em>Šta sada da radim? Instaliarao sam node ali nisam dobio ni biblioteke za obradu slike, ni drajvere za bazu podataka, ni gomilu drugih stvari koje sam očekivao da ću dobiti...</em>
+
+</p>
+<p><strong>Zajednica (userland) kao spas!!!</strong>
+
+</p>
+<p>Već ste shvatili da se uz instalaciju node-a ne dobija od igle do lokomotive i da će vam trebati još nešto sa strane...
+Rešenje je i više nego jednostavno:<br>Node.js zajednica svakodnevno objavljuje nove pakete (module) za node programe. U ovom trenutku ukupno ih ima: <strong>12916!</strong>  
+
+</p>
 <p>nastavice se...</p>
     <div style="text-align: center; font-size: 0.8em;">
       Preuzeto sa Node Srbija - <a href="http://nodejs.rs">http://nodejs.rs</a>

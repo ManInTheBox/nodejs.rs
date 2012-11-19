@@ -2,3 +2,5 @@
 /node_modules
 /credentials.json
 /.monitor
+*.sublime-project
+*.sublime-workspace
