@@ -46,9 +46,9 @@ function loginRequired(req, res, next) {
  * Performs authorization.
  *
  * Access is automatically granted to admin users, otherwise provided
- * function is called to perform authorization. If no function 
+ * function is called to perform authorization. If no function
  * is provided request will be ended with 404 status.
- * 
+ *
  * @param {Function} function to perform authorization
  */
 
@@ -317,7 +317,7 @@ app.del('/post/:postId/comment/:commentId/delete', loginRequired, grantAccess(co
 app.listen(app.settings.env = 'development' ? 3000 : 80);
 
 /**
- * Catches all exceptions that were not handled by application 
+ * Catches all exceptions that were not handled by application
  * and notifies admins about error happened.
  */
 
@@ -332,7 +332,7 @@ process.on('uncaughtException', function (err) {
     referrer: undefined,
     browser: '#process.uncaughtException',
     method: undefined
-  }
+  };
 
   var internalError = new InternalError(data);
   internalError.save();

@@ -10,7 +10,7 @@ var db = require('./db'),
   fs = require('fs');
 
 /**
- *
+ * Priority constants.
  */
 
 const PRIORITY_HIGHEST = 1;
@@ -20,7 +20,7 @@ const PRIORITY_LOW = 4;
 const PRIORITY_LOWEST = 5;
 
 /**
- *
+ * Email types this model supports.
  */
 
 var types = {
@@ -30,7 +30,7 @@ var types = {
 };
 
 /**
- *
+ * Sets up email transport layer.
  */
 
 var transport = nodemailer.createTransport('SMTP', {
@@ -42,12 +42,10 @@ var transport = nodemailer.createTransport('SMTP', {
 });
 
 /**
- *
+ * Email views template path.
  */
 
-
 var templatePath = __dirname + '/../views/email/';
-
 
 /**
  * Defines `Email` schema.
@@ -69,7 +67,12 @@ var Email = new db.Schema({
 });
 
 /**
+ * This method will actually send an email.
  *
+ * Please DON'T call it directly in your application code!
+ * It's called only by email deamon command.
+ *
+ * @api private
  */
 
 Email.methods.doSend = function (cb) {
@@ -100,13 +103,15 @@ Email.methods.doSend = function (cb) {
       self.save(function (err) {
         if (err) return cb(err);
         cb(null);
-      })
+      });
     });
   });
 };
 
 /**
+ * Configures email model based on its type.
  *
+ * @api private
  */
 
 Email.methods.configure = function configure(next) {
@@ -159,11 +164,12 @@ Email.methods.configure = function configure(next) {
       });
     break;
   }
-}
+};
 
 /**
  * Please use this method in your application code.
  * It will properly configure email and save it into database.
+ *
  * @param {Function} callback
  * @api public
  */

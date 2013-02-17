@@ -1,13 +1,13 @@
 
 /**
- *
+ * Module dependencies.
  */
 
 var db = require('./db'),
   helpers = require('../helpers');
 
 /**
- *
+ * Defines `Post` schema.
  */
 
 var Post = new db.Schema({
@@ -44,7 +44,7 @@ var Post = new db.Schema({
 });
 
 /**
- *
+ * Method will properly set up `tags` collection.
  */
 
 Post.path('tags').set(function (v) {
@@ -62,7 +62,10 @@ Post.path('tags').set(function (v) {
 });
 
 /**
+ * Method to slugify post title.
  *
+ * @return {String} slugified title
+ * @api private
  */
 
 function normalizeTitle(v) {
@@ -108,10 +111,10 @@ function normalizeTitle(v) {
           .replace(/-{2,}/g, '-')
           .replace(/^-/, '')
           .replace(/-$/, '');
-};
+}
 
 /**
- *
+ * Pre-save middleware.
  */
 
 Post.pre('save', function (next) {
@@ -122,13 +125,16 @@ Post.pre('save', function (next) {
 });
 
 /**
- *
+ * Expose `normalizeTitle` method (aka `slugify`).
  */
 
 Post.methods.normalizeTitle = normalizeTitle;
 
 /**
+ * Syntactic sugar finder.
  *
+ * @param {String} post title
+ * @param {Function} callback
  */
 
 Post.statics.findWithFullDetails = function (postTitle, cb) {
@@ -140,7 +146,10 @@ Post.statics.findWithFullDetails = function (postTitle, cb) {
 };
 
 /**
+ * Syntactic sugar finder.
  *
+ * @param {User} post author model
+ * @param {Function} callback
  */
 
 Post.statics.findByAuthor = function (author, cb) {
@@ -148,7 +157,10 @@ Post.statics.findByAuthor = function (author, cb) {
 };
 
 /**
+ * Syntactic sugar finder.
  *
+ * @param {Number} post limit. default is `10`
+ * @param {Function} callback
  */
 
 Post.statics.findNewest = function (limit, cb) {
@@ -165,7 +177,7 @@ Post.statics.findNewest = function (limit, cb) {
 };
 
 /**
- *
+ * Expose `Post` model.
  */
 
 module.exports = db.mongoose.model('Post', Post);

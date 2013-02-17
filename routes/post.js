@@ -1,3 +1,8 @@
+
+/**
+ * Module dependencies.
+ */
+
 var Post = require('../models/post'),
   Comment = require('../models/comment'),
   fs = require('fs'),
@@ -747,7 +752,15 @@ exports.comment = {
 };
 
 /**
+ * Method will check if given `post` model satisfies security conditions.
  *
+ * In case passed `post` model doesn't satisfy security conditions
+ * an `HttpError` with status code 400 will be returned.
+ *
+ * @param {Post} post model
+ * @param {Function} callback
+ * @return {String} absolute path to post content file
+ * @api private
  */
 
 function checkPostSecurity(post, cb) {
@@ -764,7 +777,7 @@ function checkPostSecurity(post, cb) {
 }
 
 /**
- *
+ * Provides sidebar data needed for view layout.
  */
 
 function handleSidebar(req, res, next, post, cb) {

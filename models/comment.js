@@ -1,4 +1,13 @@
+
+/**
+ * Module dependencies.
+ */
+
 var db = require('./db');
+
+/**
+ * Defines `Comment` schema.
+ */
 
 var Comment = new db.Schema({
   _owner: { type: db.ObjectId, ref: 'User' },
@@ -11,5 +20,9 @@ var Comment = new db.Schema({
   },
   createdAt: { type: Date, default: Date.now }
 });
+
+/**
+ * Module exports.
+ */
 
 module.exports = db.mongoose.model('Comment', Comment);

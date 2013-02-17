@@ -1,19 +1,28 @@
+
+/**
+ * Module dependencies.
+ */
+
 var db = require('./db'),
   util = require('util'),
   crypto = require('crypto'),
   helpers = require('../helpers'),
   Picture = require('./picture');
-    
+
+/**
+ * Defines `User` schema.
+ */
+
 var User = new db.Schema({
   name: {
-    first: { 
+    first: {
       type: String,
       trim: true,
       set: helpers.toUpperCaseFirst,
       min: [ 2, 'Ime je prekratko (minimum je {min} karaktera).' ],
       max: [ 30, 'Ime je predugačko (maksimum je {max} karaktera).' ]
     },
-    last: { 
+    last: {
       type: String,
       trim: true,
       set: helpers.toUpperCaseFirst,
@@ -86,7 +95,7 @@ var User = new db.Schema({
       max: [ 100, 'Lokacija je predugačka (maksimum je {max} karaktera).' ]
     }
   },
-  salt: { 
+  salt: {
     type: String,
     default: helpers.generateHash
   },
@@ -96,11 +105,26 @@ var User = new db.Schema({
   }
 });
 
+/**
+ * Method encrypts user password.
+ *
+ * You can pass `password` and `salt` parameters if you want this
+ * method to act as helper. Otherwise models values will be used.
+ *
+ * @param {String} raw password (if no value provided models value will be used)
+ * @param {String} optional salt (if no value provided models value will be used)
+ * @return {String} encrypted password
+ */
+
 User.methods.encryptPassword = function (password, salt) {
   var _password = password || this.password;
   var _salt = salt || this.salt;
   return crypto.createHmac('md5', _password + _salt).digest('hex');
 };
+
+/**
+ * Pre-save middleware.
+ */
 
 User.pre('save', function (next) {
   if (this.isNew) {
@@ -109,6 +133,12 @@ User.pre('save', function (next) {
   next();
 });
 
+/**
+ * Virtual getter for full name.
+ *
+ * @return {String} users full name
+ */
+
 User.virtual('name.full').get(function () {
   var first = this.name.first || '';
   var last = this.name.last || '';
@@ -116,8 +146,19 @@ User.virtual('name.full').get(function () {
   return full.trim();
 });
 
+/**
+ * Syntactic sugar finder.
+ *
+ * @param {String} username
+ * @param {Function} callback
+ */
+
 User.statics.findByUsername = function (username, cb) {
   return this.findOne({ 'name.username': username }).populate('photo').run(cb);
 };
+
+/**
+ * Expose `User` model.
+ */
 
 module.exports = db.mongoose.model('User', User);
