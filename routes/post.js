@@ -643,33 +643,39 @@ exports.comment = {
 
           res.on('mail list ready', function () {
             var len = _owners.length;
-            _owners.forEach(function (_owner) {
-              User.findById(_owner, ['email'], function (err, user) {
-                if (err) return next(err);
 
-                var email = new Email({
-                  to: user.email,
-                  data: {
-                    title: title,
-                    titleUrl: titleUrl,
-                    date: date,
-                    author: author,
-                    username: username,
-                    commentText: commentText,
-                    commentUrl: commentUrl
-                  },
-                  type: Email.types['newPostComment']
-                });
-                
-                email.send(function (err) {
+            if (!len) { // no need to send any emails
+              req.flash('success', 'Novi komentar uspešno dodat.');
+              res.redirect('/post/' + req.post.titleUrl);
+            } else {
+              _owners.forEach(function (_owner) {
+                User.findById(_owner, ['email'], function (err, user) {
                   if (err) return next(err);
-                  if (--len === 0) {
-                    req.flash('success', 'Novi komentar uspešno dodat.');
-                    res.redirect('/post/' + req.post.titleUrl);
-                  }
+
+                  var email = new Email({
+                    to: user.email,
+                    data: {
+                      title: title,
+                      titleUrl: titleUrl,
+                      date: date,
+                      author: author,
+                      username: username,
+                      commentText: commentText,
+                      commentUrl: commentUrl
+                    },
+                    type: Email.types['newPostComment']
+                  });
+
+                  email.send(function (err) {
+                    if (err) return next(err);
+                    if (--len === 0) {
+                      req.flash('success', 'Novi komentar uspešno dodat.');
+                      res.redirect('/post/' + req.post.titleUrl);
+                    }
+                  });
                 });
               });
-            });
+            }
           });
         });
       });
