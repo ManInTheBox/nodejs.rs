@@ -26,7 +26,9 @@ exports.register = function (req, res, next) {
 
   if (req.body.user) { // we have submitted form
     var u = req.body.user;
-    u.photo = req.files.user.photo.size ? req.files.user.photo : null;
+    u.photo = req.files.user && req.files.user.photo.size
+      ? req.files.user.photo
+      : null;
 
     user.name = {
       first: u.name.first.length ? u.name.first : undefined,
@@ -194,7 +196,9 @@ exports.edit = function (req, res, next) {
 
     if (req.body.user) {
       var u = req.body.user;
-      u.photo = req.files.user.photo.size ? req.files.user.photo : null;
+      u.photo = req.files.user && req.files.user.photo.size
+        ? req.files.user.photo
+        : null;
 
       if (u.password) {
         var originalPassword = user.password;
