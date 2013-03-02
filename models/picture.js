@@ -38,6 +38,15 @@ var Picture = new db.Schema({
 });
 
 /**
+ * Pre-save middleware.
+ */
+
+Picture.pre('save', function (next) {
+  this.ext = this.type.replace('image/', '').toLowerCase();
+  next();
+});
+
+/**
  * Generates two images, large and small and saves model.
  */
 

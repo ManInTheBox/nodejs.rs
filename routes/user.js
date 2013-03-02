@@ -268,12 +268,10 @@ exports.edit = function (req, res, next) {
         res.on('ready for photo', function () {
           if (u.photo) {
 
-            var dot = u.photo.name.lastIndexOf('.');
             var picture = new Picture({
               name: user.name.username,
               size: u.photo.size,
-              type: u.photo.type,
-              ext: u.photo.name.substring(dot + 1).toLowerCase()
+              type: u.photo.type
             });
 
             picture.store(u.photo.path, function (err) {
