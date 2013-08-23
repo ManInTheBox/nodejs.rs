@@ -1,6 +1,6 @@
 {
   "description": "Serbian Node.js community website - http://www.nodejs.rs",
-  "version": "0.3.0-3",
+  "version": "0.3.0-7",
   "author": "Zarko Stankovic <stankovic.zarko@gmail.com>",
   "private": true,
   "dependencies": {
