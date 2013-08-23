@@ -96,7 +96,12 @@ program.confirm('Is this ok? ', function (ok) {
           res.on('end', function () {
             okLog(filePath.underline);
           });
+        } else {
+          process.nextTick(function () {
+            res.emit('end');
+          });
         }
+
         res.on('end', function () {
           // remove file from queue
           queue.splice(queue.indexOf(file), 1);

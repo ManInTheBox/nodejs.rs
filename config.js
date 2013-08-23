@@ -177,7 +177,7 @@ module.exports = function () {
    */
 
   app.configure('development', function () {
-    app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
+    app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
   });
 
   /**
@@ -206,7 +206,7 @@ module.exports = function () {
           referrer: req.header('referrer'),
           browser: req.header('user-agent'),
           method: req.method
-        }
+        };
 
         var internalError = new InternalError(data);
 
