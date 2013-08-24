@@ -314,7 +314,7 @@ app.del('/post/:postId/comment/:commentId/delete', loginRequired, grantAccess(co
  * Starts the server.
  */
 
-app.listen(app.settings.env = 'development' ? 3000 : 80);
+app.listen(app.settings.env == 'development' ? 3000 : 80);
 
 /**
  * Catches all exceptions that were not handled by application
