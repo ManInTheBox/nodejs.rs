@@ -467,6 +467,7 @@ exports.delete = function (req, res, next) {
 exports.edit = function (req, res, next) {
   Post.findOne({ titleUrl: req.params.postTitle }, function (err, post) {
     if (err) return next(err);
+    if (!post) return next(); // 404 will catch this...
 
     if (req.body.post) {
       var p = req.body.post;
