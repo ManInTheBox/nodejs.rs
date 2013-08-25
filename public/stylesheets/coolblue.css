@@ -1357,3 +1357,8 @@ em {
   padding-left: 5px;
   width: 696px;
 }
+
+.anchor:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}

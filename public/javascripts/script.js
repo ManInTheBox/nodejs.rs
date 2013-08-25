@@ -44,6 +44,11 @@ $(function() {
     if ($(window).scrollTop() > 60)
       $(this).css('opacity', '0.7');
   });
+
+  $('.anchor').on('click', function () {
+    window.location.hash = $(this).attr('id');
+  });
+
 });
 
 function browserify(fn) {
