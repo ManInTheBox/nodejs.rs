@@ -1362,3 +1362,8 @@ em {
   text-decoration: underline;
   cursor: pointer;
 }
+
+#preview {
+  overflow-y: auto;
+  height: 400px;
+}
