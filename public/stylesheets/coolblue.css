@@ -903,6 +903,7 @@ footer p.footer-right {
 }
 .post.single {
   margin-bottom: 20px;
+  overflow: visible;
 }
 .primary {
     width: 533px;

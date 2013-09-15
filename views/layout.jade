@@ -10,9 +10,10 @@ html
     meta(name='keywords', content='node.js, node, javascript, srbija, framework, web, ajax, express, mongoose, chat, mongodb, v8, real time')
     meta(name='description', content='Sajt srpske Node.js zajednice.')
 
+    - var og = og || {};
     meta(property='og:image', content='http://nodejs.rs/images/logo.png')
-    meta(property='og:title', content='Node.js zajednica Srbije')
-    meta(property='og:description', content='Sajt srpske Node.js zajednice.')
+    meta(property='og:title', content= og.title || 'Node.js zajednica Srbije')
+    meta(property='og:description', content= og.description || 'Sajt srpske Node.js zajednice.')
 
     script(type='text/javascript', src='/javascripts/jquery-1.7.2.min.js')
     script(type='text/javascript', src='/javascripts/script.min.js')
@@ -37,16 +38,15 @@ html
       })();
 
   body(id='top')
-    //
-      #fb-root
-      script(type='text/javascript')
-        (function(d, s, id) {
-          var js, fjs = d.getElementsByTagName(s)[0];
-          if (d.getElementById(id)) return;
-          js = d.createElement(s); js.id = id;
-          js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=441849289192947";
-          fjs.parentNode.insertBefore(js, fjs);
-        }(document, 'script', 'facebook-jssdk'));
+    #fb-root
+    script(type='text/javascript')
+      (function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=441849289192947";
+        fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));
     #header-wrap
       header
         hgroup
