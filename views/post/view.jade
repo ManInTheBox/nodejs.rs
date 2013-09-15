@@ -30,6 +30,8 @@ article.post.single
           a(href='/search/' + encodeURIComponent(tag)) #{tag}
           - if (i < post.tags.length - 1)
             | , 
+      span.small.clear(style='clear: none;')
+        | &nbsp;&nbsp;Pregleda: #{post.viewCount}, Preuzimanja: #{post.downloadCount}
 
     .markdown-content!= post.content
     a(href='#top', class='back-to-top') vrh
