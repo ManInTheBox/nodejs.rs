@@ -132,7 +132,7 @@ exports.view = function (req, res, next) {
   }
 
   function isCommentOwner(comment) {
-    return req.session.user._id == comment._owner
+    return req.session.user._id == comment._owner;
   }
 
   Post.findWithFullDetails(req.params.postTitle, function (err, post) {
@@ -182,15 +182,23 @@ exports.view = function (req, res, next) {
             handleSidebar(req, res, next, post, function () {
               res.render('post/view', {
                 post: post,
-                canEditPost: isLoggedIn() && (isPostOwner(post) || isAdmin())
+                canEditPost: isLoggedIn() && (isPostOwner(post) || isAdmin()),
+                og: {
+                  title: post.title,
+                  description: helpers.substring(post.content, 300)
+                }
               });
             });
           });
         } else {
           handleSidebar(req, res, next, post, function () {
-            res.render('post/view', { 
+            res.render('post/view', {
               post: post,
-              canEditPost: isLoggedIn() && (isPostOwner(post) || isAdmin())
+              canEditPost: isLoggedIn() && (isPostOwner(post) || isAdmin()),
+              og: {
+                title: post.title,
+                description: helpers.substring(post.content, 300)
+              }
             });
           });
         }
