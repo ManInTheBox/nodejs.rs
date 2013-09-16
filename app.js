@@ -351,4 +351,6 @@ process.on('uncaughtException', function (err) {
  * Starts `mailer` command
  */
 
-mailer();
+if (app.settings.env != 'development') {
+  mailer();
+}
