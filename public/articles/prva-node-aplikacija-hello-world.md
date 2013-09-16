@@ -57,4 +57,4 @@ Prikazujemo u terminalu da smo uspešno pokrenuli server.
 
 I to bi bila naša prva `Node.js` aplikacija :-)  
 U ovom članku nismo previše analizirali naš kôd kao npr `request` objekat i tome slično, jer će to biti objašnjeno u sledećim naprednijim tutorijalima.
-Predlažem vam da malo eksperimentišete sa kôdom kao da na primer promenite header `Content-Type` u `text/html`i `res.end()` metodi prosledite malo HTML sadržaja.
+Predlažem vam da malo eksperimentišete sa kôdom kao da na primer promenite header `Content-Type` u `text/html` i `res.end()` metodi prosledite malo HTML sadržaja.
