@@ -179,8 +179,11 @@ exports.view = function (req, res, next) {
   User.findByUsername(req.params.username, function (err, user) {
     if (err) return next(err);
     if (!user) return next();
-    handleSidebar(req, res, next, user, function () {
-      res.render('user/view', { user: user });
+    Post.find({ _owner: user }, function (err, posts) {
+      if (err) return next(err);
+      handleSidebar(req, res, next, user, function () {
+        res.render('user/view', { user: user, posts: posts });
+      });
     });
   });
 };

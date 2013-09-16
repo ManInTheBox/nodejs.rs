@@ -27,7 +27,7 @@ exports.list = function (req, res, next) {
   var page = +qs.parse(url.parse(req.url).query).page || 1;
   var itemCount = 10;
 
-  Post.count(function (err, postCount) {
+  Post.where('visible', true).count(function (err, postCount) {
     if (err) return next(err);
     var pageCount = Math.ceil(postCount / itemCount) || 1;
 
@@ -39,7 +39,8 @@ exports.list = function (req, res, next) {
     var previousPage = page - 1;
     var nextPage = page != pageCount ? page + 1 : null;
 
-    Post.find({})
+    Post.find()
+      .where('visible', true)
       .desc('createdAt')
       .skip((page - 1) * itemCount)
       .limit(itemCount)
@@ -98,6 +99,11 @@ exports.new = function (req, res, next) {
           fs.writeFile(fileName, post.content, function (err) {
             if (err) return next(err);
             req.flash('success', 'Novi članak uspešno kreiran.');
+            req.flash('info', [
+              'Molimo Vas da imate u vidu da Vaš članak neće biti automatski vidljiv ',
+              'jer je potrebno da ga administrator prvo odobri pre javnog prikazivanja. ',
+              'Hvala na strpljenju.',
+            ].join(''));
             res.redirect('/post');
           });
         }
@@ -487,6 +493,7 @@ exports.edit = function (req, res, next) {
       post.updatedAt = Date.now();
       post.shouldGenerateHtml = true; // used for generating new HTML (download action)
       post.shouldGeneratePdf = true; // used for generating new PDF (download action)
+      post.visible = !!p.visible;
 
       var filePath = checkPostSecurity(post, function (err) {
         if (err) return next(err);

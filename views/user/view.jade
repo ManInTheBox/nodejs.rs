@@ -8,7 +8,6 @@
 
   img(src='/images/users/#{user.photo.large}', class='align-left', title=user.photo.name)
 
-
   .desc
     label Ime: 
     = user.name.full
@@ -37,3 +36,10 @@
   //- jade bug (gh-628)
   - var bio = user.bio.about || 'Korisnik nije ostavio podatke.';
   <blockquote>#{bio}</blockquote>
+
+  - if (isAdmin || session.user && session.user._id == user._id)
+    div(style='margin: 30px 0; background: #f3f4f5; padding: 10px; border: 1px solid #e4e6e9;')
+      p Članci koje sam ja napisao:
+      ul(style='list-style: none; margin: 0;')
+        each post in posts
+          li: a(href='/post/#{post.titleUrl}/edit')= post.title

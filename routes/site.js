@@ -13,8 +13,8 @@ var qs = require('querystring'),
 
 var User = require('../models/user'),
   Email = require('../models/email'),
-  Picture = require('../models/picture')
-  InternalError = require('../models/internalerror')
+  Picture = require('../models/picture'),
+  InternalError = require('../models/internalerror'),
   Post = require('../models/post');
 
 /**
@@ -37,7 +37,8 @@ exports.search = function (req, res, next) {
 
 	if (req.params.tag) {
     var conditions = {
-      tags: { $in: [req.params.tag] }
+      tags: { $in: [req.params.tag] },
+      visible: true
     };
     Post.count(conditions, function (err, postCount) {
       if (err) return next(err);
@@ -71,7 +72,8 @@ exports.search = function (req, res, next) {
         { titleUrl: new RegExp(q, 'i') },
         { tags: { $in: [new RegExp(q, 'i')] } },
         { content: new RegExp(q, 'i') }
-      ]
+      ],
+      visible: true
     };
 
     Post.count(conditions, function (err, postCount) {

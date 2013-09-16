@@ -1263,6 +1263,18 @@ form input:disabled {
     font-size: 1.1em;
 }
 
+.info {
+    display: block;
+    border: 1px solid #9FD1DA;
+    background: #d9edf7;
+}
+
+#messages ul.info {
+    padding: 10px 10px 10px 20px;
+    margin: 0;
+    list-style: none;
+}
+
 a.back-to-top {
   float: right;
   font-size: 0.7em;

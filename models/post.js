@@ -40,7 +40,8 @@ var Post = new db.Schema({
   shouldGenerateHtml: { type: Boolean, default: true },
   shouldGeneratePdf: { type: Boolean, default: true },
   downloadCount: { type: Number, default: 0 },
-  viewCount: { type: Number, default: 0 }
+  viewCount: { type: Number, default: 0 },
+  visible: false
 });
 
 /**
@@ -139,7 +140,7 @@ Post.methods.normalizeTitle = normalizeTitle;
 
 Post.statics.findWithFullDetails = function (postTitle, cb) {
   return this
-          .findOne({ titleUrl: postTitle })
+          .findOne({ titleUrl: postTitle, visible: true })
           .populate('_owner')
           .populate('comments')
           .run(cb);
@@ -153,7 +154,7 @@ Post.statics.findWithFullDetails = function (postTitle, cb) {
  */
 
 Post.statics.findByAuthor = function (author, cb) {
-  return this.find({ _owner: author }, cb);
+  return this.find({ _owner: author, visible: true }, cb);
 };
 
 /**
@@ -173,7 +174,7 @@ Post.statics.findNewest = function (limit, cb) {
 
   limit = limit || defultLimit;
 
-  return this.find({}).limit(limit).desc('createdAt').run(cb);
+  return this.find({ visible: true }).limit(limit).desc('createdAt').run(cb);
 };
 
 /**

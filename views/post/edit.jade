@@ -26,6 +26,11 @@
       label(for='postTags') Tagovi (odvojiti zarezima): 
       input(type='text', id='postTags', name='post[tags]', value=post.tags)
 
+    - if (isAdmin)
+      div
+        label(for='postVisible') Odobren od strane administratora?
+          input(style='width: auto; margin: 0 0 0 10px;', type='checkbox', checked=post.visible, id='postVisible', name='post[visible]')
+
     input(type='submit', value='Sačuvaj', class='submit')
     a(href='/post/#{post.titleUrl}')
       input(type='button', value='Odustani', class='submit')
