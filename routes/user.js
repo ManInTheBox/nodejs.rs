@@ -260,7 +260,8 @@ exports.edit = function (req, res, next) {
         }
 
         if (u.password) {
-          User.update({ password: user.encryptPassword() }, function (err) {
+          user.password = user.encryptPassword(u.password);
+          user.save(function (err) {
             if (err) return next(err);
             req.session.user = user;
             res.emit('ready for photo');
