@@ -208,6 +208,17 @@ exports.decode = decode = function (html) {
 };
 
 /**
+ * Method will strip HTML tags from given string.
+ *
+ * @param {String} HTML content
+ * @return {String} content without HTML tags
+ */
+
+exports.stripTags = function (html) {
+  return html.replace(/<\/?([a-z][a-z0-9]*)\b[^>]*>/gi, '');
+};
+
+/**
  * Method will post-process given markdown content.
  *
  * @param {String} markdown content

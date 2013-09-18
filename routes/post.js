@@ -191,7 +191,7 @@ exports.view = function (req, res, next) {
                 canEditPost: isLoggedIn() && (isPostOwner(post) || isAdmin()),
                 og: {
                   title: post.title,
-                  description: helpers.substring(post.content, 300)
+                  description: helpers.stripTags(helpers.substring(post.content, 300))
                 }
               });
             });
@@ -203,7 +203,7 @@ exports.view = function (req, res, next) {
               canEditPost: isLoggedIn() && (isPostOwner(post) || isAdmin()),
               og: {
                 title: post.title,
-                description: helpers.substring(post.content, 300)
+                description: helpers.stripTags(helpers.substring(post.content, 300))
               }
             });
           });
