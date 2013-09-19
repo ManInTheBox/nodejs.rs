@@ -41,7 +41,7 @@ var Post = new db.Schema({
   shouldGeneratePdf: { type: Boolean, default: true },
   downloadCount: { type: Number, default: 0 },
   viewCount: { type: Number, default: 0 },
-  visible: false
+  visible: { type: Boolean, default: false }
 });
 
 /**
