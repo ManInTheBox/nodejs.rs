@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
   <head>
-    <title>Instalacija i pokretanje Node.js - Node Srbija</title>
+    <title>Upravljanje različitim Node verzijama na istom sistemu - Node Srbija</title>
     <meta charset="utf-8">
     <script type="text/javascript">
       var hljs=new function(){function m(p){return p.replace(/&/gm,"&amp;").replace(/</gm,"&lt;")}function c(r,q,p){return RegExp(q,"m"+(r.cI?"i":"")+(p?"g":""))}function j(r){for(var p=0;p<r.childNodes.length;p++){var q=r.childNodes[p];if(q.nodeName=="CODE"){return q}if(!(q.nodeType==3&&q.nodeValue.match(/\s+/))){break}}}function g(t,s){var r="";for(var q=0;q<t.childNodes.length;q++){if(t.childNodes[q].nodeType==3){var p=t.childNodes[q].nodeValue;if(s){p=p.replace(/\n/g,"")}r+=p}else{if(t.childNodes[q].nodeName=="BR"){r+="\n"}else{r+=g(t.childNodes[q])}}}if(/MSIE [678]/.test(navigator.userAgent)){r=r.replace(/\r/g,"\n")}return r}function a(s){var q=s.className.split(/\s+/);q=q.concat(s.parentNode.className.split(/\s+/));for(var p=0;p<q.length;p++){var r=q[p].replace(/^language-/,"");if(d[r]||r=="nohighlight"){return r}}}function b(p){var q=[];(function(s,t){for(var r=0;r<s.childNodes.length;r++){if(s.childNodes[r].nodeType==3){t+=s.childNodes[r].nodeValue.length}else{if(s.childNodes[r].nodeName=="BR"){t+=1}else{q.push({event:"start",offset:t,node:s.childNodes[r]});t=arguments.callee(s.childNodes[r],t);q.push({event:"stop",offset:t,node:s.childNodes[r]})}}}return t})(p,0);return q}function l(y,z,x){var r=0;var w="";var t=[];function u(){if(y.length&&z.length){if(y[0].offset!=z[0].offset){return(y[0].offset<z[0].offset)?y:z}else{return z[0].event=="start"?y:z}}else{return y.length?y:z}}function s(C){var D="<"+C.nodeName.toLowerCase();for(var A=0;A<C.attributes.length;A++){var B=C.attributes[A];D+=" "+B.nodeName.toLowerCase();if(B.nodeValue!=undefined&&B.nodeValue!=false&&B.nodeValue!=null){D+='="'+m(B.nodeValue)+'"'}}return D+">"}while(y.length||z.length){var v=u().splice(0,1)[0];w+=m(x.substr(r,v.offset-r));r=v.offset;if(v.event=="start"){w+=s(v.node);t.push(v.node)}else{if(v.event=="stop"){var q=t.length;do{q--;var p=t[q];w+=("</"+p.nodeName.toLowerCase()+">")}while(p!=v.node);t.splice(q,1);while(q<t.length){w+=s(t[q]);q++}}}}w+=x.substr(r);return w}function i(){function p(u,t,v){if(u.compiled){return}if(!v){u.bR=c(t,u.b?u.b:"\\B|\\b");if(!u.e&&!u.eW){u.e="\\B|\\b"}if(u.e){u.eR=c(t,u.e)}}if(u.i){u.iR=c(t,u.i)}if(u.r==undefined){u.r=1}if(u.k){u.lR=c(t,u.l||hljs.IR,true)}for(var s in u.k){if(!u.k.hasOwnProperty(s)){continue}if(u.k[s] instanceof Object){u.kG=u.k}else{u.kG={keyword:u.k}}break}if(!u.c){u.c=[]}u.compiled=true;for(var r=0;r<u.c.length;r++){p(u.c[r],t,false)}if(u.starts){p(u.starts,t,false)}}for(var q in d){if(!d.hasOwnProperty(q)){continue}p(d[q].dM,d[q],true)}}function e(J,D){if(!i.called){i();i.called=true}function z(r,M){for(var L=0;L<M.c.length;L++){if(M.c[L].bR.test(r)){return M.c[L]}}}function w(L,r){if(C[L].e&&C[L].eR.test(r)){return 1}if(C[L].eW){var M=w(L-1,r);return M?M+1:0}return 0}function x(r,L){return L.iR&&L.iR.test(r)}function A(O,N){var M=[];for(var L=0;L<O.c.length;L++){M.push(O.c[L].b)}var r=C.length-1;do{if(C[r].e){M.push(C[r].e)}r--}while(C[r+1].eW);if(O.i){M.push(O.i)}return c(N,"("+M.join("|")+")",true)}function s(M,L){var N=C[C.length-1];if(!N.t){N.t=A(N,H)}N.t.lastIndex=L;var r=N.t.exec(M);if(r){return[M.substr(L,r.index-L),r[0],false]}else{return[M.substr(L),"",true]}}function p(O,r){var L=H.cI?r[0].toLowerCase():r[0];for(var N in O.kG){if(!O.kG.hasOwnProperty(N)){continue}var M=O.kG[N].hasOwnProperty(L);if(M){return[N,M]}}return false}function F(M,O){if(!O.k){return m(M)}var N="";var P=0;O.lR.lastIndex=0;var L=O.lR.exec(M);while(L){N+=m(M.substr(P,L.index-P));var r=p(O,L);if(r){t+=r[1];N+='<span class="'+r[0]+'">'+m(L[0])+"</span>"}else{N+=m(L[0])}P=O.lR.lastIndex;L=O.lR.exec(M)}N+=m(M.substr(P,M.length-P));return N}function K(r,M){if(M.sL&&d[M.sL]){var L=e(M.sL,r);t+=L.keyword_count;return L.value}else{return F(r,M)}}function I(M,r){var L=M.cN?'<span class="'+M.cN+'">':"";if(M.rB){q+=L;M.buffer=""}else{if(M.eB){q+=m(r)+L;M.buffer=""}else{q+=L;M.buffer=r}}C.push(M);B+=M.r}function E(O,L,Q){var R=C[C.length-1];if(Q){q+=K(R.buffer+O,R);return false}var M=z(L,R);if(M){q+=K(R.buffer+O,R);I(M,L);return M.rB}var r=w(C.length-1,L);if(r){var N=R.cN?"</span>":"";if(R.rE){q+=K(R.buffer+O,R)+N}else{if(R.eE){q+=K(R.buffer+O,R)+N+m(L)}else{q+=K(R.buffer+O+L,R)+N}}while(r>1){N=C[C.length-2].cN?"</span>":"";q+=N;r--;C.length--}var P=C[C.length-1];C.length--;C[C.length-1].buffer="";if(P.starts){I(P.starts,"")}return R.rE}if(x(L,R)){throw"Illegal"}}var H=d[J];var C=[H.dM];var B=0;var t=0;var q="";try{var v=0;H.dM.buffer="";do{var y=s(D,v);var u=E(y[0],y[1],y[2]);v+=y[0].length;if(!u){v+=y[1].length}}while(!y[2]);if(C.length>1){throw"Illegal"}return{r:B,keyword_count:t,value:q}}catch(G){if(G=="Illegal"){return{r:0,keyword_count:0,value:m(D)}}else{throw G}}}function f(t){var r={keyword_count:0,r:0,value:m(t)};var q=r;for(var p in d){if(!d.hasOwnProperty(p)){continue}var s=e(p,t);s.language=p;if(s.keyword_count+s.r>q.keyword_count+q.r){q=s}if(s.keyword_count+s.r>r.keyword_count+r.r){q=r;r=s}}if(q.language){r.second_best=q}return r}function h(r,q,p){if(q){r=r.replace(/^((<[^>]+>|\t)+)/gm,function(t,w,v,u){return w.replace(/\t/g,q)})}if(p){r=r.replace(/\n/g,"<br>")}return r}function o(u,x,q){var y=g(u,q);var s=a(u);if(s=="nohighlight"){return}if(s){var w=e(s,y)}else{var w=f(y);s=w.language}var p=b(u);if(p.length){var r=document.createElement("pre");r.innerHTML=w.value;w.value=l(p,b(r),y)}w.value=h(w.value,x,q);var t=u.className;if(!t.match("(\\s|^)(language-)?"+s+"(\\s|$)")){t=t?(t+" "+s):s}if(/MSIE [678]/.test(navigator.userAgent)&&u.tagName=="CODE"&&u.parentNode.tagName=="PRE"){var r=u.parentNode;var v=document.createElement("div");v.innerHTML="<pre><code>"+w.value+"</code></pre>";u=v.firstChild.firstChild;v.firstChild.cN=r.cN;r.parentNode.replaceChild(v.firstChild,r)}else{u.innerHTML=w.value}u.className=t;u.result={language:s,kw:w.keyword_count,re:w.r};if(w.second_best){u.second_best={language:w.second_best.language,kw:w.second_best.keyword_count,re:w.second_best.r}}}function k(){if(k.called){return}k.called=true;var r=document.getElementsByTagName("pre");for(var p=0;p<r.length;p++){var q=j(r[p]);if(q){o(q,hljs.tabReplace)}}}function n(){if(window.addEventListener){window.addEventListener("DOMContentLoaded",k,false);window.addEventListener("load",k,false)}else{if(window.attachEvent){window.attachEvent("onload",k)}else{window.onload=k}}}var d={};this.LANGUAGES=d;this.highlight=e;this.highlightAuto=f;this.fixMarkup=h;this.highlightBlock=o;this.initHighlighting=k;this.initHighlightingOnLoad=n;this.IR="[a-zA-Z][a-zA-Z0-9_]*";this.UIR="[a-zA-Z_][a-zA-Z0-9_]*";this.NR="\\b\\d+(\\.\\d+)?";this.CNR="\\b(0x[A-Za-z0-9]+|\\d+(\\.\\d+)?)";this.RSR="!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|\\.|-|-=|/|/=|:|;|<|<<|<<=|<=|=|==|===|>|>=|>>|>>=|>>>|>>>=|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~";this.BE={b:"\\\\.",r:0};this.ASM={cN:"string",b:"'",e:"'",i:"\\n",c:[this.BE],r:0};this.QSM={cN:"string",b:'"',e:'"',i:"\\n",c:[this.BE],r:0};this.CLCM={cN:"comment",b:"//",e:"$"};this.CBLCLM={cN:"comment",b:"/\\*",e:"\\*/"};this.HCM={cN:"comment",b:"#",e:"$"};this.NM={cN:"number",b:this.NR,r:0};this.CNM={cN:"number",b:this.CNR,r:0};this.inherit=function(p,s){var r={};for(var q in p){r[q]=p[q]}if(s){for(var q in s){r[q]=s[q]}}return r}}();hljs.LANGUAGES.bash=function(){var d={"true":1,"false":1};var b={cN:"variable",b:"\\$([a-zA-Z0-9_]+)\\b"};var a={cN:"variable",b:"\\$\\{(([^}])|(\\\\}))+\\}",c:[hljs.CNM]};var c={cN:"string",b:'"',e:'"',i:"\\n",c:[hljs.BE,b,a],r:0};var e={cN:"test_condition",b:"",e:"",c:[c,b,a,hljs.CNM],k:{literal:d},r:0};return{dM:{k:{keyword:{"if":1,then:1,"else":1,fi:1,"for":1,"break":1,"continue":1,"while":1,"in":1,"do":1,done:1,echo:1,exit:1,"return":1,set:1,declare:1},literal:d},c:[{cN:"shebang",b:"(#!\\/bin\\/bash)|(#!\\/bin\\/sh)",r:10},hljs.HCM,hljs.CNM,c,b,a,hljs.inherit(e,{b:"\\[ ",e:" \\]",r:0}),hljs.inherit(e,{b:"\\[\\[ ",e:" \\]\\]"})]}}}();hljs.LANGUAGES.javascript={dM:{k:{keyword:{"in":1,"if":1,"for":1,"while":1,"finally":1,"var":1,"new":1,"function":1,"do":1,"return":1,"void":1,"else":1,"break":1,"catch":1,"instanceof":1,"with":1,"throw":1,"case":1,"default":1,"try":1,"this":1,"switch":1,"continue":1,"typeof":1,"delete":1},literal:{"true":1,"false":1,"null":1,"undefined":1,"String":1,"Number":1,"Boolean":1,"Object":1,"Array":1,"Date":1,"RegExp":1,"Math":1,"Error":1}},c:[hljs.ASM,hljs.QSM,hljs.CLCM,hljs.CBLCLM,hljs.CNM,{b:"("+hljs.RSR+"|case|return|throw)\\s*",k:{"return":1,"throw":1,"case":1},c:[hljs.CLCM,hljs.CBLCLM,{cN:"regexp",b:"/",e:"/[gim]*",c:[{b:"\\\\/"}]}],r:0},{cN:"function",b:"\\bfunction\\b",e:"{",k:{"function":1},c:[{cN:"title",b:"[A-Za-z$_][0-9A-Za-z$_]*"},{cN:"params",b:"\\(",e:"\\)",c:[hljs.ASM,hljs.QSM,hljs.CLCM,hljs.CBLCLM]}]}]}};hljs.LANGUAGES.xml=function(){var b="[A-Za-z0-9\\._:-]+";var a={eW:true,c:[{cN:"attribute",b:b,r:0},{b:'="',rB:true,e:'"',c:[{cN:"value",b:'"',eW:true}]},{b:"='",rB:true,e:"'",c:[{cN:"value",b:"'",eW:true}]},{b:"=",c:[{cN:"value",b:"[^\\s/>]+"}]}]};return{cI:true,dM:{c:[{cN:"pi",b:"<\\?",e:"\\?>",r:10},{cN:"doctype",b:"<!DOCTYPE",e:">",r:10,c:[{b:"\\[",e:"\\]"}]},{cN:"comment",b:"<!--",e:"-->",r:10},{cN:"cdata",b:"<\\!\\[CDATA\\[",e:"\\]\\]>",r:10},{cN:"tag",b:"<style",e:">",k:{title:{style:1}},c:[a],starts:{cN:"css",e:"</style>",rE:true,sL:"css"}},{cN:"tag",b:"<script",e:">",k:{title:{script:1}},c:[a],starts:{cN:"javascript",e:"<\/script>",rE:true,sL:"javascript"}},{cN:"vbscript",b:"<%",e:"%>",sL:"vbscript"},{cN:"tag",b:"</?",e:"/?>",c:[{cN:"title",b:"[^ />]+"},a]}]}}}();
@@ -19,60 +19,60 @@
   </head>
   <body style="margin: 0 auto; width: 978px;">
     <h3>
-      <a href="http://nodejs.rs/post/instalacija-i-pokretanje-nodejs">Instalacija i pokretanje Node.js</a>
+      <a href="http://nodejs.rs/post/upravljanje-razlicitim-node-verzijama-na-istom-sistemu">Upravljanje različitim Node verzijama na istom sistemu</a>
     </h3>
     <div style="margin: 0 0 70px 3px; font-size: 14px;">
-      Napisao <a href="http://nodejs.rs/user/ManInTheBox">Žarko Stanković</a>, dana 19. jun 2012 04:03
+      Napisao <a href="http://nodejs.rs/user/ManInTheBox">Žarko Stanković</a>, dana 17. septembar 2013 02:52
     </div>
-    <p>U ovom članku ću vam objasniti kako da instalirate i pokrenete <em>Node.js</em> jer će vam to biti neophodno za svaki budući tutorijal. Uz instalaciju <code>node</code>-a nedavno je uključen i <a href="http://npmjs.org/">npm</a> - <code>node</code>-ov menadžer paketa.
+    <p>U ovom članku ću vam u nekoliko rečenica objasniti kako možete da imate više <code>node</code> verzija instaliranih na istom sistemu.
 
 </p>
-<p>Sam postupak instalacije je veoma jednostavan i neće vam oduzeti previše truda i vremena. Pratite sledeća uputstva:
-<input type="hidden" value="cutHere" />
+<p>Sigurno ćete doći u situaciju da radite na više projekata/modula i neki od njih će zahtevati različite verzije <code>node</code>-a.
+Trenutno najpopularnije biblioteke za upravljanje sa instaliranim node verzijama su: <a href="https://npmjs.org/package/n">n</a> i <a href="https://github.com/creationix/nvm">nvm</a> .
 
 </p>
-<p>Pre svega, potrebno je da preuzmete najnoviju <em>stabilnu</em> verziju <code>node</code>-a na sledećoj adresi: <a href="http://nodejs.org/#download"><a href="http://nodejs.org/#download">http://nodejs.org/#download</a></a>
+<p><input type="hidden" value="cutHere" />
 
 </p>
-<h3 id="unixmacintosh" class="anchor">Unix/Macintosh:</h3>
-<p>Nakon preuzimanje <code>node</code>-a naravno otpakujte arhivu i pozicionirajte se na direktorijum sa sadržajem iz arhive:
+<p>U ovom članku ćemo koristiti <a href="https://npmjs.org/package/n">n</a> node modul a svakako vam preporučujem da posetite stranicu projekta <a href="https://github.com/creationix/nvm">nvm</a> i isprobate i njega takođe.
 
 </p>
-<pre><code class="bash">cd ./node-v0.8.0</code></pre>
-<p>Izvršite sledeće naredbe kako biste instalirali <code>node</code> (videti <code>README.md</code> fajl):
+<p>Instalacija se vrši uz pomoć <code>npm</code>-a:
 
 </p>
-<pre><code class="bash"><a class="raw-file" href="http://nodejs.rs/post/instalacija-i-pokretanje-nodejs/raw/install.sh">install.sh</a><input type="hidden" value="[raw=install.sh]" />./configure
-make
-make install<input type="hidden" value="[/raw=install.sh]" /></code></pre>
-<p>I to je ceo postupak!<br>Sam proces instalacije može potrajati nekoliko minuta, tako da - bez panike ;-)
+<pre><code class="bash">$ [sudo] npm install -g n</code></pre>
+<p>Upotreba komande <code>n</code> je više nego jednostavna i ja ću navesti samo neke zanimljive kao npr:
 
 </p>
-<p>Za pokretanje testova izvršite:
+<pre><code class="bash">$ sudo n stable # instalira najnoviju stabilnu verziju node-a
+
+     install : 0.10.18
+       mkdir : /usr/local/n/versions/0.10.18
+       fetch : http://nodejs.org/dist/v0.10.18/node-v0.10.18-linux-x86.tar.gz
+/usr/local/bin/node
+   installed : v0.10.18</code></pre>
+<pre><code class="bash">$ sudo n latest # instalira poslednju objavljenu node verziju
+
+     install : 0.11.7
+       mkdir : /usr/local/n/versions/0.11.7
+       fetch : http://nodejs.org/dist/v0.11.7/node-v0.11.7-linux-x86.tar.gz
+/usr/local/bin/node
+   installed : v0.11.7</code></pre>
+<pre><code class="bash">$ sudo n rm 0.11.7 # ukloniti zeljenu verziju sa sistema</code></pre>
+<p>Za trenutno aktivnu verziju <code>node</code>-a proverite:
 
 </p>
-<pre><code class="bash">make test</code></pre>
-<p>Za <code>build</code>-ovanje dokumentacije:
+<pre><code class="bash">$ node -v
+v0.10.8</code></pre>
+<p>Za aktiviranje neke druge node verzije instalirane na sistemu:
 
 </p>
-<pre><code class="bash">make doc</code></pre>
-<p>Ukoliko imate problem sa instalacijom, molim vas da isti navedete u komentarima ispod. Dešava se (barem meni ranije) da nedostaju neke ključne biblioteke. Ukoliko ste na <code>Ubuntu</code>-u problem se uglavnom rešava u roku od jednog minuta sa <code>sudo apt-get install biblioteka</code>
-
-
-</p>
-<h3 id="windows" class="anchor">Windows:</h3>
-<p>Kao i obično na Windows-u je sve u par <em>next, next, next, finish</em> :D<br>Isti postupak primenite i za instalaciju <code>node</code>-a (dvoklik na instalacioni fajl i standardna rutina). Nakon toga pokrenite konzolu (<code>cmd.exe</code>) i <code>node</code> komanda će vam automatski biti dostupna.
+<pre><code class="bash">$ n 0.11.7 # instalira i/ili aktivira verziju 0.11.7</code></pre>
+<p>Za svu dodatnu pomoć:
 
 </p>
-<p>Nakon instalacije (važi za sve operativne sisteme) pokrenite konzolu (shell) i otkucajte:
-
-</p>
-<pre><code class="bash">node -v</code></pre>
-<p>Ukoliko je sve ok trebali biste da vidite trenutnu verziju instaliranog <code>node</code>-a:
-
-</p>
-<pre><code>v0.8.0</code></pre>
-<p>Čestitamo!!!<br>Sada imate instaliran <code>Node.js</code> i spremni ste da upoznate vaš novi omiljeni programski jezik :)</p>
+<pre><code class="bash">$ n --help</code></pre>
+<p>To bi bilo sve za upoznavanje sa ovom krajnje jednostavnom ali moćnom alatkom koja će vam pomoći da lako upravljate sa instaliranim verzijama <code>node</code>-a na vašem sistemu. Za detaljnije informacije molim vas posetite <a href="https://npmjs.org/package/n">stranicu</a> samog projekta.</p>
     <div style="text-align: center; font-size: 0.8em;">
       Preuzeto sa Node Srbija - <a href="http://nodejs.rs">http://nodejs.rs</a>
     </div>
