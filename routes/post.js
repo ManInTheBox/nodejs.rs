@@ -114,7 +114,9 @@ exports.new = function (req, res, next) {
               req.flash('info', [
                 'Molimo Vas da imate u vidu da Vaš članak neće biti automatski vidljiv ',
                 'jer je potrebno da ga administrator prvo odobri pre javnog prikazivanja. ',
-                'Hvala na strpljenju.',
+                'Listu Vaših članaka uvek možete pogledati na vašoj ',
+                '<a href="/user/' + req.session.user.name.username + '#my-posts">profil</a>',
+                ' stranici. Hvala na strpljenju.'
               ].join(''));
 
               res.redirect('/post');
@@ -537,7 +539,9 @@ exports.edit = function (req, res, next) {
                 req.flash('info', [
                   'Molimo Vas da imate u vidu da Vaš članak neće biti automatski vidljiv ',
                   'jer je potrebno da ga administrator prvo odobri pre javnog prikazivanja. ',
-                  'Hvala na strpljenju.',
+                  'Listu Vaših članaka uvek možete pogledati na vašoj ',
+                  '<a href="/user/' + req.session.user.name.username + '#my-posts">profil</a>',
+                  ' stranici. Hvala na strpljenju.'
                 ].join(''));
                 res.render('post/edit', { post: post });
               }
