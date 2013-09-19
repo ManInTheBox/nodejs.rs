@@ -26,7 +26,8 @@ const PRIORITY_LOWEST = 5;
 var types = {
   'register': 1,
   'newPostComment': 2,
-  'internalError': 3
+  'internalError': 3,
+  'newPost': 4
 };
 
 /**
@@ -150,6 +151,25 @@ Email.methods.configure = function configure(next) {
         self.html = jade.compile(file)(self.data);
         self.data = undefined; // we don't need this to be saved
         self.priority = PRIORITY_HIGHEST;
+
+        self.to = '';
+        for (var i = 0; i < credentials.admins.length; i++) {
+          self.to += credentials.admins[i].email + ',';
+        }
+        self.to = self.to.substring(0, self.to.length-1);
+
+        self.save(function (err) {
+          if (err) return next(err);
+          next();
+        });
+      });
+    break;
+    case types['newPost']:
+      fs.readFile(templatePath + 'newpost.jade', 'utf8', function (err, file) {
+        if (err) return next(err);
+        self.subject = 'Napisan je novi članak: "' + self.data.post.title + '"';
+        self.html = jade.compile(file)(self.data);
+        self.data = undefined; // we don't need this to be saved
 
         self.to = '';
         for (var i = 0; i < credentials.admins.length; i++) {

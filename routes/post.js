@@ -98,13 +98,27 @@ exports.new = function (req, res, next) {
         } else {
           fs.writeFile(fileName, post.content, function (err) {
             if (err) return next(err);
-            req.flash('success', 'Novi članak uspešno kreiran.');
-            req.flash('info', [
-              'Molimo Vas da imate u vidu da Vaš članak neće biti automatski vidljiv ',
-              'jer je potrebno da ga administrator prvo odobri pre javnog prikazivanja. ',
-              'Hvala na strpljenju.',
-            ].join(''));
-            res.redirect('/post');
+
+            var email = new Email({
+              data: {
+                author: req.session.user.name.username,
+                post: post
+              },
+              type: Email.types.newPost
+            });
+
+            email.send(function (err) {
+              if (err) return next(err);
+
+              req.flash('success', 'Novi članak uspešno kreiran.');
+              req.flash('info', [
+                'Molimo Vas da imate u vidu da Vaš članak neće biti automatski vidljiv ',
+                'jer je potrebno da ga administrator prvo odobri pre javnog prikazivanja. ',
+                'Hvala na strpljenju.',
+              ].join(''));
+
+              res.redirect('/post');
+            });
           });
         }
       });

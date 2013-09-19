@@ -1,0 +1,17 @@
+p
+  label Vreme: 
+  a(href='http://nodejs.rs/post/#{post.titleUrl}')= post.createdAt
+  br
+  label Autor: 
+  a(href='http://nodejs.rs/user/#{author}')= author
+  br
+  label Članak: 
+  a(href='http://nodejs.rs/post/#{post.titleUrl}')= post.title
+br
+br
+div(style='background: #EDEDED; padding: 5px;')!= post.content
+br
+br
+i
+  | Node Srbija - 
+  a(href='http://nodejs.rs') http://nodejs.rs
