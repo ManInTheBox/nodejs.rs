@@ -151,11 +151,15 @@ exports.admin = function (req, res, next) {
           });
           InternalError.update({ _id: { $in: _errors }}, { viewed: true }, { multi: true }, function (err, n) {
             if (err) return next(err);
-            res.render('site/admin', {
-              errors: errors,
-              previousPage: previousPage,
-              nextPage: nextPage,
-              newCount: newCount
+            Post.find({ visible: false }, function (err, posts) {
+              if (err) return next(err);
+              res.render('site/admin', {
+                posts: posts,
+                errors: errors,
+                previousPage: previousPage,
+                nextPage: nextPage,
+                newCount: newCount
+              });
             });
           });
         });
