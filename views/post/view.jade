@@ -12,11 +12,11 @@ article.post.single
         a(href='/post/#{post.titleUrl}/download', id='download') Preuzmi
         br
         span.download-box(style='display: none; float: right; background: #F3F4F5; border: 1px solid #E4E6E9; padding: 0 5px;')
-          a(href='/post/#{post.titleUrl}/download') Kao HTML format 
+          a(href='/post/#{post.titleUrl}/download', rel='nofollow') Kao HTML format
           br
-          a(href='/post/#{post.titleUrl}.md/download') Kao Markdown format
+          a(href='/post/#{post.titleUrl}.md/download', rel='nofollow') Kao Markdown format
           br
-          a(href='/post/#{post.titleUrl}.pdf/download') Kao PDF format
+          a(href='/post/#{post.titleUrl}.pdf/download', rel='nofollow') Kao PDF format
       - if (canEditPost)
         span.small
           a(href='/post/#{post.titleUrl}/edit') &nbsp;&nbsp;Izmeni 
