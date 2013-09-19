@@ -516,7 +516,17 @@ exports.edit = function (req, res, next) {
             fs.writeFile(filePath, post.content, function (err) {
               if (err) return next(err);
               req.flash('success', 'Uspešno izmenjen članak "' + helpers.encode(post.title) + '"');
-              res.redirect('/post/' + post.titleUrl);
+
+              if (post.visible) {
+                res.redirect('/post/' + post.titleUrl);
+              } else {
+                req.flash('info', [
+                  'Molimo Vas da imate u vidu da Vaš članak neće biti automatski vidljiv ',
+                  'jer je potrebno da ga administrator prvo odobri pre javnog prikazivanja. ',
+                  'Hvala na strpljenju.',
+                ].join(''));
+                res.render('post/edit', { post: post });
+              }
             });
           });
         });
