@@ -28,7 +28,7 @@ html
       hljs.initHighlightingOnLoad();
 
     link(rel='stylesheet', href='/javascripts/highlight/styles/github.min.css', type='text/css')
-    link(rel='stylesheet', type='text/css', media='screen', href='/stylesheets/coolblue.min.css')
+    link(rel='stylesheet', type='text/css', media='screen', href='/stylesheets/coolblue.css')
 
     script(type='text/javascript')
       var _gaq = _gaq || [];
@@ -73,6 +73,7 @@ html
                 li(id= ~currentUrl.indexOf('/user/#{session.user.name.username}') ? 'current' : null): a(href='/user/#{session.user.name.username}') Profil
                 li(id= currentUrl === '/logout' ? 'current' : null): a(href='/logout') Izloguj se
             .subscribe
+              a(href='http://nodejs.rs/rss', target='_blank').social.rss
               a(href='http://github.com/ManInTheBox/nodejs.rs', target='_blank').social.github
               a(href='http://twitter.com/NodeSrbija', target='_blank').social.twitter
 

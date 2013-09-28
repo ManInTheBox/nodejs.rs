@@ -1342,6 +1342,14 @@ em {
   margin: 0;
 }
 
+.rss {
+  background-image: url('../images/rss-icon-26x26.png');
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  margin: 0;
+}
+
 .raw-file {
   float: right;
   border: 1px solid #FFFFFF;
