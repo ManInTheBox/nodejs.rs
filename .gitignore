@@ -4,3 +4,8 @@
 /.monitor
 *.sublime-project
 *.sublime-workspace
+/public/images/users/
+/public/javascripts/script.min.js
+/public/stylesheets/coolblue.min.css
+/public/articles/*.html
+/public/articles/*.pdf
