@@ -195,3 +195,11 @@ exports.rss = function (req, res, next) {
     });
   });
 };
+
+/**
+ * Links action.
+ */
+
+exports.links = function (req, res, next) {
+  res.render('site/links');
+};

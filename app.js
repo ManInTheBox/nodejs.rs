@@ -209,6 +209,12 @@ app.get('/admin', loginRequired, grantAccess(), routes.site.admin);
 app.get('/feed.atom', routes.site.rss);
 
 /**
+ * Links site route.
+ */
+
+app.get('/links', routes.site.links);
+
+/**
  * Register user route.
  */
 
