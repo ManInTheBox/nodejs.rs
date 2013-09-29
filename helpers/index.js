@@ -4,10 +4,10 @@
  */
 
 var crypto = require('crypto'),
-  marked = require('marked').setOptions({
-    gfm: true,
-    pedantic: false,
+  _marked = require('marked').setOptions({
+    breaks: true,
     sanitize: true,
+    langPrefix: '',
     highlight: function (code, lang) {
       var raw = /\[raw=.*\]/.exec(code);
       if (raw) {
@@ -31,6 +31,23 @@ var crypto = require('crypto'),
       }
     }
   });
+
+/**
+ * Workaround to provide customized headings.
+ *
+ * @param {String} Markdown text
+ * @return {String} HTML content
+ */
+
+var marked = function (text) {
+  var tokens = _marked.lexer(text);
+  text = _marked.parser(tokens);
+  text = text.replace(/<h(\d+)>(.*)<\/h(\d+)>/ig, function (match, $1, $2) {
+    return '<h'+$1+' id="'+slugify($2)+'" class="anchor">'+$2+'</h'+$1+'>';
+  });
+
+  return text;
+};
 
 /**
  * Method to upper-case first character in string.
@@ -68,7 +85,7 @@ exports.EmailValidator = function (v) {
  * Checks if given URL is valid.
  *
  * @param {String} URL
- * @return {Boolean}  Whether URL is valid or not.
+ * @return {Boolean} Whether URL is valid or not.
  */
 
 exports.UrlValidator = function (v) {
@@ -216,6 +233,57 @@ exports.decode = decode = function (html) {
 
 exports.stripTags = function (html) {
   return html.replace(/<\/?([a-z][a-z0-9]*)\b[^>]*>/gi, '');
+};
+
+/**
+ * Method to slugify given value.
+ *
+ * @return {String} slugified value
+ */
+
+exports.slugify = slugify = function (v) {
+  return v
+          .toLowerCase()
+          .replace(/а/g, 'a')
+          .replace(/б/g, 'b')
+          .replace(/в/g, 'v')
+          .replace(/г/g, 'g')
+          .replace(/д/g, 'd')
+          .replace(/ђ/g, 'đ')
+          .replace(/е/g, 'e')
+          .replace(/ж/g, 'ž')
+          .replace(/з/g, 'z')
+          .replace(/и/g, 'i')
+          .replace(/ј/g, 'j')
+          .replace(/к/g, 'k')
+          .replace(/л/g, 'l')
+          .replace(/љ/g, 'lj')
+          .replace(/м/g, 'm')
+          .replace(/н/g, 'n')
+          .replace(/њ/g, 'nj')
+          .replace(/о/g, 'o')
+          .replace(/п/g, 'p')
+          .replace(/р/g, 'r')
+          .replace(/с/g, 's')
+          .replace(/т/g, 't')
+          .replace(/ћ/g, 'ć')
+          .replace(/у/g, 'u')
+          .replace(/ф/g, 'f')
+          .replace(/х/g, 'h')
+          .replace(/ц/g, 'c')
+          .replace(/ч/g, 'č')
+          .replace(/џ/g, 'dž')
+          .replace(/ш/g, 'š')
+          .replace(/č/g, 'c')
+          .replace(/ć/g, 'c')
+          .replace(/š/g, 's')
+          .replace(/đ/g, 'dj')
+          .replace(/ž/g, 'z')
+          .replace(/(\s)+/g, '-')
+          .replace(/[^a-zA-Z0-9-]/g, '')
+          .replace(/-{2,}/g, '-')
+          .replace(/^-/, '')
+          .replace(/-$/, '');
 };
 
 /**
