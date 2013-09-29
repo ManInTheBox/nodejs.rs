@@ -177,7 +177,7 @@ exports.rss = function (req, res, next) {
     var length = posts.length;
     posts.forEach(function (post) {
       var cutHere = post.content.indexOf('[cutHere]');
-      post.content = helpers.markdown(post.content.substring(0, cutHere));
+      post.content = helpers.stripTags(helpers.markdown(post.content.substring(0, cutHere)));
 
       if (--length === 0) {
         process.nextTick(function () {
