@@ -166,3 +166,32 @@ exports.admin = function (req, res, next) {
     });
   });
 };
+
+/**
+ * RSS action
+ */
+
+exports.rss = function (req, res, next) {
+  Post.find({ visible: true }).populate('_owner', ['name.username']).run(function (err, posts) {
+    if (err) return next(err);
+    var length = posts.length;
+    posts.forEach(function (post) {
+      var cutHere = post.content.indexOf('[cutHere]');
+      post.content = helpers.markdown(post.content.substring(0, cutHere));
+
+      if (--length === 0) {
+        process.nextTick(function () {
+          res.emit('posts ready');
+        });
+      }
+    });
+
+    res.on('posts ready', function () {
+      res.render('site/rss', { posts: posts, layout: false }, function (err, atom) {
+        if (err) return next(err);
+        res.writeHead(200, { 'content-type': 'application/atom+xml' });
+        res.end(atom);
+      });
+    });
+  });
+};

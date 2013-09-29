@@ -172,10 +172,11 @@ function handleSidebar(req, res, next) {
 // Routes
 
 /**
- * Handle sidebar for all routes except for public directory.
+ * Handle sidebar for all routes except for public directory
+ * and other statically served pages.
  */
 
-app.all(/^\/(?!articles|images|javascripts|stylesheets)(.*)$/i, handleSidebar);
+app.all(/^\/(?!articles|images|javascripts|stylesheets|feed\.atom)(.*)$/i, handleSidebar);
 
 /**
  * Root site route.
@@ -200,6 +201,12 @@ app.get('/about', routes.site.about);
  */
 
 app.get('/admin', loginRequired, grantAccess(), routes.site.admin);
+
+/**
+ * RSS site route.
+ */
+
+app.get('/feed.atom', routes.site.rss);
 
 /**
  * Register user route.
