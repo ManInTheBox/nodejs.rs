@@ -1,6 +1,6 @@
 .about-me
-  h3 Autor: 
-    a(href='/user/#{data.user.name.username}')= data.user.name.username
+  h3 Autor:
+    a(href='/user/#{data.user.name.username}')= data.user.name.full
   p
     a(href='/user/#{data.user.name.username}')
       img(src='/images/users/#{data.user.photo.small}', class="align-left", title=data.user.photo.name)
@@ -16,7 +16,7 @@
     label GitHub:
     br
     a(href='#{data.user.bio.github}')= data.user.bio.github
-    br  
+    br
     label Twitter:
     br
     a(href='#{data.user.bio.twitter}')= data.user.bio.twitter
