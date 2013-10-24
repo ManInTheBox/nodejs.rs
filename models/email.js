@@ -136,6 +136,7 @@ Email.methods.configure = function configure(next) {
       fs.readFile(templatePath + 'newpostcomment.jade', 'utf8', function (err, file) {
         if (err) return next(err);
         self.subject = 'Novi komentar na Node Srbija: ' + self.data.title;
+        self.data.commentText = helpers.markdown(self.data.commentText);
         self.html = jade.compile(file)(self.data);
         self.data = undefined; // we don't need this to be saved
         self.priority = PRIORITY_HIGH;
