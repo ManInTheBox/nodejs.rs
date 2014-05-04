@@ -7,7 +7,8 @@ var db = require('./db'),
   nodemailer = require('nodemailer'),
   credentials = require('../credentials'),
   jade = require('jade'),
-  fs = require('fs');
+  fs = require('fs'),
+  helpers = require('../helpers');
 
 /**
  * Priority constants.
@@ -61,7 +62,7 @@ var Email = new db.Schema({
   sent: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
   sentAt: Date,
-  type: { type: Number, default: 0 }, 
+  type: { type: Number, default: 0 },
   priority: { type: Number, default: PRIORITY_NORMAL },
   sendingCounter: { type: Number, default: 0 },
   error: String
@@ -135,6 +136,7 @@ Email.methods.configure = function configure(next) {
       fs.readFile(templatePath + 'newpostcomment.jade', 'utf8', function (err, file) {
         if (err) return next(err);
         self.subject = 'Novi komentar na Node Srbija: ' + self.data.title;
+        self.data.commentText = helpers.markdown(self.data.commentText);
         self.html = jade.compile(file)(self.data);
         self.data = undefined; // we don't need this to be saved
         self.priority = PRIORITY_HIGH;
@@ -168,6 +170,7 @@ Email.methods.configure = function configure(next) {
       fs.readFile(templatePath + 'newpost.jade', 'utf8', function (err, file) {
         if (err) return next(err);
         self.subject = 'Napisan je novi članak: "' + self.data.post.title + '"';
+        self.data.content = helpers.markdown(self.data.content);
         self.html = jade.compile(file)(self.data);
         self.data = undefined; // we don't need this to be saved
 
