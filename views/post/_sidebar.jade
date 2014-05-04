@@ -1,6 +1,6 @@
 .about-me
-  h3 Autor:
-    a(href='/user/#{data.user.name.username}')= data.user.name.full
+  h3 Autor: 
+    a(href='/user/#{data.user.name.username}')= data.user.name.username
   p
     a(href='/user/#{data.user.name.username}')
       img(src='/images/users/#{data.user.photo.small}', class="align-left", title=data.user.photo.name)
